@@ -1,23 +1,32 @@
 #!/usr/bin/env node
 
-var tarifa = require('../lib/tarifa'),
+var parser = require('nomnom'),
     pkg = require('../package.json'),
-    parser = require('nomnom');
 
-parser.script("tarifa");
+    interactive = require('../lib/interactive'),
 
-// default command, trigger the interactive mode
-parser.command('')
-   .callback(function(opts) {
-      console.log('entering the interactive mode...');
-   })
-   .help("interactive mode");
+    create = require('../actions/create'),
+    build = require('../actions/build'),
+    run = require('../actions/run'),
+    upgrade = require('../actions/upgrade'),
+    publish = require('../actions/publish');
 
-parser.command('create')
-   .callback(function(opts) {
-      console.log('...');
-   })
-   .help("Create a new project...");
+var actions = [create, build, run, upgrade, publish];
+
+parser.script("tarifa")
+    .nocommand()
+    .callback(interactive)
+    .help("Opinated workflow for cordova");
+
+actions.forEach(function (action) {
+    var c = parser.command(action.name)
+        .callback(action.action)
+        .help(action.help);
+
+    action.options.forEach(function (option) {
+        c.option(option.name, option.option)
+    });
+});
 
 parser.option('version', {
       flag: true,
