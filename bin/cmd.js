@@ -5,13 +5,14 @@ var parser = require('nomnom'),
 
     interactive = require('../lib/interactive'),
 
+    info = require('../actions/info'),
     create = require('../actions/create'),
     build = require('../actions/build'),
     run = require('../actions/run'),
     upgrade = require('../actions/upgrade'),
     publish = require('../actions/publish');
 
-var actions = [create, build, run, upgrade, publish];
+var actions = [create, build, run, upgrade, publish, info];
 
 parser.script("tarifa")
     .nocommand()
