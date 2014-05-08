@@ -13,8 +13,15 @@ var parser = require('nomnom'),
 
 var actions = [create, prepare, build, run, upgrade, publish, info];
 
+function help() {
+    console.log(parser.getUsage());
+    process.exit(1);
+}
+
 parser.script("tarifa")
     .nocolors()
+    .nocommand()
+    .callback(help)
     .help("Opinated workflow for cordova mobile apps with browserify and friends");
 
 actions.forEach(function (action) {
