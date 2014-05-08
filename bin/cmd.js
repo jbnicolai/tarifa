@@ -7,17 +7,18 @@ var parser = require('nomnom'),
 
     info = require('../actions/info'),
     create = require('../actions/create'),
+    prepare = require('../actions/prepare'),
     build = require('../actions/build'),
     run = require('../actions/run'),
     upgrade = require('../actions/upgrade'),
     publish = require('../actions/publish');
 
-var actions = [create, build, run, upgrade, publish, info];
+var actions = [create, prepare, build, run, upgrade, publish, info];
 
 parser.script("tarifa")
     .nocommand()
     .callback(interactive)
-    .help("Opinated workflow for cordova");
+    .help("Opinated workflow for cordova mobile apps with browserify and friends");
 
 actions.forEach(function (action) {
     var c = parser.command(action.name)
