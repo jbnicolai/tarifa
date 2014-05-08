@@ -3,8 +3,6 @@
 var parser = require('nomnom'),
     pkg = require('../package.json'),
 
-    interactive = require('../lib/interactive'),
-
     info = require('../actions/info'),
     create = require('../actions/create'),
     prepare = require('../actions/prepare'),
@@ -16,8 +14,7 @@ var parser = require('nomnom'),
 var actions = [create, prepare, build, run, upgrade, publish, info];
 
 parser.script("tarifa")
-    .nocommand()
-    .callback(interactive)
+    .nocolors()
     .help("Opinated workflow for cordova mobile apps with browserify and friends");
 
 actions.forEach(function (action) {
