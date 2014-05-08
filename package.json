@@ -1,0 +1,26 @@
+{
+  "name": "tarifa",
+  "version": "0.0.1",
+  "author": "Paul Panserrieu <paul@42loops.com>",
+  "description": "Opiniated workflow for cordova",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/peutetre/tarifa.git"
+  },
+  "keywords": [
+    "cordova",
+    "mobile",
+    "app",
+    "cli"
+  ],
+  "bin": {
+    "tarifa": "bin/cmd.js"
+  },
+  "license": "MIT",
+  "main": "lib/tarifa.js",
+  "homepage": "https://github.com/peutetre/tarifa",
+  "dependencies": {
+    "cordova": "^3.4.1-0.1.0",
+    "nomnom": "^1.6.2"
+  }
+}

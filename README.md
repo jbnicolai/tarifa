@@ -1,4 +1,4 @@
-tarifa
+tarifa [![experimental](http://hughsk.github.io/stability-badges/dist/experimental.svg)](http://github.com/hughsk/stability-badges)
 ======
 
 Opiniated workflow for cordova
@@ -11,8 +11,8 @@ Handling all life cycle processes of a mobile app: create, build, publish, upgra
 
 A mobile app has many configuration and can be build for multiple targets.
 
-![app](assets/images/app.png)
+![app](doc/assets/images/app.png)
 
 Building to publish or the run
 
-![build](assets/images/build.png)
+![build](doc/assets/images/build.png)
