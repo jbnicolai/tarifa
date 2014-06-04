@@ -5,6 +5,7 @@ var argv = process.argv.slice(2),
     path = require('path'),
     args = require('minimist')(argv),
     pkg = require('../package.json'),
+    argsHelper = require('../lib/args'),
     create = require('../actions/create'),
     info = require('../actions/info');
 
@@ -28,10 +29,6 @@ function printVersion() {
     process.exit(0);
 }
 
-function matchSingleOptions(arg, s, l) {
-    return (arg[s] == true || arg[l] == true) && arg._.length == 0 && arg.length != 2;
-}
-
 function matchAction(arg) {
     return arg._[0] && availableActions.map(function (a) { return a.name; }).indexOf(arg._[0]) >=0;
 }
@@ -41,7 +38,7 @@ function actionError(err) { console.log(err); }
 
 function main(arg) {
     singleOptions.forEach(function (option) {
-        if(matchSingleOptions(arg, option.small, option.name)) option.action();
+        if(argsHelper.matchSingleOptions(arg, option.small, option.name)) option.action();
     });
 
     if(matchAction(arg)) {
