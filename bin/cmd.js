@@ -45,8 +45,9 @@ function main(arg) {
     });
 
     if(matchAction(arg)) {
+        var action = arg._.shift(0);
         availableActions
-            .filter(function (a) { return a.name == arg._[0]; })[0].action(arg)
+            .filter(function (a) { return a.name == action; })[0].action(arg)
             .done(actionSuccess, actionError);
     } else {
         printHelp(argv.length && "Tarifa does not know " + argv.join(' ') + '\n');
