@@ -8,9 +8,6 @@ module.exports = {
     },{
         name:'android',
         value:'android'
-    },{
-        name:'wp',
-        value:'wp8'
     }],
     message:'What are the supported platform of your project?'
 };

@@ -21,6 +21,7 @@
   "main": "lib/tarifa.js",
   "homepage": "https://github.com/peutetre/tarifa",
   "dependencies": {
+    "chalk": "^0.4.0",
     "cordova": "3.4.1-0.1.0",
     "inquirer": "^0.5.1",
     "minimist": "0.1.0"
