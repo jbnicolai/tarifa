@@ -1,0 +1,73 @@
+[{
+    "name":"Battery Status",
+    "value":"org.apache.cordova.battery-status",
+    "version":"xxx"
+},{
+    "name":"Camera",
+    "value":"org.apache.cordova.camera",
+    "version":"xxx"
+},{
+    "name":"Console",
+    "value":"org.apache.cordova.console",
+    "version":"xxx"
+},{
+    "name":"Contacts",
+    "value":"org.apache.cordova.contacts",
+    "version":"xxx"
+},{
+    "name":"Device",
+    "value":"org.apache.cordova.device",
+    "version":"xxx"
+},{
+    "name":"Device Motion",
+    "value":"org.apache.cordova.device-motion",
+    "version":"xxx"
+},{
+    "name":"Device Orientation",
+    "value":"org.apache.cordova.device-orientation",
+    "version":"xxx"
+},{
+    "name":"Dialogs",
+    "value":"org.apache.cordova.dialogs",
+    "version":"xxx"
+},{
+    "name":"File",
+    "value":"org.apache.cordova.file",
+    "version":"xxx"
+},{
+    "name":"File Transfer",
+    "value":"org.apache.cordova.file-transfer",
+    "version":"xxx"
+},{
+    "name":"Geolocation",
+    "value":"org.apache.cordova.geolocation",
+    "version":"xxx"
+},{
+    "name":"Globalization",
+    "value":"org.apache.cordova.globalization",
+    "version":"xxx"
+},{
+    "name":"In App Browser",
+    "value":"org.apache.cordova.inappbrowser",
+    "version":"xxx"
+},{
+    "name":"Media",
+    "value":"org.apache.cordova.media",
+    "version":"xxx"
+},{
+    "name":"Media Capture",
+    "value":"org.apache.cordova.media-capture",
+    "version":"xxx"
+},{
+    "name":"Network Information",
+    "value":"org.apache.cordova.network-information",
+    "version":"xxx"
+},{
+    "name":"Splashscreen",
+    "value":"org.apache.cordova.splashscreen",
+    "version":"xxx"
+},{
+    "name":"Vibration",
+    "value":"org.apache.cordova.vibration",
+    "version":"xxx"
+}]

@@ -34,7 +34,11 @@ function matchAction(arg) {
 }
 
 function actionSuccess(val) { }
-function actionError(err) { console.log(err); }
+function actionError(name) {
+    return function (err) {
+        console.log('[tarifa ' + name + ' error] ' + err);
+    }
+}
 
 function main(arg) {
     singleOptions.forEach(function (option) {
@@ -45,7 +49,7 @@ function main(arg) {
         var action = arg._.shift(0);
         availableActions
             .filter(function (a) { return a.name == action; })[0].action(arg)
-            .done(actionSuccess, actionError);
+            .done(actionSuccess, actionError(action));
     } else {
         printHelp(argv.length && "Tarifa does not know " + argv.join(' ') + '\n');
     }

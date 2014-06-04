@@ -3,38 +3,42 @@ var Q = require('q'),
     cordova = require('cordova'),
     fs = require('fs'),
     path = require('path'),
-    argsHelper = require('../../lib/args');
+    argsHelper = require('../../lib/args'),
+
+    questions = [
+        require('./questions/path'),
+        require('./questions/id'),
+        require('./questions/name'),
+        require('./questions/description'),
+        require('./questions/platforms'),
+        require('./questions/plugins'),
+    ],
+
+    verbose = false;
 
 function create(argv) {
 
-    if(argsHelper.matchSingleOptions(argv, 'h', 'help')){
+    if(argsHelper.matchSingleOptions(argv, 'h', 'help')) {
         console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
-        process.exit(0);
+        return Q.resolve();
     }
 
-    // TODO parse arguments -> if ok -> createProject, if no args -> inquirer, if invalid args -> error + help
+    if(argv.V == true || argv.verbose == true) verbose = true;
 
-    // hier, we want to create a cordova project and setting up our information require to templatize it...
+    var defer = Q.defer();
 
-    /*inquirer.prompt([{
-        type:'input',
-        name:'project name',
-        message:'what\'s the name of your project ?'
-    }], function( answers ) {
-        console.log(answers);
-    });*/
+    inquirer.prompt(questions, function(resp) {
+        var cfg = { };
+        cordova.create(resp.project_path, resp.project_id, resp.project_name, cfg, function (err) {
+            if(err) {
+                defer.reject(err);
+                return;
+            }
+            defer.resolve();
+        });
+    });
 
-    /*cordova.create('.', this.appId, this.appName, cfg, function (err) {
-        if(err) {
-            console.log(chalk.red('Error in cordova app init'));
-            console.log(err);
-            process.exit(1);
-        }
-        this.log.write().ok('Raw app created');
-        cb();
-    }.bind(this));*/
-
-    return Q.resolve("ohh yessssss");
+    return defer.promise;
 };
 
 module.exports = create;
