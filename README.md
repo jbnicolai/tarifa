@@ -1,16 +1,20 @@
 tarifa [![experimental](http://hughsk.github.io/stability-badges/dist/experimental.svg)](http://github.com/hughsk/stability-badges)
 ======
 
-Opiniated workflow for cordova
+Your friendly mobile-app development workflow on top of Cordova
 
-### Goals
+### Install
 
-Handling all life cycle processes of a mobile app: create, build, publish, upgrade with a single cli
+```
+npm install tarifa
+```
+
+### Usage
 
 ```
 Usage: tarifa [command] [options]
 
-command     
+command
   create      create a mobile app
   prepare     prepare the app for building
   build       build the app with a given configuration for some targets
@@ -25,13 +29,3 @@ Options:
 
 Opinated workflow for cordova mobile apps with browserify and friends
 ```
-
-### Context
-
-A mobile app has many configuration and can be build for multiple targets.
-
-![app](doc/assets/images/app.png)
-
-Building to publish or the run
-
-![build](doc/assets/images/build.png)

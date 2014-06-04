@@ -1,14 +1,13 @@
-module.exports = {
-    name : 'info',
-    help : 'current project information',
-    action : function (options) {
-        // get some info about the current project
-        // which sdk are installed on the current host
-    },
-    options : [{
-        name : 'verbose',
-        option : {
-            help: "more verbose logs"
-        }
-    }]
+var Q = require('q'),
+    pkg = require('../package.json');
+
+module.exports = function (argv) {
+
+    console.log('node version: ' + process.versions.node);
+    console.log('cordova version: ' + pkg.dependencies.cordova);
+
+    // check installed xcode version if available
+    // check android sdk version
+    // check if we are in a tarifa project
+    return Q.resolve();
 };

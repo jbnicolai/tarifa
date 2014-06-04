@@ -1,0 +1,10 @@
+Usage: tarifa [command] [options]
+
+Commands:
+
+    create         Create a tarifa project
+    info           Get information about the current project
+
+Options:
+    --version, -v  Show tarifa version number
+    --help, -h     Show this message

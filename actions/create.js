@@ -1,13 +1,8 @@
-module.exports = {
-    name : 'create',
-    help : 'create a mobile app',
-    action : function (options) {
-        console.log(options);
-    },
-    options : [{
-        name : 'verbose',
-        option : {
-            help: "more verbose logs"
-        }
-    }]
+var Q = require('q');
+
+module.exports = function (argv) {
+    // do the stuff
+    console.log(argv);
+
+    return Q.resolve("ohh yessssss");
 };
