@@ -1,5 +1,5 @@
 var Q = require('q'),
-    pkg = require('../package.json');
+    pkg = require('../../package.json');
 
 module.exports = function (argv) {
 
