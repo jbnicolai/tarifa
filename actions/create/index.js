@@ -39,20 +39,34 @@ function create(argv) {
         return Q.resolve();
     }
 
-    var defer = Q.defer();
+    var defer = Q.defer(),
+        response;
 
-    inquirer.prompt(questions, function(resp) {
+    response = questions.reduce(function (promise, question) {
+        var d = Q.defer();
 
-        resp.verbose = verbose;
+        promise.then(function (val) {
+            if (val.verbose){
+                var helpPath =  path.join(__dirname, 'help', question.name + '.txt');
+                if(fs.existsSync(helpPath)) console.log(fs.readFileSync(helpPath, 'utf-8'));
+            }
+            inquirer.prompt([question], function (answer) {
+                val[question.name] = answer[question.name];
+                d.resolve(val);
+            });
+        });
 
-        Q.all(tasks.reduce(function (val, task){
+        return d.promise;
+    }, Q.resolve({ verbose : verbose }));
+
+    response.then(function (resp) {
+        tasks.reduce(function (val, task){
             return Q.when(val, task);
-        }, resp)).done(function () {
+        }, resp).done(function () {
             defer.resolve();
         }, function (err) {
             defer.reject(err);
         });
-
     });
 
     return defer.promise;

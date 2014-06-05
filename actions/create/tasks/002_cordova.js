@@ -14,25 +14,25 @@ var path = require('path'),
     };
 
 module.exports = function (response) {
-    var cordova_path = path.join(response.project_path, settings.cordovaAppPath),
+    var cordova_path = path.join(response.path, settings.cordovaAppPath),
         cwd = process.cwd(),
         defer = Q.defer();
 
-    cordova.create(cordova_path, response.project_id, response.project_name, cfg, function (err) {
+    cordova.create(cordova_path, response.id, response.name, cfg, function (err) {
         if(err) {
             defer.reject(err);
             return;
         }
         if (response.verbose) console.log('\n' + chalk.green('✔') + ' cordova raw app created here ' + path.resolve(cordova_path));
         process.chdir(cordova_path);
-        cordova.platform('add', response.project_targets, function (err) {
+        cordova.platform('add', response.targets, function (err) {
             if(err) {
                 process.chdir(cwd);
                 defer.reject(err);
                 return;
             }
             if (response.verbose) {
-                response.project_targets.forEach(function (target) {
+                response.targets.forEach(function (target) {
                     console.log(chalk.green('✔') + ' cordova platform ' + target + ' added');
                 });
             }

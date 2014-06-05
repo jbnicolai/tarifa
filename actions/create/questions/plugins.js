@@ -3,7 +3,7 @@ var fs = require('fs'),
 
 module.exports = {
     type:'checkbox',
-    name:'project_plugins',
+    name:'plugins',
     choices:JSON.parse(fs.readFileSync(path.join(__dirname, '../../../conf/plugins.json'))),
     message:'Which plugins do you want to install right now?'
 };
