@@ -16,6 +16,12 @@ var Q = require('q'),
         require('./questions/plugins'),
     ],
 
+    tasks = [
+        require('./tasks/001_tarifa'),
+        require('./tasks/002_cordova'),
+        require('./tasks/003_www')
+    ],
+
     verbose = false,
     cwd = process.cwd();
 
@@ -36,40 +42,17 @@ function create(argv) {
     var defer = Q.defer();
 
     inquirer.prompt(questions, function(resp) {
-        var cfg = {
-                lib : {
-                    www : {
-                        id : "tarifa",
-                        version : "0.0.0",
-                        uri : path.join(__dirname, '../../conf/empty-www')
-                    }
-                }
-            },
-            cordova_path = path.join(resp.project_path, settings.cordovaAppPath);
 
-        fs.mkdirSync(resp.project_path);
-        cordova.create(cordova_path, resp.project_id, resp.project_name, cfg, function (err) {
-            if(err) {
-                defer.reject(err);
-                return;
-            }
-            if (verbose) console.log('\n' + chalk.green('✔') + ' cordova raw app created here ' + path.resolve(cordova_path));
-            process.chdir(cordova_path);
-            cordova.platform('add', resp.project_targets, function (err) {
-                if(err) {
-                    process.chdir(cwd);
-                    defer.reject(err);
-                    return;
-                }
-                if (verbose) {
-                    resp.project_targets.forEach(function (target) {
-                        console.log(chalk.green('✔') + ' cordova platform ' + target + ' added');
-                    });
-                }
-                process.chdir(cwd);
-                defer.resolve();
-            });
+        resp.verbose = verbose;
+
+        Q.all(tasks.reduce(function (val, task){
+            return Q.when(val, task);
+        }, resp)).done(function () {
+            defer.resolve();
+        }, function (err) {
+            defer.reject(err);
         });
+
     });
 
     return defer.promise;
