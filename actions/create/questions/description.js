@@ -1,6 +1,6 @@
 module.exports = {
     type:'input',
     name:'description',
-    validate : function () { /*TODO*/ return true; },
+    validate : function (answer) { return answer.length > 0; },
     message:'What\'s is your project about?'
 };
