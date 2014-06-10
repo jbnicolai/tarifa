@@ -13,7 +13,12 @@ var Q = require('q'),
         require('./questions/name'),
         require('./questions/description'),
         require('./questions/platforms'),
-        require('./questions/plugins')
+        require('./questions/plugins'),
+        require('./questions/www')
+    ],
+
+    customQuestions = [
+        require('./questions/custom/run')
     ],
 
     tasks = [
@@ -24,6 +29,27 @@ var Q = require('q'),
 
     verbose = false,
     cwd = process.cwd();
+
+function askCustomQuestions(answers) {
+
+    return customQuestions.reduce(function (promise, question) {
+        var d = Q.defer();
+
+        promise.then(function (val) {
+            if (val.verbose){
+                var helpPath =  path.join(__dirname, 'help', 'custom', question.name + '.txt');
+                if(fs.existsSync(helpPath)) console.log(fs.readFileSync(helpPath, 'utf-8'));
+            }
+            inquirer.prompt([question], function (answer) {
+                val[question.name] = answer[question.name];
+                d.resolve(val);
+            });
+        });
+
+        return d.promise;
+    }, Q.resolve(answers));
+
+}
 
 function create(argv) {
 
@@ -60,6 +86,9 @@ function create(argv) {
     }, Q.resolve({ verbose : verbose }));
 
     response.then(function (resp) {
+        if(resp.www === 'custom') return askCustomQuestions(resp);
+        else return resp;
+    }).then(function (resp) {
         tasks.reduce(function (val, task){
             return Q.when(val, task);
         }, resp).done(function () {
