@@ -9,5 +9,6 @@ module.exports = function (argv) {
     // check installed xcode version if available
     // check android sdk version
     // check if we are in a tarifa project
+    // give me all connected devices...
     return Q.resolve();
 };
