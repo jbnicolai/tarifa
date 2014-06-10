@@ -1,5 +1,0 @@
-{
-    "package" : "com.42loops.zanimo",
-    "appname": "[STAGING] zanimo.js editor",
-    "publish": "hockeyapp"
-}

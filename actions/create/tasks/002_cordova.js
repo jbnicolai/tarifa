@@ -8,7 +8,7 @@ var path = require('path'),
             www : {
                 id : "tarifa",
                 version : "0.0.0",
-                uri : path.join(__dirname, '../../../conf/empty-www')
+                uri : path.join(__dirname, '../../../template/empty')
             }
         }
     };

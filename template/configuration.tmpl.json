@@ -1,0 +1,5 @@
+{
+    "package" : "$PACKAGE_NAME",
+    "projectname": "$PROJECT_NAME",
+    "appname": "$APP_NAME"
+}
