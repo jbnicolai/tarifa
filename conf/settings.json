@@ -1,3 +1,4 @@
 {
-    "cordovaAppPath" : "app"
+    "cordovaAppPath" : "app",
+    "webAppPath" : "project"
 }
