@@ -1,5 +1,5 @@
 module.exports = {
     type:'input',
-    name:'run',
+    name:'build',
     message:'What is the build command of your www?'
 };

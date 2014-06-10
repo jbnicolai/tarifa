@@ -18,7 +18,9 @@ var Q = require('q'),
     ],
 
     customQuestions = [
-        require('./questions/custom/run')
+        require('./questions/custom/build'),
+        require('./questions/custom/project_path'),
+        require('./questions/custom/project_output')
     ],
 
     tasks = [
@@ -49,6 +51,13 @@ function askCustomQuestions(answers) {
         return d.promise;
     }, Q.resolve(answers));
 
+}
+
+function extendWithDefaultSettings(answers) {
+    answers.build = settings.build;
+    answers.project_path = settings.project_path;
+    answers.project_output = settings.project_output;
+    return answers;
 }
 
 function create(argv) {
@@ -87,7 +96,7 @@ function create(argv) {
 
     response.then(function (resp) {
         if(resp.www === 'custom') return askCustomQuestions(resp);
-        else return resp;
+        else return extendWithDefaultSettings(resp);
     }).then(function (resp) {
         tasks.reduce(function (val, task){
             return Q.when(val, task);

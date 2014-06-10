@@ -1,4 +1,7 @@
 {
     "cordovaAppPath" : "app",
-    "webAppPath" : "project"
+    "webAppPath" : "project",
+    "project_path" : "conf/template",
+    "build" : "project/bin/build.js",
+    "project_output" : "project/www"
 }
