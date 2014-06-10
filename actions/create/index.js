@@ -14,13 +14,19 @@ var Q = require('q'),
         require('./questions/description'),
         require('./questions/platforms'),
         require('./questions/plugins'),
-        require('./questions/www')
+        require('./questions/www'),
+        require('./questions/deploy')
     ],
 
     customQuestions = [
         require('./questions/custom/build'),
         require('./questions/custom/project_path'),
         require('./questions/custom/project_output')
+    ],
+
+    deployQuestions = [
+        require('./questions/deploy/user.js'),
+        require('./questions/deploy/token.js')
     ],
 
     tasks = [
@@ -31,6 +37,27 @@ var Q = require('q'),
 
     verbose = false,
     cwd = process.cwd();
+
+function askDeployQuestions(answers) {
+
+    return deployQuestions.reduce(function (promise, question) {
+        var d = Q.defer();
+
+        promise.then(function (val) {
+            if (val.verbose){
+                var helpPath =  path.join(__dirname, 'help', 'deploy', question.name + '.txt');
+                if(fs.existsSync(helpPath)) console.log(fs.readFileSync(helpPath, 'utf-8'));
+            }
+            inquirer.prompt([question], function (answer) {
+                val[question.name] = answer[question.name];
+                d.resolve(val);
+            });
+        });
+
+        return d.promise;
+    }, Q.resolve(answers));
+
+}
 
 function askCustomQuestions(answers) {
 
@@ -97,6 +124,9 @@ function create(argv) {
     response.then(function (resp) {
         if(resp.www === 'custom') return askCustomQuestions(resp);
         else return extendWithDefaultSettings(resp);
+    }).then(function (resp) {
+        if(resp.hockeyapp) return askDeployQuestions(resp);
+        else return resp;
     }).then(function (resp) {
         tasks.reduce(function (val, task){
             return Q.when(val, task);
