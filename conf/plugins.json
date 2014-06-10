@@ -1,73 +1,73 @@
 [{
     "name":"Battery Status",
     "value":"org.apache.cordova.battery-status",
-    "version":"xxx"
+    "uri":"org.apache.cordova.battery-status"
 },{
     "name":"Camera",
     "value":"org.apache.cordova.camera",
-    "version":"xxx"
+    "uri":"org.apache.cordova.camera"
 },{
     "name":"Console",
     "value":"org.apache.cordova.console",
-    "version":"xxx"
+    "uri":"org.apache.cordova.console"
 },{
     "name":"Contacts",
     "value":"org.apache.cordova.contacts",
-    "version":"xxx"
+    "uri":"org.apache.cordova.contacts"
 },{
     "name":"Device",
     "value":"org.apache.cordova.device",
-    "version":"xxx"
+    "uri":"org.apache.cordova.device"
 },{
     "name":"Device Motion",
     "value":"org.apache.cordova.device-motion",
-    "version":"xxx"
+    "uri":"org.apache.cordova.device-motion"
 },{
     "name":"Device Orientation",
     "value":"org.apache.cordova.device-orientation",
-    "version":"xxx"
+    "uri":"org.apache.cordova.device-orientation"
 },{
     "name":"Dialogs",
     "value":"org.apache.cordova.dialogs",
-    "version":"xxx"
+    "uri":"org.apache.cordova.dialogs"
 },{
     "name":"File",
     "value":"org.apache.cordova.file",
-    "version":"xxx"
+    "uri":"org.apache.cordova.file"
 },{
     "name":"File Transfer",
     "value":"org.apache.cordova.file-transfer",
-    "version":"xxx"
+    "uri":"org.apache.cordova.file-transfer"
 },{
     "name":"Geolocation",
     "value":"org.apache.cordova.geolocation",
-    "version":"xxx"
+    "uri":"org.apache.cordova.geolocation"
 },{
     "name":"Globalization",
     "value":"org.apache.cordova.globalization",
-    "version":"xxx"
+    "uri":"org.apache.cordova.globalization"
 },{
     "name":"In App Browser",
     "value":"org.apache.cordova.inappbrowser",
-    "version":"xxx"
+    "uri":"org.apache.cordova.inappbrowser"
 },{
     "name":"Media",
     "value":"org.apache.cordova.media",
-    "version":"xxx"
+    "uri":"org.apache.cordova.media"
 },{
     "name":"Media Capture",
     "value":"org.apache.cordova.media-capture",
-    "version":"xxx"
+    "uri":"org.apache.cordova.media-capture"
 },{
     "name":"Network Information",
     "value":"org.apache.cordova.network-information",
-    "version":"xxx"
+    "uri":"org.apache.cordova.network-information"
 },{
     "name":"Splashscreen",
     "value":"org.apache.cordova.splashscreen",
-    "version":"xxx"
+    "uri":"org.apache.cordova.splashscreen"
 },{
     "name":"Vibration",
     "value":"org.apache.cordova.vibration",
-    "version":"xxx"
+    "uri":"org.apache.cordova.vibration"
 }]

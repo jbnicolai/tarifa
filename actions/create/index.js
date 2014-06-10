@@ -13,7 +13,7 @@ var Q = require('q'),
         require('./questions/name'),
         require('./questions/description'),
         require('./questions/platforms'),
-        require('./questions/plugins'),
+        require('./questions/plugins')
     ],
 
     tasks = [

@@ -36,8 +36,15 @@ module.exports = function (response) {
                     console.log(chalk.green('✔') + ' cordova platform ' + target + ' added');
                 });
             }
-            process.chdir(cwd);
-            defer.resolve(response);
+            cordova.plugin('add', response.plugins, function (err) {
+                if(err) {
+                    process.chdir(cwd);
+                    defer.reject(err);
+                    return;
+                }
+                process.chdir(cwd);
+                defer.resolve(response);
+            });
         });
     });
 
