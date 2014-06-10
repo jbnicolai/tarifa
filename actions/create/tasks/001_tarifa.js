@@ -1,12 +1,19 @@
 var Q = require('q'),
     fs = require('fs'),
-    chalk = require('chalk');
+    path = require('path'),
+    chalk = require('chalk'),
+    settings = require('../../../conf/settings.json');
 
 module.exports = function (response) {
-    // create project folder
     fs.mkdirSync(response.path);
-    if (response.verbose) console.log('\n' + chalk.green('✔') + ' project folder created ' + response.path);
-    // TODO 2 create project main structure
-    // TODO 3 create the tarifa project file tarifa.json and the package.json
+    fs.mkdirSync(path.join(response.path, settings.webAppPath));
+    if (response.verbose) console.log('\n' + chalk.green('✔') + ' project folders created ' + response.path);
+
+    // TODO
+    // copy template or project_path to webAppPath
+    // template configuration files according to targets (android, ios, ...)
+    // create package.json file
+    // create tarifa.json file
+
     return Q.resolve(response);
 };
