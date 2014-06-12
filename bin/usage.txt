@@ -4,6 +4,7 @@ Commands:
 
     create         Create a tarifa project
     info           Get information about the current project
+    config         Configure the current project
 
 Options:
     --version, -v  Show tarifa version number
