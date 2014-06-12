@@ -7,7 +7,7 @@ var fs = require('fs');
 var b = browserify();
 
 var output = path.join(__dirname, '../www/main.js');
-if(fs.exist(output)) fs.unlinkSync(output);
+if(fs.existsSync(output)) fs.unlinkSync(output);
 
 var ws = fs.createWriteStream(path.join(__dirname, '../www/main.js'));
 
