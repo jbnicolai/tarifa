@@ -24,6 +24,8 @@ function createConfigurationFile(response, mode, platform, outputPath) {
     var conf = {};
 
     conf.label = mode + ' ' + response.name;
+    conf.mode = mode;
+    conf.name = response.name;
     conf.id = response.id;
 
     fs.writeFileSync(outputPath, JSON.stringify(conf, null, 2), 'utf-8');
