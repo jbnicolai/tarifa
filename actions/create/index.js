@@ -25,14 +25,15 @@ var Q = require('q'),
     ],
 
     deployQuestions = [
-        require('./questions/deploy/user.js'),
-        require('./questions/deploy/token.js')
+        require('./questions/deploy/apple_id.js'),
+        require('./questions/deploy/apple_password.js'),
+        require('./questions/deploy/hockeyapp_user.js'),
+        require('./questions/deploy/hockeyapp_token.js')
     ],
 
     tasks = [
-        require('./tasks/001_tarifa'),
-        require('./tasks/002_cordova'),
-        require('./tasks/003_www')
+        require('./tasks/tarifa'),
+        require('./tasks/cordova')
     ],
 
     verbose = false,
@@ -125,7 +126,7 @@ function create(argv) {
         if(resp.www === 'custom') return askCustomQuestions(resp);
         else return extendWithDefaultSettings(resp);
     }).then(function (resp) {
-        if(resp.hockeyapp) return askDeployQuestions(resp);
+        if(resp.deploy) return askDeployQuestions(resp);
         else return resp;
     }).then(function (resp) {
         tasks.reduce(function (val, task){

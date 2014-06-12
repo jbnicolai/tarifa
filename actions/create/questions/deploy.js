@@ -1,5 +1,5 @@
 module.exports = {
     type:'confirm',
-    name:'hockeyapp',
-    message:'Do you use HockeyApp to deploy to testers?'
+    name:'deploy',
+    message:'Do you use tarifa to help you for deploying to testers?'
 };
