@@ -1,0 +1,14 @@
+{
+  "name": "tarifa-empty-project",
+  "version": "0.0.0",
+  "description": "This is the tarifa default empty project",
+  "license": "MIT",
+  "dependencies": {
+    "q": "^1.0.1",
+    "qstart": "^0.1.0",
+    "zanimo": "^1.1.2"
+  },
+  "devDependencies": {
+    "browserify": "^4.1.9"
+  }
+}
