@@ -7,7 +7,7 @@ var fs = require('fs');
 var b = browserify();
 
 var output = path.join(__dirname, '../www/main.js');
-if(fs.exist(output)) fs.unlinkSunc(output);
+if(fs.exist(output)) fs.unlinkSync(output);
 
 var ws = fs.createWriteStream(path.join(__dirname, '../www/main.js'));
 
@@ -17,9 +17,12 @@ function usage(n, m) {
 }
 
 if (!argv[0]) usage(1);
-if (argv[0] && !fs.exists(argv[0])) usage(2, 'file does not exist!');
+
+var configurationPath = path.join(process.cwd(), argv[0]);
+
+if (argv[0] && !fs.existsSync(configurationPath)) usage(2, 'file does not exist!');
 
 b.add(path.join(__dirname, '../src/app.js'))
-    .require(argv[0], {expose: 'configuration'})
+    .require(configurationPath, {expose: 'configuration'})
     .bundle()
     .pipe(ws);
