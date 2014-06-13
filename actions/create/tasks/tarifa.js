@@ -35,7 +35,7 @@ function createConfigurations(response) {
     fs.mkdirSync(path.join(response.path, 'configuration'));
     response.targets.forEach(function (target) {
         fs.mkdirSync(path.join(response.path, 'configuration', target));
-        ['development', 'staging', 'production'].forEach(function(mode){
+        settings.configurations.forEach(function(mode){
             createConfigurationFile(response, mode, target, path.join(response.path, 'configuration', target, mode + '.json'));
         });
     });
