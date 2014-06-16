@@ -5,7 +5,6 @@ var Q = require('q'),
     fs = require('fs'),
     path = require('path'),
     argsHelper = require('../../lib/args'),
-    settings = require('../../conf/settings.json'),
 
     mainQuestions = [
         require('./questions/path'),
@@ -14,14 +13,7 @@ var Q = require('q'),
         require('./questions/description'),
         require('./questions/platforms'),
         require('./questions/plugins'),
-        require('./questions/www'),
         require('./questions/deploy')
-    ],
-
-    customQuestions = [
-        require('./questions/custom/build'),
-        require('./questions/custom/project_path'),
-        require('./questions/custom/project_output')
     ],
 
     deployQuestions = [
@@ -36,8 +28,7 @@ var Q = require('q'),
         require('./tasks/cordova')
     ],
 
-    verbose = false,
-    cwd = process.cwd();
+    verbose = false;
 
 function askQuestions(questions, type) {
     return function (answers) {
@@ -60,13 +51,6 @@ function askQuestions(questions, type) {
     };
 }
 
-function extendWithDefaultSettings(answers) {
-    answers.build = settings.build;
-    answers.project_path = settings.project_path;
-    answers.project_output = settings.project_output;
-    return answers;
-}
-
 function create(argv) {
 
     if(argsHelper.matchSingleOptions(argv, 'h', 'help')) {
@@ -82,15 +66,13 @@ function create(argv) {
     }
 
     return askQuestions(mainQuestions, '')({ verbose : verbose })
-            .then(function (resp) {
-                if(resp.www === 'custom') return askQuestions(customQuestions, 'custom')(resp);
-                else return extendWithDefaultSettings(resp);
-            }).then(function (resp) {
-                if(resp.deploy) return askQuestions(deployQuestions, 'deploy')(resp);
-                else return resp;
-            }).then(function (resp) {
-                return tasks.reduce(function (val, task){ return Q.when(val, task); }, resp);
-            });
+        .then(function (resp) {
+            if(resp.deploy) return askQuestions(deployQuestions, 'deploy')(resp);
+            else return resp;
+        })
+        .then(function (resp) {
+            return tasks.reduce(function (val, task){ return Q.when(val, task); }, resp);
+        });
 };
 
 module.exports = create;

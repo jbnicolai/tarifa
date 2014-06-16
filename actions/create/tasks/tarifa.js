@@ -3,8 +3,56 @@ var Q = require('q'),
     path = require('path'),
     chalk = require('chalk'),
     ncp = require('ncp').ncp,
-    settings = require('../../../conf/settings.json');
+    settings = require('../../../lib/settings');
 
+/* task goals
+ * 1 create project folder
+ * 2 create empty www project in project
+ * 3 create tarifa.json file
+ */
+
+/* tarifa.json should look like:
+
+   {
+        "name":"tarifa-example",
+        "description":"this is a tarifa example app",
+        "version":"0.0.0",
+        "platforms": [
+            "ios",
+            "android"
+        ],
+        "plugins":[
+            "org.apache.cordova.console",
+            "org.apache.cordova.device"
+        ],
+        "configuration":{
+            "app_label":"tarifa example",
+            "id":"com.fortytwoloops.tarifa_example"
+        },
+        "configurations":{
+            "developpement":{
+                "app_label":"tarifa dev example",
+                "id":"com.fortytwoloops.tarifa_example_dev"
+            },
+            "staging":{
+                "app_label":"tarifa staging example",
+                "id":"com.fortytwoloops.tarifa_example_staging"
+            },
+            "production":{
+                "app_label":"tarifa demo",
+                "id":"com.fortytwoloops.tarifa_demo"
+            }
+        },
+        "deploy": {
+            "hockeyapp_user":"toto",
+            "hockeyapp_token":"arandomtoken",
+            "apple_id":"toto@42loops.com"
+        }
+   }
+
+*/
+
+// TODO to remove
 function createTarifaJSONFile(response) {
 
     var conf = {};
@@ -20,6 +68,7 @@ function createTarifaJSONFile(response) {
     return response;
 }
 
+// TODO to remove
 function createConfigurationFile(response, mode, platform, outputPath) {
     var conf = {};
 
@@ -31,6 +80,7 @@ function createConfigurationFile(response, mode, platform, outputPath) {
     fs.writeFileSync(outputPath, JSON.stringify(conf, null, 2), 'utf-8');
 }
 
+// TODO to remove
 function createConfigurations(response) {
     fs.mkdirSync(path.join(response.path, 'configuration'));
     response.targets.forEach(function (target) {

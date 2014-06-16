@@ -1,8 +1,12 @@
+/* task goals
+ * create cordova  app
+ */
+
 var path = require('path'),
     cordova = require('cordova'),
     Q = require('q'),
     chalk = require('chalk'),
-    settings = require('../../../conf/settings.json'),
+    settings = require('../../../lib/settings'),
     cfg = {
         lib : {
             www : {

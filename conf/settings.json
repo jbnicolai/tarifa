@@ -1,7 +1,0 @@
-{
-    "configurations": [ "development", "staging", "production"],
-    "cordovaAppPath" : "app",
-    "webAppPath" : "project",
-    "build" : "project/bin/build.js",
-    "project_output" : "project/www"
-}
