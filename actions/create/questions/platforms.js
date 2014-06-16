@@ -1,6 +1,6 @@
 module.exports = {
     type:'checkbox',
-    name:'targets',
+    name:'platforms',
     validate : function (val) { return val.length > 0 || "One platform is mandatory!"; },
     choices:[{
         name:'iOS',

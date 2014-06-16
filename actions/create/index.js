@@ -36,7 +36,7 @@ function askQuestions(questions, type) {
             var d = Q.defer();
 
             promise.then(function (val) {
-                if (val.verbose){
+                if (val.options.verbose){
                     var helpPath =  path.join(__dirname, 'help', type, question.name + '.txt');
                     if(fs.existsSync(helpPath)) console.log(fs.readFileSync(helpPath, 'utf-8'));
                 }
@@ -65,7 +65,7 @@ function create(argv) {
         return Q.resolve();
     }
 
-    return askQuestions(mainQuestions, '')({ verbose : verbose })
+    return askQuestions(mainQuestions, '')({ options : { verbose : verbose } })
         .then(function (resp) {
             if(resp.deploy) return askQuestions(deployQuestions, 'deploy')(resp);
             else return resp;

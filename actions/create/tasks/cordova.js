@@ -29,14 +29,14 @@ module.exports = function (response) {
         }
         if (response.verbose) console.log('\n' + chalk.green('✔') + ' cordova raw app created here ' + path.resolve(cordova_path));
         process.chdir(cordova_path);
-        cordova.platform('add', response.targets, function (err) {
+        cordova.platform('add', response.platforms, function (err) {
             if(err) {
                 process.chdir(cwd);
                 defer.reject(err);
                 return;
             }
             if (response.verbose) {
-                response.targets.forEach(function (target) {
+                response.platforms.forEach(function (target) {
                     console.log(chalk.green('✔') + ' cordova platform ' + target + ' added');
                 });
             }
