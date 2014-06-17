@@ -31,7 +31,7 @@ function copyWWWProject(response) {
 
 module.exports = function (response) {
     if(!fs.existsSync(response.path)) fs.mkdirSync(response.path);
-
+    // TODO npm install in the www project so that we can remove node_modules from template/project
     return copyWWWProject(response)
         .then(tarifaFile.createFileFromResponse)
         .then(log);
