@@ -3,6 +3,10 @@ Usage: tarifa prepare <platform> [configuration]
 Build the output of the www project of your tarifa project, with no
 configuration 'default' will be used.
 
-example:
+Options:
+    --help, -h     Show this message
+    --verbose, -v  Be more verbose on everything
 
-tarifa prepare ios
+Examples:
+
+    tarifa prepare android production
