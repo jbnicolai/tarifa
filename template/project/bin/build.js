@@ -1,28 +1,32 @@
-#!/usr/bin/env node
+module.exports = function (platform, configuration) {
 
-var argv = process.argv.slice(2);
-var browserify = require('browserify');
-var path = require('path');
-var fs = require('fs');
-var b = browserify();
+    var browserify = require('browserify');
+    var Q = require('q');
+    var path = require('path');
+    var fs = require('fs');
+    var tmp = require('tmp');
 
-var output = path.join(__dirname, '../www/main.js');
-if(fs.existsSync(output)) fs.unlinkSync(output);
+    var b = browserify();
+    var defer = Q.defer();
+    var output = path.join(__dirname, '../www/main.js');
 
-var ws = fs.createWriteStream(path.join(__dirname, '../www/main.js'));
+    if(fs.existsSync(output)) fs.unlinkSync(output);
 
-function usage(n, m) {
-    console.log(m || 'build configuration.json');
-    process.exit(n);
+    var ws = fs.createWriteStream(path.join(__dirname, '../www/main.js'));
+
+    tmp.file({ prefix: 'configuration-', postfix: '.json' },function (err, tmpFilePath) {
+        if (err) throw err;
+        fs.writeFileSync(tmpFilePath, JSON.stringify(configuration, null, 2));
+        b.add(path.join(__dirname, '../src/app.js'))
+            .require(tmpFilePath, { expose : 'configuration' })
+            .bundle()
+            .pipe(ws);
+
+        ws.on('end', function() {
+            tmp.setGracefulCleanup();
+            defer.resolve();
+        });
+    });
+
+    return defer.promise;
 }
-
-if (!argv[0]) usage(1);
-
-var configurationPath = path.join(process.cwd(), argv[0]);
-
-if (argv[0] && !fs.existsSync(configurationPath)) usage(2, 'file does not exist!');
-
-b.add(path.join(__dirname, '../src/app.js'))
-    .require(configurationPath, {expose: 'configuration'})
-    .bundle()
-    .pipe(ws);

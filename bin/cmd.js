@@ -7,11 +7,13 @@ var argv = process.argv.slice(2),
     pkg = require('../package.json'),
     argsHelper = require('../lib/args'),
     create = require('../actions/create'),
+    prepare = require('../actions/prepare'),
     config = require('../actions/config'),
     info = require('../actions/info');
 
 var availableActions = [
         { name : 'create', action : create },
+        { name : 'prepare', action : prepare },
         { name : 'info', action : info },
         { name : 'config', action : config }
     ],

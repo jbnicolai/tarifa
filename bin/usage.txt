@@ -3,6 +3,7 @@ Usage: tarifa [command] [options]
 Commands:
 
     create         Create a tarifa project
+    prepare        Prepare the www project with a given configuration
     info           Get information about the current project
     config         Configure the current project
 
