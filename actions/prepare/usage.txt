@@ -1,5 +1,8 @@
-prepare your www project!
+Usage: tarifa prepare <platform> [configuration]
+
+Build the output of the www project of your tarifa project, with no
+configuration 'default' will be used.
 
 example:
 
-tarifa prepare ios:staging
+tarifa prepare ios
