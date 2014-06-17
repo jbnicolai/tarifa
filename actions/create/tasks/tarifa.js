@@ -30,7 +30,7 @@ function copyWWWProject(response) {
 };
 
 module.exports = function (response) {
-    fs.mkdirSync(response.path);
+    if(!fs.existsSync(response.path)) fs.mkdirSync(response.path);
 
     return copyWWWProject(response)
         .then(tarifaFile.createFileFromResponse)
