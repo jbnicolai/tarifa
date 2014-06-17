@@ -11,7 +11,7 @@ module.exports = {
     name:'path',
     validate : function (answer) {
         var msg = "folder already exist!";
-        return isPathValid(answer) || mgs;
+        return isPathValid(answer) || msg;
     },
     message:'Where do you want to create your project?'
 };
