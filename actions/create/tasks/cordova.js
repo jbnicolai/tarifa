@@ -40,15 +40,21 @@ module.exports = function (response) {
                     console.log(chalk.green('✔') + ' cordova platform ' + target + ' added');
                 });
             }
-            cordova.plugin('add', response.plugins, function (err) {
-                if(err) {
+            if (response.plugins.length) {
+                cordova.plugin('add', response.plugins, function (err) {
+                    if(err) {
+                        process.chdir(cwd);
+                        defer.reject(err);
+                        return;
+                    }
                     process.chdir(cwd);
-                    defer.reject(err);
-                    return;
-                }
+                    defer.resolve(response);
+                });
+            }
+            else {
                 process.chdir(cwd);
                 defer.resolve(response);
-            });
+            }
         });
     });
 
