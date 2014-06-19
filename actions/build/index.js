@@ -1,6 +1,3 @@
-// adb install -r platforms/android/ant-build/lclstorage-debug.apk;
-// open the app
-// adb shell am start com.lcl.test.storage/com.lcl.test.storage.lclstorage
 var Q = require('q'),
     cordova = require('cordova'),
     argsHelper = require('../../lib/args'),
