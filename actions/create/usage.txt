@@ -3,5 +3,6 @@ Usage: tarifa create
 Answer some questions to get a new tarifa project
 
 Options:
+
     --help, -h     Show this message
     --verbose, -v  Be more verbose on everything

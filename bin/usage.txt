@@ -9,5 +9,6 @@ Commands:
     config         Configure the current project
 
 Options:
+
     --version, -v  Show tarifa version number
     --help, -h     Show this message
