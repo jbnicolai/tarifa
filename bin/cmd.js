@@ -8,6 +8,7 @@ var argv = process.argv.slice(2),
     argsHelper = require('../lib/args'),
     create = require('../actions/create'),
     prepare = require('../actions/prepare'),
+    build = require('../actions/build'),
     config = require('../actions/config'),
     info = require('../actions/info');
 
@@ -15,7 +16,8 @@ var availableActions = [
         { name : 'create', action : create },
         { name : 'prepare', action : prepare },
         { name : 'info', action : info },
-        { name : 'config', action : config }
+        { name : 'config', action : config },
+        { name : 'build', action : build }
     ],
     singleOptions = [
         { small: 'v', name : 'version', action : printVersion },

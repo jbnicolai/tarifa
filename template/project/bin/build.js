@@ -15,18 +15,17 @@ module.exports = function (platform, configuration) {
     var ws = fs.createWriteStream(path.join(__dirname, '../www/main.js'));
 
     tmp.file({ prefix: 'configuration-', postfix: '.json' },function (err, tmpFilePath) {
-        if (err) throw err;
+        if (err) defer.reject(err);
         fs.writeFileSync(tmpFilePath, JSON.stringify(configuration, null, 2));
         b.add(path.join(__dirname, '../src/app.js'))
             .require(tmpFilePath, { expose : 'configuration' })
             .bundle()
             .pipe(ws);
 
-        ws.on('end', function() {
+        ws.on('finish', function() {
             tmp.setGracefulCleanup();
             defer.resolve();
         });
     });
-
     return defer.promise;
 }
