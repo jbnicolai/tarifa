@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var argv = process.argv.slice(2),
+    chalk = require('chalk'),
     fs = require('fs'),
     path = require('path'),
     args = require('minimist')(argv),
@@ -9,15 +10,19 @@ var argv = process.argv.slice(2),
     create = require('../actions/create'),
     prepare = require('../actions/prepare'),
     build = require('../actions/build'),
+    run = require('../actions/run'),
     config = require('../actions/config'),
     info = require('../actions/info');
+
+var t0 = (new Date()).getTime();
 
 var availableActions = [
         { name : 'create', action : create },
         { name : 'prepare', action : prepare },
         { name : 'info', action : info },
         { name : 'config', action : config },
-        { name : 'build', action : build }
+        { name : 'build', action : build },
+        { name : 'run', action : run }
     ],
     singleOptions = [
         { small: 'v', name : 'version', action : printVersion },
@@ -39,7 +44,11 @@ function matchAction(arg) {
     return arg._[0] && availableActions.map(function (a) { return a.name; }).indexOf(arg._[0]) >=0;
 }
 
-function actionSuccess(val) { }
+function actionSuccess(val) {
+    var t = (new Date()).getTime();
+    console.log(chalk.magenta('done in ~ ' + Math.floor((t-t0)/1000) + 's'));
+}
+
 function actionError(name) {
     return function (err) {
         console.log('[tarifa ' + name + ' error] ' + err);
