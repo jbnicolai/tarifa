@@ -29,15 +29,19 @@ var build = function (platform, config, verbose) {
 
     var defer = Q.defer();
     var cordova_path = path.join(process.cwd(), settings.cordovaAppPath);
+    var localConf = localSettings.configurations[platform][config];
+    // TODO for ios
+    var mode = (platform === 'android' && (localConf.keystore_path && localConf.keystore_alias)) ? '--release' : null;
 
     if(verbose) console.log('start to build the www project');
     prepareAction.prepare(platform, config, verbose).then(function () {
         process.chdir(cordova_path);
         if(verbose) console.log('start cordova build');
+
         cordova.build({
             verbose: verbose,
-            platforms: [platform],
-            options: []
+            platforms: [ platform ],
+            options: mode ? [ mode ] : []
         }, function (err, result) {
             process.chdir('..');
             if(err) defer.reject(err);

@@ -20,12 +20,15 @@ var Q = require('q'),
         require('./questions/deploy/apple_id.js'),
         require('./questions/deploy/apple_password.js'),
         require('./questions/deploy/hockeyapp_user.js'),
-        require('./questions/deploy/hockeyapp_token.js')
+        require('./questions/deploy/hockeyapp_token.js'),
+        require('./questions/deploy/keystore_path.js'),
+        require('./questions/deploy/keystore_alias.js')
     ],
 
     tasks = [
         require('./tasks/tarifa'),
-        require('./tasks/cordova')
+        require('./tasks/cordova'),
+        require('./tasks/ant-properties')
     ],
 
     verbose = false;
