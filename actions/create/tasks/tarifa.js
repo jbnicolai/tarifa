@@ -1,5 +1,6 @@
 var Q = require('q'),
     fs = require('fs'),
+    exec = require('child_process').exec,
     path = require('path'),
     chalk = require('chalk'),
     ncp = require('ncp').ncp,
@@ -7,7 +8,8 @@ var Q = require('q'),
     settings = require('../../../lib/settings');
 
 function log(response) {
-    if (response.verbose) console.log('\n' + chalk.green('✔') + ' project folders created ' + response.path);
+    if (response.options.verbose)
+        console.log('\n' + chalk.green('✔') + ' project folders created ' + response.path);
     return Q.resolve(response);
 }
 
@@ -23,16 +25,40 @@ function copyWWWProject(response) {
 
     ncp(source, destination, function (err) {
         if (err) return defer.reject(err);
+        if (response.options.verbose)
+            console.log(chalk.green('✔') + ' copied template www project');
         defer.resolve(response);
     });
 
     return defer.promise;
-};
+}
+
+function npm_install(response) {
+    var destination = path.join(response.path, settings.webAppPath);
+    var cwd = process.cwd();
+    var defer = Q.defer();
+
+    process.chdir(destination);
+
+    exec('npm install',
+        function (error, stdout, stderr) {
+            process.chdir(cwd);
+            if (error !== null) {
+                defer.reject(error);
+                console.log('npm install error in project' + error);
+                return;
+            }
+            if (response.options.verbose)
+                console.log(chalk.green('✔') + ' npm install www project');
+            defer.resolve(response);
+    });
+    return defer.promise;
+}
 
 module.exports = function (response) {
     if(!fs.existsSync(response.path)) fs.mkdirSync(response.path);
-    // TODO npm install in the www project so that we can remove node_modules from template/project
     return copyWWWProject(response)
+        .then(npm_install)
         .then(tarifaFile.createFileFromResponse)
         .then(log);
 };
