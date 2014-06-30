@@ -1,5 +1,5 @@
-/* task goals
- * create cordova  app
+/*
+ * create empty cordova  app task
  */
 
 var path = require('path'),
@@ -7,6 +7,7 @@ var path = require('path'),
     Q = require('q'),
     chalk = require('chalk'),
     settings = require('../../../lib/settings'),
+    // setting an empty folder as the default www template
     cfg = {
         lib : {
             www : {
@@ -18,7 +19,7 @@ var path = require('path'),
     };
 
 module.exports = function (response) {
-    var cordova_path = path.join(response.path, settings.cordovaAppPath),
+    var cordova_path = path.resolve(path.join(response.path, settings.cordovaAppPath)),
         cwd = process.cwd(),
         defer = Q.defer();
 
@@ -27,35 +28,8 @@ module.exports = function (response) {
             defer.reject(err);
             return;
         }
-        if (response.verbose) console.log('\n' + chalk.green('✔') + ' cordova raw app created here ' + path.resolve(cordova_path));
-        process.chdir(cordova_path);
-        cordova.platform('add', response.platforms, function (err) {
-            if(err) {
-                process.chdir(cwd);
-                defer.reject(err);
-                return;
-            }
-            if (response.verbose) {
-                response.platforms.forEach(function (target) {
-                    console.log(chalk.green('✔') + ' cordova platform ' + target + ' added');
-                });
-            }
-            if (response.plugins.length) {
-                cordova.plugin('add', response.plugins, function (err) {
-                    if(err) {
-                        process.chdir(cwd);
-                        defer.reject(err);
-                        return;
-                    }
-                    process.chdir(cwd);
-                    defer.resolve(response);
-                });
-            }
-            else {
-                process.chdir(cwd);
-                defer.resolve(response);
-            }
-        });
+        if (response.options.verbose) console.log('\n' + chalk.green('✔') + ' cordova raw app created here ' + cordova_path);
+        defer.resolve(response);
     });
 
     return defer.promise;

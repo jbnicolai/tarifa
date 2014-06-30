@@ -1,4 +1,5 @@
 var Q = require('q'),
+    spinner = require("char-spinner"),
     inquirer = require('inquirer'),
     chalk = require('chalk'),
     cordova = require('cordova'),
@@ -28,6 +29,8 @@ var Q = require('q'),
     tasks = [
         require('./tasks/tarifa'),
         require('./tasks/cordova'),
+        require('./tasks/platforms'),
+        require('./tasks/plugins'),
         require('./tasks/ant-properties')
     ],
 
@@ -74,6 +77,7 @@ function create(argv) {
             else return resp;
         })
         .then(function (resp) {
+            spinner();
             return tasks.reduce(function (val, task){ return Q.when(val, task); }, resp);
         });
 };
