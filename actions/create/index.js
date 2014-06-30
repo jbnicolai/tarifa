@@ -77,6 +77,7 @@ function create(argv) {
             else return resp;
         })
         .then(function (resp) {
+            console.log();
             spinner();
             return tasks.reduce(function (val, task){ return Q.when(val, task); }, resp);
         });
