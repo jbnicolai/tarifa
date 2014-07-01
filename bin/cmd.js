@@ -51,7 +51,7 @@ function actionSuccess(val) {
 
 function actionError(name) {
     return function (err) {
-        console.log('[tarifa ' + name + ' error] ' + err);
+        console.log(chalk.red(err));
     }
 }
 
