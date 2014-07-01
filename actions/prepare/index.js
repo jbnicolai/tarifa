@@ -32,7 +32,7 @@ var prepare = function (platform, config, verbose) {
         return defer.promise.then(function () {
             if(verbose) console.log(chalk.green('✔') + ' prepare, launch www project build');
             // execute www project builder lib with the asked configuration
-            return builder(platform, localSettings.configurations[platform][config], verbose);
+            return builder(platform, localSettings.configurations[platform][config], config, verbose);
         });
     });
 };

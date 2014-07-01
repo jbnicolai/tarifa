@@ -1,4 +1,4 @@
-module.exports = function (platform, configuration, verbose) {
+module.exports = function (platform, configuration, configurationName, verbose) {
 
     var browserify = require('browserify');
     var Q = require('q');
@@ -24,7 +24,8 @@ module.exports = function (platform, configuration, verbose) {
 
         ws.on('finish', function() {
             tmp.setGracefulCleanup();
-            if(verbose) console.log('✔ www project build done!');
+            if(verbose)
+                console.log('✔ www project build done with configuration ' + configurationName + '!');
             defer.resolve();
         });
     });
