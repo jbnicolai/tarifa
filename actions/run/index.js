@@ -60,7 +60,9 @@ var run = function (platform, config, verbose) {
 
 var installAndroidApp = function (localSettings, config, verbose) {
     var defer = Q.defer();
-    var cmd = settings.external.adb.name + ' install -r ' + 'app/platforms/android/ant-build/' + localSettings.configurations['android'][config].app_label + '-debug.apk';
+    // TODO need to check the mode (debug/release)
+    var apk_filename = localSettings.configurations['android'][config].product_file_name + '-debug.apk';
+    var cmd = settings.external.adb.name + ' install -r ' + 'app/platforms/android/ant-build/' + apk_filename;
 
     var options = {
         timeout : 6000,
