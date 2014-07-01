@@ -8,6 +8,11 @@ var Q = require('q'),
     fs = require('fs'),
     prepareAction = require('../prepare');
 
+var prebuildTasks = {
+    ios: ['product_file_name'/* , ... */],
+    android : ['product_file_name'/* , ... */]
+};
+
 var build = function (platform, config, verbose) {
     var cwd = process.cwd();
     var tarifaFilePath = path.join(cwd, 'tarifa.json');
@@ -18,7 +23,8 @@ var build = function (platform, config, verbose) {
         var mode = (platform === 'android' && (localConf.keystore_path && localConf.keystore_alias)) ? '--release' : null;
 
         if(verbose) console.log(chalk.green('✔') + ' start to build the www project');
-        return prepareAction.prepare(platform, config, verbose).then(function () {
+
+        var launchCordovaBuild = function () {
             process.chdir(path.join(cwd, settings.cordovaAppPath));
             if(verbose) console.log(chalk.green('✔') + ' start cordova build');
             cordova.build({
@@ -31,7 +37,21 @@ var build = function (platform, config, verbose) {
                 defer.resolve();
             });
             return defer.promise;
-        });
+        };
+
+        var launchPreBuildTasks = function () {
+            return prebuildTasks[platform].reduce(function (opt, task) {
+                return Q.when(opt, require('./tasks/' + platform  + '/' + task));
+            }, {
+                config: config,
+                verbose: verbose,
+                settings: localSettings
+            });
+        };
+
+        return prepareAction.prepare(platform, config, verbose)
+            .then(launchPreBuildTasks)
+            .then(launchCordovaBuild);
     });
 };
 
