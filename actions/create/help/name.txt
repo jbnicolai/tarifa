@@ -1,6 +1,5 @@
 
-The name will be also used has a default label for the app name.
-
-It is possible to overwrite the app label name with configuration.
-See this name has the name of your project and not the name of your app.
-
+> The name will be also used has a default label for the app name.
+>
+> It is possible to overwrite the app label name with configuration.
+> See this name has the name of your project and not the name of your app.

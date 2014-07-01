@@ -28,7 +28,7 @@ module.exports = function (response) {
             defer.reject(err);
             return;
         }
-        if (response.options.verbose) console.log('\n' + chalk.green('✔') + ' cordova raw app created here ' + cordova_path);
+        if (response.options.verbose) console.log(chalk.green('✔') + ' cordova raw app created here ' + cordova_path);
         defer.resolve(response);
     });
 

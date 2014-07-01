@@ -1,0 +1,3 @@
+
+> Plugins are cordova plugins, you can add them later, but that's not implemented
+> for now.

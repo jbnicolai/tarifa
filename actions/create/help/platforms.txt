@@ -1,0 +1,3 @@
+
+> Platforms can be added or removed also after creating the project, which is
+> not implemented right now.

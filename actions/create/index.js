@@ -57,6 +57,18 @@ function askQuestions(questions, type) {
     };
 }
 
+function printBanner() {
+    console.log(
+        chalk.bold(chalk.red('t')
+        + chalk.green('a')
+        + chalk.magenta('r')
+        + chalk.cyan('i')
+        + chalk.yellow('f')
+        + chalk.blue('a'))
+        + '\n'
+    );
+}
+
 function create(argv) {
 
     if(argsHelper.matchSingleOptions(argv, 'h', 'help')) {
@@ -70,6 +82,8 @@ function create(argv) {
         console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
         return Q.resolve();
     }
+
+    if(verbose) printBanner();
 
     return askQuestions(mainQuestions, '')({ options : { verbose : verbose } })
         .then(function (resp) {

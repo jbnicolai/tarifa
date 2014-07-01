@@ -1,0 +1,3 @@
+
+> This section asks for all needed informations in order to deploy the app
+> for the given platforms.
