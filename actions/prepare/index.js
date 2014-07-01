@@ -51,8 +51,7 @@ var action = function (argv) {
         return Q.resolve();
     }
 
-    var tmp = argv._[0].split(':');
-    return prepare(tmp[0], tmp[1] || 'default', verbose);
+    return prepare(argv._[0], argv._[1] || 'default', verbose);
 };
 
 action.prepare = prepare;
