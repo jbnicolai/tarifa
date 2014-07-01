@@ -40,6 +40,8 @@ var run = function (platform, config, verbose) {
             case 'android':
                 installAndroidApp(localSettings, config, verbose).then(function () {
                     return openAndroidApp(localSettings, config, verbose);
+                    // TODO would be also nice to be able to open chrome with the inspector
+                    // right on the chrome webview
                 }).then(function () {
                     defer.resolve();
                 }, function (err) {
