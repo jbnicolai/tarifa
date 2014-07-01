@@ -119,8 +119,7 @@ var action = function (argv) {
         return Q.resolve();
     }
 
-    var tmp = argv._[0].split(':');
-    return run(tmp[0], tmp[1] || 'default', verbose);
+    return run(argv._[0], argv._[1] || 'default', verbose);
 };
 
 action.run = run;
