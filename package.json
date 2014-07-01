@@ -26,6 +26,7 @@
     "char-spinner": "^1.0.1",
     "cordova": "3.4.1-0.1.0",
     "inquirer": "0.5.1",
+    "libxmljs": "^0.10.0",
     "minimist": "0.1.0",
     "mkdirp": "^0.5.0",
     "ncp": "^0.5.1",
