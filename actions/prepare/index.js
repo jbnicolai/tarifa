@@ -1,52 +1,41 @@
 var Q = require('q'),
+    chalk = require('chalk'),
     rimraf = require('rimraf'),
     argsHelper = require('../../lib/args'),
+    tarifaFile = require('../../lib/tarifa-file'),
     settings = require('../../lib/settings'),
     path = require('path'),
     fs = require('fs');
 
 var prepare = function (platform, config, verbose) {
-    // check if we have a tarifa.json file on the current dir
-    var tarifaFilePath = path.join(process.cwd(), 'tarifa.json');
-    if(!fs.existsSync(path.join(process.cwd(), 'tarifa.json')))
-        return Q.reject(new Error('no tarifa.json file available in the current working directory!'));
+    var cwd = process.cwd();
+    var tarifaFilePath = path.join(cwd, 'tarifa.json');
 
-    // check that we have the wanted platform and configuration
-    var localSettings = require(tarifaFilePath);
+    return tarifaFile.parseFromFile(tarifaFilePath, platform, config).then(function (localSettings) {
+        // link app www to project output
+        var defer = Q.defer();
+        var cordovaWWW = path.join(cwd, settings.cordovaAppPath, 'www');
+        var projectWWW = path.join(cwd, settings.project_output);
 
-    if(settings.platforms.indexOf(platform) < 0) {
-        return Q.reject(new Error('platform not availble!'));
-    }
+        rimraf(cordovaWWW, function (err) {
+            if(err) defer.reject(err);
+            if(verbose) console.log(chalk.green('✔') + ' prepare, rm cordova www link');
+            fs.symlink(projectWWW, cordovaWWW, 'dir', function (err) {
+                if (err) { defer.reject(err); }
+                if(verbose) console.log(chalk.green('✔') + ' prepare, link www project to cordova www');
+                defer.resolve();
+            });
+        });
 
-    if (localSettings.platforms.indexOf(platform) < 0) {
-        return Q.reject(new Error('platform not described in tarifa.json'));
-    }
-
-    if(!localSettings.configurations[platform][config]) {
-        return Q.reject(new Error('configuration ' + platform + ' not described in tarifa.json'));
-    }
-
-    // link app www to project output
-    var defer = Q.defer();
-    var cordovaWWW = path.join(process.cwd(), settings.cordovaAppPath, 'www');
-    var projectWWW = path.join(process.cwd(), settings.project_output);
-
-    rimraf(cordovaWWW, function (err) {
-        if(err) defer.reject(err);
-        if(verbose) console.log('prepare, rm cordova www link');
-        fs.symlink(projectWWW, cordovaWWW, 'dir', function (err) {
-            if (err) { defer.reject(err); }
-            if(verbose) console.log('prepare, link www project to cordova www');
-            defer.resolve();
+        // get www project builder lib
+        var builder = require(path.join(cwd, settings.build));
+        return defer.promise.then(function () {
+            if(verbose) console.log(chalk.green('✔') + ' prepare, launch www project build');
+            // execute www project builder lib with the asked configuration
+            return builder(platform, localSettings.configurations[platform][config], verbose);
         });
     });
-
-    var builder = require(path.join(process.cwd(), settings.build));
-    return defer.promise.then(function () {
-        if(verbose) console.log('prepare, launch www project build');
-        return builder(platform, localSettings.configurations[platform][config]);
-    });
-}
+};
 
 var action = function (argv) {
     var verbose = false;
@@ -67,4 +56,5 @@ var action = function (argv) {
 };
 
 action.prepare = prepare;
+
 module.exports = action;
