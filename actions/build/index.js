@@ -8,9 +8,16 @@ var Q = require('q'),
     fs = require('fs'),
     prepareAction = require('../prepare');
 
+// FIXME
+// prebuildTasks is not enough, we need to make some stuff before the cordova prepare
+// and some after but before the cordova build
+//
+// for example the task produc_file_name is a pre cordova prepare task
+// and app_label is a pre cordova build task
+
 var prebuildTasks = {
     ios: ['product_file_name'/* , ... */],
-    android : ['product_file_name'/* , ... */]
+    android : ['product_file_name', 'app_label'/* , ... */]
 };
 
 var launchCordovaBuild = function (platform, mode, verbose) {
@@ -20,6 +27,7 @@ var launchCordovaBuild = function (platform, mode, verbose) {
 
         process.chdir(path.join(cwd, settings.cordovaAppPath));
         if(verbose) console.log(chalk.green('✔') + ' start cordova build');
+
         cordova.build({
             verbose: verbose,
             platforms: [ platform ],
