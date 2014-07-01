@@ -64,7 +64,7 @@ var action = function (argv) {
 
     var tmp = argv._[0].split(':');
     return prepare(tmp[0], tmp[1] || 'default', verbose);
-}
+};
 
 action.prepare = prepare;
 module.exports = action;

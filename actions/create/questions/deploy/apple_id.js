@@ -1,4 +1,5 @@
 module.exports = {
+    dependency: 'ios',
     type:'input',
     name:'apple_id',
     validate : function () { /*TODO*/ return true; },

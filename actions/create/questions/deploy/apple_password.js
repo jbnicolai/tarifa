@@ -1,4 +1,5 @@
 module.exports = {
+    dependency: 'ios',
     type:'password',
     name:'apple_password',
     validate : function () { /*TODO*/ return true; },

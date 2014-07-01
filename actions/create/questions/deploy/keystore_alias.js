@@ -1,4 +1,5 @@
 module.exports = {
+    dependency: 'android',
     type:'input',
     name:'keystore_alias',
     validate : function (answer) { return answer.length > 0 || 'alias can not be empty'; },

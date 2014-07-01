@@ -42,16 +42,22 @@ function askQuestions(questions, type) {
             var d = Q.defer();
 
             promise.then(function (val) {
-                if (val.options.verbose){
-                    var helpPath =  path.join(__dirname, 'help', type, question.name + '.txt');
-                    if(fs.existsSync(helpPath)) console.log(fs.readFileSync(helpPath, 'utf-8'));
-                }
-                inquirer.prompt([question], function (answer) {
-                    val[question.name] = answer[question.name];
+                if (val.platforms && question.dependency && val.platforms.indexOf(question.dependency) < 0) {
+                    // pass to the next question
                     d.resolve(val);
-                });
+                }
+                else {
+                    if (val.options.verbose){
+                        var helpPath =  path.join(__dirname, 'help', type, question.name + '.txt');
+                        if(fs.existsSync(helpPath))
+                            console.log(fs.readFileSync(helpPath, 'utf-8'));
+                    }
+                    inquirer.prompt([question], function (answer) {
+                        val[question.name] = answer[question.name];
+                        d.resolve(val);
+                    });
+                }
             });
-
             return d.promise;
         }, Q.resolve(answers));
     };

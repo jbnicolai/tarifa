@@ -9,7 +9,7 @@ var Q = require('q'),
 
 function log(response) {
     if (response.options.verbose)
-        console.log('\n' + chalk.green('✔') + ' project folders created ' + response.path);
+        console.log(chalk.green('✔') + ' project folders created ' + response.path);
     return Q.resolve(response);
 }
 
