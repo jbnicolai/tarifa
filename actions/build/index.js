@@ -9,8 +9,16 @@ var Q = require('q'),
     prepareAction = require('../prepare');
 
 var tasks = {
-    ios: ['product_file_name'/* , ... */],
-    android : ['product_file_name', 'app_label'/* , ... */]
+    ios: {
+        'pre-cordova-prepare' : [/* ... */],
+        'pre-cordova-compile' : ['product_file_name'/* , ... */],
+        'post-cordova-compile' : [/* ... */]
+    },
+    android: {
+        'pre-cordova-prepare' : [/* ... */],
+        'pre-cordova-compile' : ['product_file_name', 'app_label'/* , ... */],
+        'post-cordova-compile' : [/* ... */]
+    }
 };
 
 var prepare = function (platform, verbose) {
@@ -55,9 +63,12 @@ var compile = function (platform, mode, verbose) {
     };
 };
 
-var runTasks = function (platform, config, localSettings, verbose) {
+var runTasks = function (type, platform, config, localSettings, verbose) {
     return function () {
-        return tasks[platform].reduce(function (opt, task) {
+
+        if(!tasks[platform][type].length) { return Q.resolve(); }
+
+        return tasks[platform][type].reduce(function (opt, task) {
             return Q.when(opt, require('./tasks/' + platform  + '/' + task));
         }, {
             config: config,
@@ -78,9 +89,11 @@ var build = function (platform, config, verbose) {
         if(verbose) console.log(chalk.green('✔') + ' start to build the www project');
 
         return prepareAction.prepare(platform, config, verbose)
+            .then(runTasks('pre-cordova-prepare', platform, config, localSettings, verbose))
             .then(prepare(platform, verbose))
-            .then(runTasks(platform, config, localSettings, verbose))
-            .then(compile(platform, mode, verbose));
+            .then(runTasks('pre-cordova-compile', platform, config, localSettings, verbose))
+            .then(compile(platform, mode, verbose))
+            .then(runTasks('post-cordova-compile', platform, config, localSettings, verbose));
     });
 };
 
