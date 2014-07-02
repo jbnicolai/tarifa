@@ -34,8 +34,7 @@ var run = function (platform, config, verbose) {
     var defer = Q.defer();
     var cordova_path = path.join(process.cwd(), settings.cordovaAppPath);
 
-    buildAction.build(platform, config, verbose).then(function (err) {
-        if(err) defer.reject(err);
+    buildAction.build(platform, config, verbose).then(function (msg) {
         switch(platform) {
             case 'android':
                 installAndroidApp(localSettings, config, verbose).then(function () {
