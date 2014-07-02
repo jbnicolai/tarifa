@@ -8,19 +8,33 @@ var Q = require('q'),
     fs = require('fs'),
     prepareAction = require('../prepare');
 
-// FIXME
-// prebuildTasks is not enough, we need to make some stuff before the cordova prepare
-// and some after but before the cordova build
-//
-// for example the task produc_file_name is a pre cordova prepare task
-// and app_label is a pre cordova build task
-
-var prebuildTasks = {
+var tasks = {
     ios: ['product_file_name'/* , ... */],
     android : ['product_file_name', 'app_label'/* , ... */]
 };
 
-var launchCordovaBuild = function (platform, mode, verbose) {
+var prepare = function (platform, verbose) {
+    return function () {
+        var cwd = process.cwd();
+        var defer = Q.defer();
+
+        process.chdir(path.join(cwd, settings.cordovaAppPath));
+        if(verbose) console.log(chalk.green('✔') + ' start cordova prepare');
+
+        cordova.prepare({
+            verbose: verbose,
+            platforms: [ platform ],
+            options: []
+        }, function (err, result) {
+            process.chdir(cwd);
+            if(err) defer.reject(err);
+            defer.resolve();
+        });
+        return defer.promise;
+    };
+};
+
+var compile = function (platform, mode, verbose) {
     return function () {
         var cwd = process.cwd();
         var defer = Q.defer();
@@ -28,7 +42,7 @@ var launchCordovaBuild = function (platform, mode, verbose) {
         process.chdir(path.join(cwd, settings.cordovaAppPath));
         if(verbose) console.log(chalk.green('✔') + ' start cordova build');
 
-        cordova.build({
+        cordova.compile({
             verbose: verbose,
             platforms: [ platform ],
             options: mode ? [ mode ] : []
@@ -41,6 +55,18 @@ var launchCordovaBuild = function (platform, mode, verbose) {
     };
 };
 
+var runTasks = function (platform, config, localSettings, verbose) {
+    return function () {
+        return tasks[platform].reduce(function (opt, task) {
+            return Q.when(opt, require('./tasks/' + platform  + '/' + task));
+        }, {
+            config: config,
+            verbose: verbose,
+            settings: localSettings
+        });
+    };
+};
+
 var build = function (platform, config, verbose) {
     var cwd = process.cwd();
     var tarifaFilePath = path.join(cwd, 'tarifa.json');
@@ -50,19 +76,11 @@ var build = function (platform, config, verbose) {
         var mode = (platform === 'android' && (localConf.keystore_path && localConf.keystore_alias)) ? '--release' : null;
 
         if(verbose) console.log(chalk.green('✔') + ' start to build the www project');
-        var launchPreBuildTasks = function () {
-            return prebuildTasks[platform].reduce(function (opt, task) {
-                return Q.when(opt, require('./tasks/' + platform  + '/' + task));
-            }, {
-                config: config,
-                verbose: verbose,
-                settings: localSettings
-            });
-        };
 
         return prepareAction.prepare(platform, config, verbose)
-            .then(launchPreBuildTasks)
-            .then(launchCordovaBuild(platform, mode, verbose));
+            .then(prepare(platform, verbose))
+            .then(runTasks(platform, config, localSettings, verbose))
+            .then(compile(platform, mode, verbose));
     });
 };
 
