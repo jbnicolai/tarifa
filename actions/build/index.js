@@ -15,7 +15,7 @@ var tasks = {
         'post-cordova-compile' : [/* ... */]
     },
     android: {
-        'pre-cordova-prepare' : [ 'set_cordova_id', 'template_activity'],
+        'pre-cordova-prepare' : ['set_cordova_id', 'change_template_activity'],
         'pre-cordova-compile' : ['product_file_name', 'app_label'],
         'post-cordova-compile' : ['reset_cordova_id']
     }
