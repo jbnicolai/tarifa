@@ -1,63 +1,12 @@
-// adb install -r platforms/android/ant-build/lclstorage-debug.apk;
-// open the app
-// adb shell am start com.lcl.test.storage/com.lcl.test.storage.lclstorage
 var Q = require('q'),
     cordova = require('cordova'),
     exec = require('child_process').exec,
     argsHelper = require('../../lib/args'),
     settings = require('../../lib/settings'),
+    tarifaFile = require('../../lib/tarifa-file'),
     path = require('path'),
     fs = require('fs'),
     buildAction = require('../build');
-
-var run = function (platform, config, verbose) {
-    // check if we have a tarifa.json file on the current dir
-    var tarifaFilePath = path.join(process.cwd(), 'tarifa.json');
-    if(!fs.existsSync(path.join(process.cwd(), 'tarifa.json')))
-        return Q.reject(new Error('No tarifa.json file available in the current working directory!'));
-
-    // check that we have the wanted platform and configuration
-    var localSettings = require(tarifaFilePath);
-
-    if(settings.platforms.indexOf(platform) < 0) {
-        return Q.reject(new Error('platform not availble!'));
-    }
-
-    if (localSettings.platforms.indexOf(platform) < 0) {
-        return Q.reject(new Error('platform not described in tarifa.json'));
-    }
-
-    if(!localSettings.configurations[platform][config]) {
-        return Q.reject(new Error('configuration ' + platform + ' not described in tarifa.json'));
-    }
-
-    var defer = Q.defer();
-    var cordova_path = path.join(process.cwd(), settings.cordovaAppPath);
-
-    buildAction.build(platform, config, verbose).then(function (msg) {
-        switch(platform) {
-            case 'android':
-                installAndroidApp(localSettings, config, verbose).then(function () {
-                    return openAndroidApp(localSettings, config, verbose);
-                    // TODO would be also nice to be able to open chrome with the inspector
-                    // right on the chrome webview
-                }).then(function () {
-                    defer.resolve();
-                }, function (err) {
-                    defer.reject(err);
-                });
-                break;
-            case 'ios':
-                console.log('TODO, impl. install + open ios app');
-                defer.resolve();
-                break;
-            default:
-                 defer.reject('platform unknown!');
-        }
-    });
-
-    return defer.promise;
-};
 
 var installAndroidApp = function (localSettings, config, verbose) {
     var defer = Q.defer();
@@ -84,8 +33,11 @@ var installAndroidApp = function (localSettings, config, verbose) {
 
 var openAndroidApp = function (localSettings, config, verbose) {
     var defer = Q.defer();
-    // adb shell am start com.lcl.test.storage/com.lcl.test.storage.lclstorage
-    var cmd = settings.external.adb.name + ' shell am start ' + localSettings.configurations['android'][config].id + '/'+ localSettings.configurations['android'][config].id + '.' + localSettings.name;
+    var cmd = settings.external.adb.name
+        + ' shell am start '
+        + localSettings.configurations['android'][config].id
+        + '/'+ localSettings.configurations['android'][config].id
+        + '.' + localSettings.name;
 
     var options = {
         timeout : 6000,
@@ -102,6 +54,27 @@ var openAndroidApp = function (localSettings, config, verbose) {
     });
 
     return defer.promise;
+};
+
+var run = function (platform, config, verbose) {
+    var cwd = process.cwd();
+    var tarifaFilePath = path.join(cwd, 'tarifa.json');
+
+    return tarifaFile.parseFromFile(tarifaFilePath, platform, config).then(function (localSettings) {
+        return buildAction.build(platform, config, verbose).then(function (msg) {
+            switch(platform) {
+                case 'android':
+                    return installAndroidApp(localSettings, config, verbose).then(function () {
+                        return openAndroidApp(localSettings, config, verbose);
+                    });
+                case 'ios':
+                    // TODO
+                    return Q.resolve();
+                default:
+                     return Q.reject('platform unknown!');
+            }
+        });
+    });
 };
 
 var action = function (argv) {
