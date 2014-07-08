@@ -5,9 +5,25 @@
         <title>tarifa</title>
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name = "viewport" content = "width = device-width, height=device-height, initial-scale = 1, user-scalable = no, minimal-ui">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui" media="(device-height: 568px)">
     </head>
+    <style type="text/css">
+        body {
+            background: rgb(72, 126, 194);
+            font-family: sans-serif;
+            font-size: 30px;
+            color: rgb(226, 226, 226);
+        }
+        p {
+            margin:10% 0 0 0;
+            text-align:center;
+        }
+    </style>
     <body>
         <p>Welcome to tarifa!</p>
+        <!-- FIXME, we need some preprocess when we introduce the web target where cordova won't be imported! -->
+        <script src="cordova.js"></script>
         <script src="main.js"></script>
     </body>
 </html>
