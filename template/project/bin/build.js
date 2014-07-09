@@ -1,3 +1,13 @@
+/*
+ * build.js
+ */
+
+var browserify = require('browserify'),
+    Q = require('q'),
+    path = require('path'),
+    fs = require('fs'),
+    tmp = require('tmp');
+
 function mapSettings(settings, platform, configurationName) {
     var mapping = require('./mapping');
     var result = {};
@@ -6,7 +16,7 @@ function mapSettings(settings, platform, configurationName) {
     for (var k in settings) {
         if (k !== "configurations") {
             flatSettings[k] = settings[k];
-        } else if (k === "configurations") {
+        } else {
             for (var l in settings[k][platform][configurationName]) {
                 flatSettings[l] = settings[k][platform][configurationName][l];
             }
@@ -22,14 +32,7 @@ function mapSettings(settings, platform, configurationName) {
     return result;
 }
 
-module.exports = function (platform, settings, configurationName, verbose) {
-
-    var browserify = require('browserify');
-    var Q = require('q');
-    var path = require('path');
-    var fs = require('fs');
-    var tmp = require('tmp');
-
+module.exports = function build(platform, settings, configurationName, verbose) {
     var b = browserify();
     var defer = Q.defer();
     var output = path.join(__dirname, '../www/main.js');
