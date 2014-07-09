@@ -4,6 +4,7 @@
 
 var browserify = require('browserify'),
     Q = require('q'),
+    preprocess = require('preprocess'),
     path = require('path'),
     fs = require('fs'),
     tmp = require('tmp');
@@ -51,6 +52,12 @@ module.exports = function build(platform, settings, configurationName, verbose) 
 
         ws.on('finish', function() {
             tmp.setGracefulCleanup();
+            var htmlSrc = path.join(__dirname, '../html/index.html');
+            var htmlDest = path.join(__dirname, '../www/index.html');
+            preprocess.preprocessFileSync(htmlSrc, htmlDest, {
+                PLATFORM : platform
+            });
+
             if(verbose)
                 console.log('✔ www project build done with configuration ' + configurationName + '!');
             defer.resolve();
