@@ -1,5 +1,6 @@
 var Q = require('q'),
     cordova = require('cordova'),
+    opener = require("opener"),
     exec = require('child_process').exec,
     argsHelper = require('../../lib/args'),
     settings = require('../../lib/settings'),
@@ -22,6 +23,9 @@ var run = function (platform, config, verbose) {
                         return openAndroidApp(localSettings, config, verbose);
                     });
                 case 'ios':
+                    return Q.resolve();
+                case 'web':
+                    opener(path.join(settings.project_output, 'index.html'));
                     return Q.resolve();
                 default:
                      return Q.reject('platform unknown!');

@@ -12,20 +12,24 @@ var prepare = function (platform, config, verbose) {
     var tarifaFilePath = path.join(cwd, 'tarifa.json');
 
     return tarifaFile.parseFromFile(tarifaFilePath, platform, config).then(function (localSettings) {
-        // link app www to project output
         var defer = Q.defer();
         var cordovaWWW = path.join(cwd, settings.cordovaAppPath, 'www');
         var projectWWW = path.join(cwd, settings.project_output);
 
-        rimraf(cordovaWWW, function (err) {
-            if(err) defer.reject(err);
-            if(verbose) console.log(chalk.green('✔') + ' prepare, rm cordova www link');
-            fs.symlink(projectWWW, cordovaWWW, 'dir', function (err) {
-                if (err) { defer.reject(err); }
-                if(verbose) console.log(chalk.green('✔') + ' prepare, link www project to cordova www');
-                defer.resolve();
+        if (platform !== 'web') {
+            // link app www to project output
+            rimraf(cordovaWWW, function (err) {
+                if(err) defer.reject(err);
+                if(verbose) console.log(chalk.green('✔') + ' prepare, rm cordova www link');
+                fs.symlink(projectWWW, cordovaWWW, 'dir', function (err) {
+                    if (err) { defer.reject(err); }
+                    if(verbose) console.log(chalk.green('✔') + ' prepare, link www project to cordova www');
+                    defer.resolve();
+                });
             });
-        });
+        } else {
+            defer.resolve();
+        }
 
         // get www project builder lib
         var builder = require(path.join(cwd, settings.build));

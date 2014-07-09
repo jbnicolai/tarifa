@@ -26,7 +26,9 @@ module.exports = function (response) {
             }
         };
 
-    return cordova_platform_add(hooks, projectRoot, response.platforms, opts).then(function (err) {
+    var platforms = response.platforms.filter(function (platform) { return platform != 'web'; });
+
+    return cordova_platform_add(hooks, projectRoot, platforms, opts).then(function (err) {
         process.chdir(cwd);
         if(err) return Q.reject(err);
         if (response.options.verbose) {

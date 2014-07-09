@@ -9,6 +9,11 @@ var Q = require('q'),
     prepareAction = require('../prepare');
 
 var tasks = {
+    web: {
+        'pre-cordova-prepare' : [],
+        'pre-cordova-compile' : [],
+        'post-cordova-compile' : []
+    },
     ios: {
         'pre-cordova-prepare' : [/* ... */],
         'pre-cordova-compile' : ['product_file_name'/* , ... */],
@@ -23,6 +28,7 @@ var tasks = {
 
 var prepare = function (platform, verbose) {
     return function () {
+        if(platform === 'web') return Q.resolve();
         var cwd = process.cwd();
         var defer = Q.defer();
 
@@ -44,6 +50,7 @@ var prepare = function (platform, verbose) {
 
 var compile = function (platform, mode, verbose) {
     return function () {
+        if(platform === 'web') return Q.resolve();
         var cwd = process.cwd();
         var defer = Q.defer();
 
