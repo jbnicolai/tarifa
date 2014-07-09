@@ -1,11 +1,11 @@
 var qstart = require('qstart'),
-    configuration = require('configuration'),
+    settings = require('settings'),
     Zanimo = require('zanimo');
 
 qstart.then(function () {
     var p = window.document.querySelector('p');
     Zanimo(p, 'transform', 'scale(0.5)', 500, 'ease-in-out').then(function (el) {
-        el.innerHTML = 'welcome to ' + configuration.app_label + ' with id ' + configuration.id;
+        el.innerHTML = 'welcome to ' + settings.appName + ' with id ' + settings.bundleId + ' with version: ' + settings.version;
         return el;
     }).then(Zanimo.f('transform', 'scale(1)', 500, 'ease-in-out'));
 });

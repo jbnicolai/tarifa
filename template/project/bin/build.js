@@ -1,4 +1,28 @@
-module.exports = function (platform, configuration, configurationName, verbose) {
+function mapSettings(settings, platform, configurationName) {
+    var mapping = require('./mapping');
+    var result = {};
+    var flatSettings = {};
+
+    for (var k in settings) {
+        if (k !== "configurations") {
+            flatSettings[k] = settings[k];
+        } else if (k === "configurations") {
+            for (var l in settings[k][platform][configurationName]) {
+                flatSettings[l] = settings[k][platform][configurationName][l];
+            }
+        }
+    }
+
+    for (var j in flatSettings) {
+        if (mapping[j] !== undefined) {
+            result[mapping[j]] = flatSettings[j];
+        }
+    }
+
+    return result;
+}
+
+module.exports = function (platform, settings, configurationName, verbose) {
 
     var browserify = require('browserify');
     var Q = require('q');
@@ -14,11 +38,11 @@ module.exports = function (platform, configuration, configurationName, verbose) 
 
     var ws = fs.createWriteStream(path.join(__dirname, '../www/main.js'));
 
-    tmp.file({ prefix: 'configuration-', postfix: '.json' },function (err, tmpFilePath) {
+    tmp.file({ prefix: 'settings-', postfix: '.json' },function (err, tmpFilePath) {
         if (err) defer.reject(err);
-        fs.writeFileSync(tmpFilePath, JSON.stringify(configuration, null, 2));
+        fs.writeFileSync(tmpFilePath, JSON.stringify(mapSettings(settings, platform, configurationName), null, 2));
         b.add(path.join(__dirname, '../src/app.js'))
-            .require(tmpFilePath, { expose : 'configuration' })
+            .require(tmpFilePath, { expose : 'settings' })
             .bundle()
             .pipe(ws);
 
@@ -30,4 +54,4 @@ module.exports = function (platform, configuration, configurationName, verbose) 
         });
     });
     return defer.promise;
-}
+};
