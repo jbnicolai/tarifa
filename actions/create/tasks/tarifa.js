@@ -44,8 +44,8 @@ function npm_install(response) {
         function (error, stdout, stderr) {
             process.chdir(cwd);
             if (error !== null) {
-                defer.reject(error);
-                console.log('npm install error in project' + error);
+                defer.resolve(response);
+                console.log(chalk.red('npm install error in www project' + error));
                 return;
             }
             if (response.options.verbose)
