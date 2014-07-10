@@ -4,11 +4,12 @@ var Q = require('q'),
 
 module.exports = function (localSettings, config, verbose) {
     var defer = Q.defer();
+    var name = localSettings.configurations['android'][config].name;
     var cmd = settings.external.adb.name
         + ' shell am start '
         + localSettings.configurations['android'][config].id
         + '/'+ localSettings.configurations['android'][config].id
-        + '.' + localSettings.name;
+        + '.' + name;
 
     var options = {
         timeout : 6000,
