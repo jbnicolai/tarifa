@@ -91,7 +91,8 @@ var build = function (platform, config, verbose) {
 
     return tarifaFile.parseFromFile(tarifaFilePath, platform, config).then(function (localSettings) {
         var localConf = localSettings.configurations[platform][config];
-        var mode = (platform === 'android' && (localConf.keystore_path && localConf.keystore_alias)) ? '--release' : null;
+        // release mode if we have a valid keystore and keyalias
+        localSettings.mode = (platform === 'android' && (localConf.keystore_path && localConf.keystore_alias)) ? '--release' : null;
 
         if(verbose) console.log(chalk.green('✔') + ' start to build the www project');
 
@@ -99,7 +100,7 @@ var build = function (platform, config, verbose) {
             .then(runTasks('pre-cordova-prepare', platform, config, localSettings, verbose))
             .then(prepare(platform, verbose))
             .then(runTasks('pre-cordova-compile', platform, config, localSettings, verbose))
-            .then(compile(platform, mode, verbose))
+            .then(compile(platform, localSettings.mode, verbose))
             .then(runTasks('post-cordova-compile', platform, config, localSettings, verbose));
     });
 };

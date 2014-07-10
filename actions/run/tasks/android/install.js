@@ -4,9 +4,9 @@ var Q = require('q'),
 
 module.exports = function (localSettings, config, verbose) {
     var defer = Q.defer();
-    // TODO need to check the mode (debug/release)
-    var apk_filename = localSettings.configurations['android'][config].product_file_name + '-debug.apk';
-    var cmd = settings.external.adb.name + ' install -r ' + 'app/platforms/android/ant-build/' + apk_filename;
+    var mode = localSettings.mode ? '-release.apk' : '-debug.apk';
+    var apk_filename = localSettings.configurations['android'][config].product_file_name + mode;
+    var cmd = settings.external.adb.name + ' install -rl ' + 'app/platforms/android/ant-build/' + apk_filename;
 
     var options = {
         timeout : 6000,
