@@ -2,14 +2,18 @@
   "name": "tarifa",
   "version": "0.0.1",
   "author": "Paul Panserrieu <paul@42loops.com>",
-  "description": "Your friendly mobile-app development workflow on top of Cordova",
+  "description": "Your friendly mobile app development toolchain on top of Cordova",
   "repository": {
     "type": "git",
     "url": "https://github.com/peutetre/tarifa.git"
   },
   "keywords": [
     "cordova",
+    "toolchain",
     "mobile",
+    "ios",
+    "android",
+    "web",
     "app",
     "cli",
     "worflow"
