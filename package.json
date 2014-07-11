@@ -21,7 +21,7 @@
   "bin": {
     "tarifa": "bin/cmd.js"
   },
-  "license": "MIT",
+  "license": "Apache version 2.0",
   "main": "lib/tarifa.js",
   "homepage": "https://github.com/peutetre/tarifa",
   "dependencies": {
