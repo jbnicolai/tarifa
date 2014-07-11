@@ -9,7 +9,8 @@ var Q = require('q'),
     fs = require('fs'),
     buildAction = require('../build'),
     installAndroidApp = require('./tasks/android/install'),
-    openAndroidApp = require('./tasks/android/open');
+    openAndroidApp = require('./tasks/android/open'),
+    openAndInstalliOSApp = require('./tasks/ios/install_and_open');
 
 var run = function (platform, config, verbose) {
     var cwd = process.cwd();
@@ -23,7 +24,7 @@ var run = function (platform, config, verbose) {
                         return openAndroidApp(localSettings, config, verbose);
                     });
                 case 'ios':
-                    return Q.resolve();
+                    return openAndInstalliOSApp(localSettings, config, verbose);
                 case 'web':
                     opener(path.join(settings.project_output, 'index.html'));
                     return Q.resolve();

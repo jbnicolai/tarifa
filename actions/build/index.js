@@ -53,6 +53,9 @@ var compile = function (platform, mode, verbose) {
         if(platform === 'web') return Q.resolve();
         var cwd = process.cwd();
         var defer = Q.defer();
+        var options = mode ? [ mode ] : [];
+
+        if(platform === 'ios') options.push('--device');
 
         process.chdir(path.join(cwd, settings.cordovaAppPath));
         if(verbose) console.log(chalk.green('✔') + ' start cordova build');
@@ -60,7 +63,7 @@ var compile = function (platform, mode, verbose) {
         cordova.compile({
             verbose: verbose,
             platforms: [ platform ],
-            options: mode ? [ mode ] : []
+            options: options
         }, function (err, result) {
             process.chdir(cwd);
             if(err) defer.reject(err);

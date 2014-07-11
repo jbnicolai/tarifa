@@ -31,6 +31,7 @@
     "cordova": "3.4.1-0.1.0",
     "findit": "^2.0.0",
     "inquirer": "0.5.1",
+    "ios-deploy": "^1.0.8",
     "libxmljs": "^0.10.0",
     "minimist": "0.1.0",
     "mkdirp": "^0.5.0",
