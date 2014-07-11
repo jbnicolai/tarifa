@@ -15,7 +15,7 @@ var run = function (platform, config, verbose) {
     var cwd = process.cwd();
     var tarifaFilePath = path.join(cwd, 'tarifa.json');
 
-    return tarifaFile.parseFromFile(tarifaFilePath, platform, config).then(function (localSettings) {
+    return tarifaFile.parseConfig(tarifaFilePath, platform, config).then(function (localSettings) {
         return buildAction.build(platform, config, verbose).then(function (msg) {
             switch(platform) {
                 case 'android':

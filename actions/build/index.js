@@ -89,7 +89,7 @@ var build = function (platform, config, verbose) {
     var cwd = process.cwd();
     var tarifaFilePath = path.join(cwd, 'tarifa.json');
 
-    return tarifaFile.parseFromFile(tarifaFilePath, platform, config).then(function (localSettings) {
+    return tarifaFile.parseConfig(tarifaFilePath, platform, config).then(function (localSettings) {
         var localConf = localSettings.configurations[platform][config];
         var mode = (platform === 'android' && (localConf.keystore_path && localConf.keystore_alias)) ? '--release' : null;
 
@@ -119,7 +119,7 @@ var action = function (argv) {
     }
 
     return build(argv._[0], argv._[1] || 'default', verbose);
-}
+};
 
 action.build = build;
 
