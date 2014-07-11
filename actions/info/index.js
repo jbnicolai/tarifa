@@ -10,7 +10,7 @@ module.exports = function (argv) {
         console.log(chalk.green('cordova version:            ') + pkg.dependencies.cordova);
 
     return devices.ios().then(function (devices) {
-        console.log(chalk.green('connected iOS devices:      ') +  devices.replace('\n', ''));
+        console.log(chalk.green('connected iOS devices:      ') +  devices.join('\n'));
     }).then(devices.android).then(function (devices) {
         var out = devices.replace('List of devices attached', '').replace('\t', ' ').replace('\n', '');
         console.log(chalk.green('connected Android devices: ') +  out);
