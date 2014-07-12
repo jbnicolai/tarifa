@@ -1,5 +1,6 @@
 var Q = require('q'),
     exec = require('child_process').exec,
+    chalk = require('chalk'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (localSettings, config, verbose) {
@@ -13,10 +14,16 @@ module.exports = function (localSettings, config, verbose) {
         maxBuffer: 1024 * 400
     };
 
+    if(verbose)
+        console.log(chalk.green('✔') + ' trying to install android app: ' + apk_filename);
+
     exec(cmd, options, function (err, stdout, stderr) {
         if(verbose && !! err && stdout) console.log('adb output ' + stdout);
         if(err) {
-            if(verbose) console.log('adb stderr ' + stderr);
+            if(verbose) {
+                console.log(chalk.red('command: ' + cmd));
+                console.log('adb stderr ' + stderr);
+            }
             defer.reject('adb ' + err);
         }
         else {
