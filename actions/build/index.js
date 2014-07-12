@@ -16,7 +16,7 @@ var tasks = {
     },
     ios: {
         'pre-cordova-prepare' : [/* ... */],
-        'pre-cordova-compile' : ['product_file_name'/* , ... */],
+        'pre-cordova-compile' : ['product_file_name', 'bundle_id'],
         'post-cordova-compile' : [/* ... */]
     },
     android: {
