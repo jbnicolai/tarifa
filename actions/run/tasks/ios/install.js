@@ -23,7 +23,7 @@ module.exports = function (localSettings, config, verbose) {
         if(verbose)
             console.log(chalk.green('✔') + ' start ios app install to device: ' + uuid);
 
-        exec(cmd, options, function (err, stdout, stderr) {
+        var child = exec(cmd, options, function (err, stdout, stderr) {
             if(err) {
                 if(verbose) {
                     console.log(chalk.red('command: ' + cmd));
@@ -32,9 +32,11 @@ module.exports = function (localSettings, config, verbose) {
                 defer.reject('ios-deploy ' + err);
                 return;
             }
-            if(verbose && stdout) console.log(stdout.toString());
             defer.resolve();
         });
+
+        if (verbose) child.stdout.pipe(process.stdout);
+
         return defer.promise;
     });
 };
