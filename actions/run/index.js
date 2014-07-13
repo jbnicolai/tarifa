@@ -1,4 +1,5 @@
 var Q = require('q'),
+    spinner = require("char-spinner"),
     cordova = require('cordova'),
     opener = require("opener"),
     exec = require('child_process').exec,
@@ -15,6 +16,8 @@ var Q = require('q'),
 var run = function (platform, config, verbose) {
     var cwd = process.cwd();
     var tarifaFilePath = path.join(cwd, 'tarifa.json');
+
+    spinner();
 
     return tarifaFile.parseFromFile(tarifaFilePath, platform, config).then(function (localSettings) {
         return buildAction.build(platform, config, verbose).then(function (msg) {
