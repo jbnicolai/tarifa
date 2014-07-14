@@ -57,7 +57,7 @@ function actionError(name) {
 
 function main(arg) {
     singleOptions.forEach(function (option) {
-        if(argsHelper.matchSingleOptions(arg, option.small, option.name)) option.action();
+        if(argsHelper.matchSingleOptions(arg, option.small, option.name) && !arg._.length) option.action();
     });
 
     if(matchAction(arg)) {

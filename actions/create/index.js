@@ -101,7 +101,7 @@ function create(argv) {
 
     if(argsHelper.matchSingleOptions(argv, 'V', 'verbose')) {
         verbose = true;
-    } else if(argv.length > 1) {
+    } else if(argv._.length >= 1) {
         console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
         return Q.resolve();
     }
