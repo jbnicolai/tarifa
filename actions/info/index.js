@@ -16,7 +16,7 @@ function getToolVersion(name, tool, verbose) {
         },
         child = exec(tool + ' -v', options, function (err, stdout, stderr) {
             if(err) {
-                defer.reject(tool + ' -v ' + err);
+                defer.reject(tool + ' ' + err);
                 return;
             }
             defer.resolve({
@@ -24,8 +24,6 @@ function getToolVersion(name, tool, verbose) {
                 version: stdout.toString().replace('\n', '')
             });
         });
-
-    if (verbose) child.stderr.pipe(process.stderr);
 
     return defer.promise;
 }
@@ -40,21 +38,29 @@ function check_tools(verbose) {
                 );
     }
 
-    return Q.all(rslts).then(function (results) {
-        results.forEach(function (r) {
-            console.log(chalk.green(r.name + ' version: ') + r.version);
+    return Q.allSettled(rslts).then(function (results) {
+        results.forEach(function (result) {
+            if (result.state === "fulfilled") {
+                console.log(chalk.green(result.value.name + ' version: ') + result.value.version);
+            } else {
+                console.log(chalk.cyan(result.reason.split(' ')[0] + ' not found!'));
+                if (verbose) console.log('\tReason: ' + chalk.cyan(result.reason));
+            }
         });
-    }, function (err) {
-        console.log(chalk.red('Error: ') + err);
+        return Q.resolve();
     });
 }
 
 module.exports = function (argv) {
-    var verbose = false;
 
-    if(argsHelper.matchSingleOptions(argv, 'V', 'verbose', [1,2])) {
+    var verbose = false;
+    var usage = false;
+
+    for(var a in argv) if(a != 'verbose' && a !="_") usage = true;
+
+    if(argsHelper.matchSingleOptions(argv, 'V', 'verbose')) {
         verbose = true;
-    } else if(argv._.length != 0) {
+    } else if(argv._.length != 0 || usage) {
         console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
         return Q.resolve();
     }
