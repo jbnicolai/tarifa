@@ -15,9 +15,9 @@ var tasks = {
         'post-cordova-compile' : []
     },
     ios: {
-        'pre-cordova-prepare' : [/* ... */],
-        'pre-cordova-compile' : ['product_file_name', 'bundle_id'],
-        'post-cordova-compile' : [/* ... */]
+        'pre-cordova-prepare' : [],
+        'pre-cordova-compile' : ['product_file_name', 'bundle_id', 'set_code_sign_identity'],
+        'post-cordova-compile' : ['run_xcrun', 'undo_set_code_sign_identity']
     },
     android: {
         'pre-cordova-prepare' : ['set_cordova_id', 'change_template_activity'],
