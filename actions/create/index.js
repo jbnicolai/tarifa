@@ -21,9 +21,10 @@ var Q = require('q'),
         require('./questions/deploy/apple_developer_identity.js'),
         require('./questions/deploy/provisioning_profile.js'),
         require('./questions/deploy/apple_id.js'),
-        require('./questions/deploy/apple_password.js'),
-        require('./questions/deploy/hockeyapp_user.js'),
-        require('./questions/deploy/hockeyapp_token.js'),
+        // FIXME not used for now
+        //require('./questions/deploy/apple_password.js'),
+        //require('./questions/deploy/hockeyapp_user.js'),
+        //require('./questions/deploy/hockeyapp_token.js'),
         require('./questions/deploy/keystore_path.js'),
         require('./questions/deploy/keystore_alias.js')
     ],
