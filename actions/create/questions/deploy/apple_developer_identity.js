@@ -8,7 +8,7 @@ var question = function (verbose) {
         return {
             dependency: 'ios',
             type:'list',
-            name:'apple_deveoper_identity',
+            name:'apple_developer_identity',
             choices: identities,
             default: 0,
             message:'Which Developer Identity do you take to build the adhoc distribution?'
