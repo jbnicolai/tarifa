@@ -7,7 +7,9 @@ Your friendly mobile app development toolchain on top of Cordova
 ### Dependencies
 
 • iOS SDK
+
 • android SDK
+
 • nomad-cli
 
 ### Install
