@@ -4,18 +4,36 @@ tarifa [![experimental](http://hughsk.github.io/stability-badges/dist/experiment
 Your friendly mobile app development toolchain on top of Cordova
 
 
-### Dependencies
+### Requirements
 
-• iOS SDK
-
-• android SDK
-
-• nomad-cli
+* [Android SDK](http://developer.android.com/)
+* [iOS SDK](http://developer.apple.com/)
+* [nomad cli: cupertino](https://github.com/nomad/cupertino)
 
 ### Install
 
 ```
 npm install tarifa
+```
+
+### Usage
+
+```
+Usage: tarifa [command] [options]
+
+Commands:
+
+    create         Create a tarifa project
+    prepare        Prepare the www project with a given platform and configuration
+    build          Build the project for a given platform and configuration
+    run            Run the project for a given platform and configuration on your device
+    info           Get information about the current project
+    config         Configure the current project
+
+Options:
+
+    --version, -v  Show tarifa version number
+    --help, -h     Show this message
 ```
 
 ### Install for developement
