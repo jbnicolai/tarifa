@@ -19,6 +19,7 @@ var Q = require('q'),
 
     deployQuestions = [
         require('./questions/deploy/apple_developer_identity.js'),
+        require('./questions/deploy/provisioning_profile.js'),
         require('./questions/deploy/apple_id.js'),
         require('./questions/deploy/apple_password.js'),
         require('./questions/deploy/hockeyapp_user.js'),
