@@ -104,7 +104,7 @@ var build = function (platform, config, verbose) {
     var cwd = process.cwd();
     var tarifaFilePath = path.join(cwd, 'tarifa.json');
 
-    return tarifaFile.parseFromFile(tarifaFilePath, platform, config).then(function (localSettings) {
+    return tarifaFile.parseConfig(tarifaFilePath, platform, config).then(function (localSettings) {
         localSettings.mode = setMode(platform, config, localSettings);
 
         if(verbose) console.log(chalk.green('✔') + ' start to build the www project');
@@ -133,7 +133,7 @@ var action = function (argv) {
     }
 
     return build(argv._[0], argv._[1] || 'default', verbose);
-}
+};
 
 action.build = build;
 

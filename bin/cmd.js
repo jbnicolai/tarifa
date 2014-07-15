@@ -8,6 +8,7 @@ var argv = process.argv.slice(2),
     pkg = require('../package.json'),
     argsHelper = require('../lib/args'),
     create = require('../actions/create'),
+    platform = require('../actions/platform'),
     prepare = require('../actions/prepare'),
     build = require('../actions/build'),
     run = require('../actions/run'),
@@ -18,6 +19,7 @@ var t0 = (new Date()).getTime();
 
 var availableActions = [
         { name : 'create', action : create },
+        { name : 'platform', action: platform },
         { name : 'prepare', action : prepare },
         { name : 'info', action : info },
         { name : 'config', action : config },
@@ -52,7 +54,7 @@ function actionSuccess(val) {
 function actionError(name) {
     return function (err) {
         console.log(chalk.red(err));
-    }
+    };
 }
 
 function main(arg) {

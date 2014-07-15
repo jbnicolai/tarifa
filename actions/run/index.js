@@ -19,7 +19,7 @@ var run = function (platform, config, verbose) {
 
     spinner();
 
-    return tarifaFile.parseFromFile(tarifaFilePath, platform, config).then(function (localSettings) {
+    return tarifaFile.parseConfig(tarifaFilePath, platform, config).then(function (localSettings) {
         return buildAction.build(platform, config, verbose).then(function (msg) {
             switch(platform) {
                 case 'android':
