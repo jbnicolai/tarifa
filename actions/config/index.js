@@ -34,7 +34,7 @@ var config = function (args, verbose) {
             return cmds[p][t][c](args.splice(2, args.length-1));
         }
         else {
-            usage();;
+            usage();
             return Q.resolve();
         }
     }
