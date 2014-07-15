@@ -1,6 +1,7 @@
 var Q = require('q'),
     chalk = require('chalk'),
     spinner = require("char-spinner"),
+    ncp = require('ncp').ncp,
     exec = require('child_process').exec,
     path = require('path'),
     fs = require('fs'),
@@ -71,7 +72,67 @@ function printList(args, verbose) {
     });
 }
 
+function downloadProvisioningProfile(user, team, password, profile_path, verbose) {
+    var defer = Q.defer(),
+        options = {
+            timeout : 40000,
+            maxBuffer: 1024 * 400
+        },
+        name = path.basename(profile_path, '.mobileprovision');
+        t = (team ?  (" --team " + team) : ''),
+        cmd = "ios profiles:download " + name + " -u " + user + " -p "+ password + t + ' --type distribution';
+
+    exec(cmd, options, function (err, stdout, stderr) {
+        if(err) {
+            if(verbose) {
+                console.log(chalk.red('command: ' + cmd));
+            }
+            defer.reject('ios stderr ' + err);
+            return;
+        }
+
+        ncp.limit = 1;
+        ncp(path.join(process.cwd(), name+'.mobileprovision'), profile_path, function (err) {
+            if (err) return defer.reject(err);
+            if (verbose)
+                console.log(chalk.green('✔') + ' provisioning profile fetched');
+            var output = stdout.toString();
+            defer.resolve(output);
+        });
+    });
+
+    return defer.promise;
+}
+
+function fetch(args, verbose) {
+    if(args.length !== 2 && args[0] !== 'fetch') {
+        return usage("Wrong arguments!");
+    }
+    var name = args[0],
+        conf = args[1];
+
+    return tarifaFile.parseFromFile(path.join(process.cwd(), 'tarifa.json')).then(function (localSettings) {
+        if(!localSettings.configurations['ios'][conf]) {
+            return Q.reject('Error: configuration ' + conf + 'not found!');
+        } else {
+            return askPassword().then(function (password) {
+                return [password, localSettings];
+            });
+        }
+    }).spread(function (password, localSettings) {
+        return downloadProvisioningProfile(
+            localSettings.deploy.apple_id,
+            localSettings.deploy.apple_developer_team,
+            password,
+            localSettings.configurations['ios'][conf].provisioning_profile,
+            verbose
+        );
+    });
+
+    return Q.resolve();
+}
+
 module.exports = {
-    fetch : function (args, verbose) { return Q.resolve(); },
+    fetch : fetch,
     list : printList
 };

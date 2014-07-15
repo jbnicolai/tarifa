@@ -8,8 +8,8 @@ Commands:
         Add a device to a configuration
     ios devices remove <uuid> <configuration>
         Remove a device from a configuration
-    ios provisioning fetch <name> <configuration>
-        Download provisioning profile with the given name into the given configuration
+    ios provisioning fetch <configuration>
+        Download provisioning profile from the given configuration
     ios provisioning list
         List all available provisioning profiles on the current apple developer account
 
