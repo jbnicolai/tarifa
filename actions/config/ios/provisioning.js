@@ -45,7 +45,7 @@ function getProvisioningProfileList(user, team, password, verbose) {
 function list(verbose) {
     return askPassword().then(function (password) {
         spinner();
-        return tarifaFile.parseFromFile(path.join(process.cwd(), 'tarifa.json'))
+        return tarifaFile.parseConfig(path.join(process.cwd(), 'tarifa.json'))
             .then(function (localSettings) {
                 return getProvisioningProfileList(
                     localSettings.deploy.apple_id,
@@ -111,7 +111,7 @@ function fetch(args, verbose) {
     var name = args[0],
         conf = args[1];
 
-    return tarifaFile.parseFromFile(path.join(process.cwd(), 'tarifa.json')).then(function (localSettings) {
+    return tarifaFile.parseConfig(path.join(process.cwd(), 'tarifa.json')).then(function (localSettings) {
         if(!localSettings.configurations['ios'][conf]) {
             return Q.reject('Error: configuration ' + conf + 'not found!');
         } else {
@@ -120,6 +120,7 @@ function fetch(args, verbose) {
             });
         }
     }).spread(function (password, localSettings) {
+        spinner();
         return downloadProvisioningProfile(
             localSettings.deploy.apple_id,
             localSettings.deploy.apple_developer_team,
