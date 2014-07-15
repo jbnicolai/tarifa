@@ -31,7 +31,7 @@ var config = function (args, verbose) {
             cmd_exists = cmds[p] && cmds[p][t] && cmds[p][t][c];
 
         if(cmd_exists) {
-            return cmds[p][t][c](args.splice(2, args.length-1));
+            return cmds[p][t][c](args.splice(2, args.length-1), verbose);
         }
         else {
             usage();

@@ -18,15 +18,16 @@ var Q = require('q'),
     ],
 
     deployQuestions = [
-        require('./questions/deploy/apple_developer_identity.js'),
-        require('./questions/deploy/provisioning_profile.js'),
-        require('./questions/deploy/apple_id.js'),
+        require('./questions/deploy/apple_developer_identity'),
+        require('./questions/deploy/provisioning_profile'),
+        require('./questions/deploy/apple_id'),
+        require('./questions/deploy/has_apple_developer_team'),
         // FIXME not used for now
-        //require('./questions/deploy/apple_password.js'),
-        //require('./questions/deploy/hockeyapp_user.js'),
-        //require('./questions/deploy/hockeyapp_token.js'),
-        require('./questions/deploy/keystore_path.js'),
-        require('./questions/deploy/keystore_alias.js')
+        //require('./questions/deploy/apple_password'),
+        //require('./questions/deploy/hockeyapp_user'),
+        //require('./questions/deploy/hockeyapp_token'),
+        require('./questions/deploy/keystore_path'),
+        require('./questions/deploy/keystore_alias')
     ],
 
     tasks = [
@@ -44,15 +45,21 @@ function askQuestions(questions, type) {
         return questions.reduce(function (promise, question) {
             var d = Q.defer(),
                 ask = function (q, value, verbose) {
-                    if (verbose){
-                            var helpPath =  path.join(__dirname, 'help', type, q.name + '.txt');
-                            if(fs.existsSync(helpPath))
-                                console.log(fs.readFileSync(helpPath, 'utf-8'));
+                    if (verbose) {
+                        var helpPath =  path.join(__dirname, 'help', type, q.name + '.txt');
+                        if(fs.existsSync(helpPath))
+                            console.log(fs.readFileSync(helpPath, 'utf-8'));
+                    }
+                    inquirer.prompt([q], function (answer) {
+                        value[q.name] = answer[q.name];
+                        // linked question
+                        if(q.question && answer){
+                            return ask(require(path.join(__dirname, q.question)), value, verbose);
                         }
-                        inquirer.prompt([q], function (answer) {
-                            value[q.name] = answer[q.name];
+                        else {
                             d.resolve(value);
-                        });
+                        }
+                    });
                 };
 
             promise.then(function (val) {
