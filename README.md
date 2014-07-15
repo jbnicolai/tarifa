@@ -24,6 +24,7 @@ Usage: tarifa [command] [options]
 Commands:
 
     create         Create a tarifa project
+    platform       Manage your platforms
     prepare        Prepare the www project with a given platform and configuration
     build          Build the project for a given platform and configuration
     run            Run the project for a given platform and configuration on your device
