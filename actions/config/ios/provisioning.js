@@ -1,5 +1,6 @@
 var Q = require('q'),
     chalk = require('chalk'),
+    spinner = require("char-spinner"),
     exec = require('child_process').exec,
     path = require('path'),
     fs = require('fs'),
@@ -13,7 +14,7 @@ function getProvisioningProfileList(user, team, password, verbose) {
             maxBuffer: 1024 * 400
         },
         t = (team ?  (" --team " + team) : ''),
-        cmd = "ios profiles:list -u " + user + " -p "+ password + t;
+        cmd = "ios profiles:list -u " + user + " -p "+ password + t + ' --type distribution';
 
     exec(cmd, options, function (err, stdout, stderr) {
         if(err) {
@@ -31,7 +32,7 @@ function getProvisioningProfileList(user, team, password, verbose) {
                         })
                         .map(function (line) {
                             var elts = line.split('|');
-                            return [elts[1].trim(), elts[2].trim()];
+                            return [elts[1], elts[2]];
                         });
 
         defer.resolve(output);
@@ -42,6 +43,7 @@ function getProvisioningProfileList(user, team, password, verbose) {
 
 function list(verbose) {
     return askPassword().then(function (password) {
+        spinner();
         return tarifaFile.parseFromFile(path.join(process.cwd(), 'tarifa.json'))
             .then(function (localSettings) {
                 return getProvisioningProfileList(
@@ -62,7 +64,7 @@ function usage(msg) {
 function printList(args, verbose) {
     if(args.length !== 1 && args[0] !== 'list') return usage("Wrong arguments!");
     else return list(verbose).then(function (items) {
-        console.log();
+        console.log(chalk.underline("\nActive provisioning profiles:"));
         items.forEach(function (item) {
             console.log("appid: %s name: %s ", chalk.yellow(item[1]), chalk.cyan(item[0]));
         });
