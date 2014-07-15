@@ -15,9 +15,9 @@ var tasks = {
         'post-cordova-compile' : []
     },
     ios: {
-        'pre-cordova-prepare' : [/* ... */],
-        'pre-cordova-compile' : ['product_file_name'/* , ... */],
-        'post-cordova-compile' : [/* ... */]
+        'pre-cordova-prepare' : [],
+        'pre-cordova-compile' : ['product_file_name', 'bundle_id', 'set_code_sign_identity'],
+        'post-cordova-compile' : ['run_xcrun', 'undo_set_code_sign_identity']
     },
     android: {
         'pre-cordova-prepare' : ['set_cordova_id', 'change_template_activity'],
@@ -53,6 +53,9 @@ var compile = function (platform, mode, verbose) {
         if(platform === 'web') return Q.resolve();
         var cwd = process.cwd();
         var defer = Q.defer();
+        var options = mode ? [ mode ] : [];
+
+        if(platform === 'ios') options.push('--device');
 
         process.chdir(path.join(cwd, settings.cordovaAppPath));
         if(verbose) console.log(chalk.green('✔') + ' start cordova build');
@@ -60,7 +63,7 @@ var compile = function (platform, mode, verbose) {
         cordova.compile({
             verbose: verbose,
             platforms: [ platform ],
-            options: mode ? [ mode ] : []
+            options: options
         }, function (err, result) {
             process.chdir(cwd);
             if(err) defer.reject(err);
@@ -85,13 +88,24 @@ var runTasks = function (type, platform, config, localSettings, verbose) {
     };
 };
 
+var setMode = function (platform, config, localSettings) {
+    var mode = null,
+        localConf = localSettings.configurations[platform][config];
+
+    if (platform === 'android' && localConf.keystore_path && localConf.keystore_alias) {
+        mode = '--release';
+    }
+    if(platform === 'ios' && localConf.apple_developer_identity && localConf.provisioning_profile) {
+        mode = '--release'
+    }
+};
+
 var build = function (platform, config, verbose) {
     var cwd = process.cwd();
     var tarifaFilePath = path.join(cwd, 'tarifa.json');
 
     return tarifaFile.parseConfig(tarifaFilePath, platform, config).then(function (localSettings) {
-        var localConf = localSettings.configurations[platform][config];
-        var mode = (platform === 'android' && (localConf.keystore_path && localConf.keystore_alias)) ? '--release' : null;
+        localSettings.mode = setMode(platform, config, localSettings);
 
         if(verbose) console.log(chalk.green('✔') + ' start to build the www project');
 
@@ -99,7 +113,7 @@ var build = function (platform, config, verbose) {
             .then(runTasks('pre-cordova-prepare', platform, config, localSettings, verbose))
             .then(prepare(platform, verbose))
             .then(runTasks('pre-cordova-compile', platform, config, localSettings, verbose))
-            .then(compile(platform, mode, verbose))
+            .then(compile(platform, localSettings.mode, verbose))
             .then(runTasks('post-cordova-compile', platform, config, localSettings, verbose));
     });
 };
@@ -111,7 +125,7 @@ var action = function (argv) {
         return Q.resolve();
     }
 
-    if(argsHelper.matchSingleOptions(argv, 'V', 'verbose', [1,2])) {
+    if(argsHelper.matchSingleOptions(argv, 'V', 'verbose')) {
         verbose = true;
     } else if(argv._.length != 1 && argv._.length != 2) {
         console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));

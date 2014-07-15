@@ -1,0 +1,23 @@
+Usage: tarifa config <platform> <command>
+
+Commands:
+
+    ios devices list <configuration>
+        List all devices attached to a given configuration
+    ios devices add <uuid> <configuration>
+        Add a device to a configuration
+    ios devices remove <uuid> <configuration>
+        Remove a device from a configuration
+    ios provisioning fetch <name> <configuration>
+        Download provisioning profile with the given name into the given configuration
+    ios provisioning list
+        List all available provisioning profiles on the current apple developer account
+
+Options:
+
+    --help, -h     Show this message
+    --verbose, -v  Be more verbose on everything
+
+Examples:
+
+    ios devices list staging

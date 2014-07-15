@@ -1,4 +1,5 @@
 var Q = require('q'),
+    spinner = require("char-spinner"),
     cordova = require('cordova'),
     opener = require("opener"),
     exec = require('child_process').exec,
@@ -9,11 +10,14 @@ var Q = require('q'),
     fs = require('fs'),
     buildAction = require('../build'),
     installAndroidApp = require('./tasks/android/install'),
-    openAndroidApp = require('./tasks/android/open');
+    openAndroidApp = require('./tasks/android/open'),
+    installiOSApp = require('./tasks/ios/install');
 
 var run = function (platform, config, verbose) {
     var cwd = process.cwd();
     var tarifaFilePath = path.join(cwd, 'tarifa.json');
+
+    spinner();
 
     return tarifaFile.parseConfig(tarifaFilePath, platform, config).then(function (localSettings) {
         return buildAction.build(platform, config, verbose).then(function (msg) {
@@ -23,7 +27,7 @@ var run = function (platform, config, verbose) {
                         return openAndroidApp(localSettings, config, verbose);
                     });
                 case 'ios':
-                    return Q.resolve();
+                    return installiOSApp(localSettings, config, verbose);
                 case 'web':
                     opener(path.join(settings.project_output, 'index.html'));
                     return Q.resolve();
@@ -41,7 +45,7 @@ var action = function (argv) {
         return Q.resolve();
     }
 
-    if(argsHelper.matchSingleOptions(argv, 'V', 'verbose', [1,2])) {
+    if(argsHelper.matchSingleOptions(argv, 'V', 'verbose')) {
         verbose = true;
     } else if(argv._.length != 1 && argv._.length != 2) {
         console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
