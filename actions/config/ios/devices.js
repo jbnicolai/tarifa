@@ -6,6 +6,7 @@ var Q = require('q'),
     path = require('path'),
     fs = require('fs'),
     tarifaFile = require('../../../lib/tarifa-file'),
+    parseProvisionFile = require('../../../lib/parse-mobileprovision'),
     askPassword = require('./ask_password');
 
 function getDevices(user, team, password, profile_path, verbose) {
@@ -66,23 +67,65 @@ function usage(msg) {
     return Q.reject(msg);
 }
 
-function list(args, verbose) {
-    // TODO take into account the long for of the list command
-    // `tarifa config ios devices list <configuration>`
-    // we should read the provisioning profile file and extract the uuids...
-
-    if(args.length !== 1 && args[0] !== 'list') return usage("Wrong arguments!");
-    else return listAction(verbose).then(function (devices) {
-        console.log(chalk.underline("\nAll Devices :"));
-        devices.forEach(function (device) {
-            console.log(
-                " %s %s enabled: %s",
-                chalk.cyan(device.name),
-                chalk.yellow(device.uuid),
-                chalk.green(device.enabled)
-            );
+function listDeviceInProvisioningWithInfo(config, verbose) {
+    return tarifaFile.parseConfig(path.join(process.cwd(), 'tarifa.json'))
+        .then(function (localSettings) {
+            if(!localSettings.configurations.ios[config]) {
+                return Q.reject('configuration not available!');
+            }
+            var localConf = localSettings.configurations.ios[config];
+            if (!localConf.provisioning_profile) {
+                return Q.reject('no provisioning profile in configuration!');
+            }
+            else {
+                var provisioning_profile = localConf.provisioning_profile;
+                return parseProvisionFile(provisioning_profile).then(function (provision) {
+                    var devices = provision.uuids.map(function (uuid){
+                        return { name: null, uuid: uuid, enabled: null };
+                    });
+                    return {
+                        type: provision.type,
+                        name: provision.name,
+                        devices: devices
+                    };
+                });
+            }
         });
-    });
+}
+
+function printDevices(title, msg) {
+    return function (devices) {
+        if(title) console.log(chalk.cyan(title));
+        if (devices.length) {
+            if(msg) console.log(msg);
+            devices.forEach(function (device) {
+                console.log(
+                    "%s %s enabled: %s",
+                    chalk.cyan(device.name),
+                    chalk.yellow(device.uuid),
+                    device.enabled ? chalk.green(device.enabled) : 'false'
+                );
+            });
+        }
+    };
+}
+
+function list(args, verbose) {
+    if(args.length > 2 || args[0] !== 'list')
+        return usage("Wrong arguments!");
+    else if(args.length == 2)
+        return listDeviceInProvisioningWithInfo(args[1], verbose)
+            .then(function (provision) {
+                var title = "Provisioning Profile "
+                            + provision.name
+                            + " with Type: "
+                            + provision.type,
+                    msg = "\nDevices in configuration: "
+                            + args[1];
+                printDevices(title, msg)(provision.devices);
+            });
+    else
+        return listAction(verbose).then(printDevices("\nAll Devices :"));
 }
 
 function addDevice(user, team, password, name, uuid, verbose) {

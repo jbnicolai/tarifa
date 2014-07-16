@@ -5,7 +5,7 @@ Commands:
     ios devices list
         List all devices attached to the apple developer account
 
-    (TODO) ios devices list <configuration>
+    ios devices list <configuration>
         List all devices attached to a given configuration
         by reading the mobile provisioning profile file
 
