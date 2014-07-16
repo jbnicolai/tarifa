@@ -74,6 +74,8 @@ function printList(args, verbose) {
 }
 
 function downloadProvisioningProfile(user, team, password, profile_path, verbose) {
+    // FIXME has we don't controle the ouptu of `ios`, we should run it
+    // in a temp folder to avoid collisions...
     return provisionFileParse(profile_path).then(function(provision) {
         var name = provision.name,
             defer = Q.defer(),
