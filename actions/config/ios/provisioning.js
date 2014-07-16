@@ -74,44 +74,40 @@ function printList(args, verbose) {
     });
 }
 
-function downloadProvisioningProfile(user, team, password, profile_path, verbose) {
-    return provisionFileParse(profile_path).then(function(provision) {
+function downloadProvisioningProfile(user, team, password, name, profile_path, verbose) {
+    var defer = Q.defer(),
+        t = (team ?  (" --team " + team) : ''),
+        cmd = "ios profiles:download " + name + " -u " + user + " -p "+ password + t + ' --type distribution';
 
-        var name = provision.name,
-            defer = Q.defer(),
-            t = (team ?  (" --team " + team) : ''),
-            cmd = "ios profiles:download " + name + " -u " + user + " -p "+ password + t + ' --type distribution';
+    tmp.dir(function _tempDirCreated(err, tmppath) {
+        if (err) return defer.reject('downloadProvisioningProfile ' + err);;
 
-        tmp.dir(function _tempDirCreated(err, tmppath) {
-            if (err) return defer.reject('downloadProvisioningProfile ' + err);;
-
-            exec(cmd, {
-                cwd: tmppath,
-                timeout : 40000,
-                maxBuffer: 1024 * 400
-            }, function (err, stdout, stderr) {
-                if(err) {
-                    if(verbose) {
-                        console.log(chalk.red('command: ' + cmd));
-                    }
-                    defer.reject('ios stderr ' + err);
-                    return;
+        exec(cmd, {
+            cwd: tmppath,
+            timeout : 40000,
+            maxBuffer: 1024 * 400
+        }, function (err, stdout, stderr) {
+            if(err) {
+                if(verbose) {
+                    console.log(chalk.red('command: ' + cmd));
                 }
-                if (verbose) console.log('try to copy provision');
-                ncp.limit = 1;
-                ncp(path.join(tmppath, name.replace(/-/g,'')+'.mobileprovision'), profile_path, function (err) {
-                    if (err) return defer.reject(err);
-                    if (verbose)
-                        console.log(chalk.green('✔') + ' provisioning profile fetched');
-                    var output = stdout.toString();
-                    if (verbose) console.log(output);
-                    defer.resolve(output);
-                });
+                defer.reject('ios stderr ' + err);
+                return;
+            }
+            if (verbose) console.log('try to copy provision');
+            ncp.limit = 1;
+            ncp(path.join(tmppath, name.replace(/-/g,'')+'.mobileprovision'), profile_path, function (err) {
+                if (err) return defer.reject(err);
+                if (verbose)
+                    console.log(chalk.green('✔') + ' provisioning profile fetched');
+                var output = stdout.toString();
+                if (verbose) console.log(output);
+                defer.resolve(output);
             });
         });
-
-        return defer.promise;
     });
+
+    return defer.promise;
 }
 
 function fetch(args, verbose) {
@@ -135,7 +131,8 @@ function fetch(args, verbose) {
             localSettings.deploy.apple_id,
             localSettings.deploy.apple_developer_team,
             password,
-            localSettings.configurations['ios'][conf].provisioning_profile,
+            localSettings.configurations['ios'][conf].provisioning_profile_name,
+            localSettings.configurations['ios'][conf].provisioning_profile_path,
             verbose
         );
     });
@@ -146,5 +143,6 @@ function fetch(args, verbose) {
 module.exports = {
     fetch : fetch,
     list : printList,
-    downloadProvisioningProfile: downloadProvisioningProfile
+    downloadProvisioningProfile: downloadProvisioningProfile,
+    getProvisioningProfileList: getProvisioningProfileList
 };

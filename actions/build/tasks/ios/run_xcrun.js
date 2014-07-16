@@ -14,7 +14,7 @@ module.exports = function (msg) {
     var product_file_name = conf['product_file_name'] + '.ipa',
         developer_identity = conf['apple_developer_identity'],
         output = path.join(process.cwd(), settings.output_folder, product_file_name),
-        provisioning_profile = conf['provisioning_profile'];
+        provisioning_profile_path = conf['provisioning_profile_path'];
 
     var defer = Q.defer(),
         app_output = path.join('app/platforms/ios/build/device', conf['product_file_name'] + '.app'),
@@ -24,7 +24,7 @@ module.exports = function (msg) {
             + '" -sign "'
             + developer_identity
             + '" -embed "'
-            + provisioning_profile + '"',
+            + provisioning_profile_path + '"',
         options = {
             timeout : 0,
             maxBuffer: 1024 * 400

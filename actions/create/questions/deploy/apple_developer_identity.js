@@ -4,7 +4,7 @@ var Q = require('q'),
     settings = require('../../../../lib/settings'),
     getAppleDeveloperIdentities = require('../../../../lib/apple_developer_identity');
 
-var question = function (verbose) {
+var question = function (response, verbose) {
     return getAppleDeveloperIdentities(verbose).then(function (identities) {
         var ids = identities;
         ids.push(settings.default_apple_developer_identity);

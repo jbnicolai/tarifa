@@ -76,12 +76,12 @@ function listDeviceInProvisioningWithInfo(config, verbose) {
                 return Q.reject('configuration not available!');
             }
             var localConf = localSettings.configurations.ios[config];
-            if (!localConf.provisioning_profile) {
+            if (!localConf.provisioning_profile_name || !localConf.provisioning_profile_path) {
                 return Q.reject('no provisioning profile in configuration!');
             }
             else {
-                var provisioning_profile = localConf.provisioning_profile;
-                return parseProvisionFile(provisioning_profile).then(function (provision) {
+                var provisioning_profile_path = localConf.provisioning_profile_path;
+                return parseProvisionFile(provisioning_profile_path).then(function (provision) {
                     var devices = provision.uuids.map(function (uuid){
                         return { name: null, uuid: uuid, enabled: null };
                     });
@@ -268,7 +268,7 @@ function attach(args, verbose) {
                                 localSettings.deploy.apple_developer_team,
                                 password,
                                 uuid,
-                                localSettings.configurations.ios[config].provisioning_profile,
+                                localSettings.configurations.ios[config].provisioning_profile_path,
                                 devices,
                                 verbose
                             ).then(function () {
@@ -276,7 +276,8 @@ function attach(args, verbose) {
                                 localSettings.deploy.apple_id,
                                 localSettings.deploy.apple_developer_team,
                                 password,
-                                localSettings.configurations.ios[config].provisioning_profile,
+                                localSettings.configurations.ios[config].provisioning_profile_name,
+                                localSettings.configurations.ios[config].provisioning_profile_path,
                                 verbose
                             );
                         });
@@ -305,7 +306,7 @@ function attach(args, verbose) {
                                     localSettings.deploy.apple_developer_team,
                                     password,
                                     uuid,
-                                    localSettings.configurations.ios[config].provisioning_profile,
+                                    localSettings.configurations.ios[config].provisioning_profile_path,
                                     devices,
                                     verbose
                                 ).then(function () {
@@ -313,7 +314,8 @@ function attach(args, verbose) {
                                     localSettings.deploy.apple_id,
                                     localSettings.deploy.apple_developer_team,
                                     password,
-                                    localSettings.configurations.ios[config].provisioning_profile,
+                                    localSettings.configurations.ios[config].provisioning_profile_name,
+                                    localSettings.configurations.ios[config].provisioning_profile_path,
                                     verbose
                                 );
                             });
@@ -334,11 +336,13 @@ function detach(args, verbose) {
         .then(function (localSettings) {
             if(!localSettings.configurations.ios[config])
                 return Q.reject('configuration not found');
-            if(!localSettings.configurations.ios[config].provisioning_profile)
-                return Q.reject('no provisioning_profile attribute in configuration');
+            if(!localSettings.configurations.ios[config].provisioning_profile_path)
+                return Q.reject('no provisioning_profile_path attribute in configuration');
+            if(!localSettings.configurations.ios[config].provisioning_profile_name)
+                return Q.reject('no provisioning_profile_name attribute in configuration');
 
             return askPassword().then(function (password) {
-                return parseProvisionFile(localSettings.configurations.ios[config].provisioning_profile)
+                return parseProvisionFile(localSettings.configurations.ios[config].provisioning_profile_path)
                     .then(function (provision) {
                         if(provision.uuids.indexOf(uuid) < 0) return Q.reject('device is not included in the provisioning file!');
                         return getDevices(
@@ -352,7 +356,7 @@ function detach(args, verbose) {
                                 localSettings.deploy.apple_developer_team,
                                 password,
                                 uuid,
-                                localSettings.configurations.ios[config].provisioning_profile,
+                                localSettings.configurations.ios[config].provisioning_profile_path,
                                 devices,
                                 verbose
                             );
@@ -362,7 +366,8 @@ function detach(args, verbose) {
                             localSettings.deploy.apple_id,
                             localSettings.deploy.apple_developer_team,
                             password,
-                            localSettings.configurations.ios[config].provisioning_profile,
+                            localSettings.configurations.ios[config].provisioning_profile_name,
+                            localSettings.configurations.ios[config].provisioning_profile_path,
                             verbose
                         );
                     });

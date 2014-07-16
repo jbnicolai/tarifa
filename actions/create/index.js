@@ -19,13 +19,10 @@ var Q = require('q'),
 
     deployQuestions = [
         require('./questions/deploy/apple_developer_identity'),
-        require('./questions/deploy/provisioning_profile'),
+        require('./questions/deploy/provisioning_profile_path'),
         require('./questions/deploy/apple_id'),
         require('./questions/deploy/has_apple_developer_team'),
-        // FIXME not used for now
-        //require('./questions/deploy/apple_password'),
-        //require('./questions/deploy/hockeyapp_user'),
-        //require('./questions/deploy/hockeyapp_token'),
+        require('./questions/deploy/provisioning_profile_name'),
         require('./questions/deploy/keystore_path'),
         require('./questions/deploy/keystore_alias')
     ],
@@ -35,7 +32,8 @@ var Q = require('q'),
         require('./tasks/cordova'),
         require('./tasks/platforms'),
         require('./tasks/plugins'),
-        require('./tasks/ant-properties')
+        require('./tasks/ant-properties'),
+        require('./tasks/fetch-provisioning-file')
     ],
 
     verbose = false;
@@ -72,7 +70,7 @@ function askQuestions(questions, type) {
                     // that means, the question needs to do some async tasks
                     // in order to populate the choices
                     if(typeof question === 'function') {
-                        return question(val.options.verbose).then(function (qst) {
+                        return question(val, val.options.verbose).then(function (qst) {
                             ask(qst, val, val.options.verbose);
                         }, function (err) {
                             console.log(chalk.red(err));

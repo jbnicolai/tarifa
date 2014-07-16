@@ -95,7 +95,7 @@ var setMode = function (platform, config, localSettings) {
     if (platform === 'android' && localConf.keystore_path && localConf.keystore_alias) {
         mode = '--release';
     }
-    if(platform === 'ios' && localConf.apple_developer_identity && localConf.provisioning_profile) {
+    if(platform === 'ios' && localConf.apple_developer_identity && localConf.provisioning_profile_name) {
         mode = '--release'
     }
 };
