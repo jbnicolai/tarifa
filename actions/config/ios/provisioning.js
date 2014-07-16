@@ -5,6 +5,7 @@ var Q = require('q'),
     exec = require('child_process').exec,
     path = require('path'),
     fs = require('fs'),
+    tmp = require('tmp'),
     tarifaFile = require('../../../lib/tarifa-file'),
     provisionFileParse = require('../../../lib/parse-mobileprovision'),
     askPassword = require('./ask_password');
@@ -74,40 +75,41 @@ function printList(args, verbose) {
 }
 
 function downloadProvisioningProfile(user, team, password, profile_path, verbose) {
-    // FIXME has we don't controle the ouptu of `ios`, we should run it
-    // in a temp folder to avoid collisions...
     return provisionFileParse(profile_path).then(function(provision) {
+
         var name = provision.name,
             defer = Q.defer(),
-            options = {
-                timeout : 40000,
-                maxBuffer: 1024 * 400
-            },
             t = (team ?  (" --team " + team) : ''),
             cmd = "ios profiles:download " + name + " -u " + user + " -p "+ password + t + ' --type distribution';
 
-        exec(cmd, options, function (err, stdout, stderr) {
-            if(err) {
-                if(verbose) {
-                    console.log(chalk.red('command: ' + cmd));
-                }
-                defer.reject('ios stderr ' + err);
-                return;
-            }
-            if (verbose) console.log('try to copy provision');
-            ncp.limit = 1;
-            var src = path.join(process.cwd(), name.replace(/-/g,'')+'.mobileprovision');
-            if(src === profile_path) return defer.resolve('done');
+        tmp.dir(function _tempDirCreated(err, tmppath) {
+            if (err) return defer.reject('downloadProvisioningProfile ' + err);;
 
-            ncp(path.join(process.cwd(), name.replace(/-/g,'')+'.mobileprovision'), profile_path, function (err) {
-                if (err) return defer.reject(err);
-                if (verbose)
-                    console.log(chalk.green('✔') + ' provisioning profile fetched');
-                var output = stdout.toString();
-                if (verbose) console.log(output);
-                defer.resolve(output);
+            exec(cmd, {
+                cwd: tmppath,
+                timeout : 40000,
+                maxBuffer: 1024 * 400
+            }, function (err, stdout, stderr) {
+                if(err) {
+                    if(verbose) {
+                        console.log(chalk.red('command: ' + cmd));
+                    }
+                    defer.reject('ios stderr ' + err);
+                    return;
+                }
+                if (verbose) console.log('try to copy provision');
+                ncp.limit = 1;
+                ncp(path.join(tmppath, name.replace(/-/g,'')+'.mobileprovision'), profile_path, function (err) {
+                    if (err) return defer.reject(err);
+                    if (verbose)
+                        console.log(chalk.green('✔') + ' provisioning profile fetched');
+                    var output = stdout.toString();
+                    if (verbose) console.log(output);
+                    defer.resolve(output);
+                });
             });
         });
+
         return defer.promise;
     });
 }
