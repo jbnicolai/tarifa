@@ -2,14 +2,25 @@ Usage: tarifa config <platform> <command>
 
 Commands:
 
-    ios devices list <configuration>
+    ios devices list
+        List all devices attached to the apple developer account
+
+    (TODO) ios devices list <configuration>
         List all devices attached to a given configuration
-    ios devices add <uuid> <configuration>
+        by reading the mobile provisioning profile file
+
+    ios devices add <name> <uuid>
+        Add a device to the apple developer account
+
+    (TODO) ios devices add <name> <uuid> <configuration>
         Add a device to a configuration
-    ios devices remove <uuid> <configuration>
+
+    (TODO) ios devices remove <uuid> <configuration>
         Remove a device from a configuration
+
     ios provisioning fetch <configuration>
         Download provisioning profile from the given configuration
+
     ios provisioning list
         List all available provisioning profiles on the current apple developer account
 
@@ -20,4 +31,4 @@ Options:
 
 Examples:
 
-    ios devices list staging
+    tarifa ios devices list staging
