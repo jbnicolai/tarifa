@@ -13,9 +13,9 @@ function platform (action, type, verbose) {
         case 'remove':
             return platformsLib.remove([type], verbose);
         case 'list':
-            return platformsLib.list();
+            return platformsLib.list(true);
         default:
-            return platformsLib.list();
+            return platformsLib.list(true);
     }
 }
 
