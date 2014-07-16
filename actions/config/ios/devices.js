@@ -149,7 +149,6 @@ function addDevice(user, team, password, name, uuid, verbose) {
         }
 
         var output = stdout.toString();
-
         defer.resolve(output);
     });
 
@@ -173,7 +172,7 @@ function add(args, verbose) {
                     name,
                     uuid,
                     verbose
-                ).then(function (output) { console.log(output); });
+                ).then(function (output) { if(verbose) console.log(output); });
             });
         });
 }
@@ -186,7 +185,7 @@ function addDeviceToProvisioningProfile(user, team, password, uuid, profile_path
                 maxBuffer: 1024 * 400
             },
             t = (team ?  (" --team " + team) : ''),
-            device = devices.filter(function (d) { console.log( d.uuid.trim() === uuid, d.uuid); return d.uuid.trim() === uuid; } )[0],
+            device = devices.filter(function (d) { return d.uuid.trim() === uuid; } )[0],
             deviceTuple = '"' + device.name.trim() + '"=' + uuid,
             cmd = "ios profiles:manage:devices:add " + provisioning.name + " " + deviceTuple + " -u " + user + " -p "+ password + t;
 
@@ -200,7 +199,7 @@ function addDeviceToProvisioningProfile(user, team, password, uuid, profile_path
             }
 
             var output = stdout.toString().split('\n');
-            console.log(output.toString());
+            if(verbose) console.log(output.toString());
             defer.resolve(output.toString());
         });
 
@@ -209,15 +208,6 @@ function addDeviceToProvisioningProfile(user, team, password, uuid, profile_path
 }
 
 function attach(args, verbose) {
-    // TODO
-    // take into account the over variant
-    // `tarifa config ios devices add myuuid configuration`
-    //
-    // 1 - (done) look if the uuid is already attached to the apple account
-    // 2 - if not add it with addDevice but ask for a label
-    // 3 - add uuid to the provisioning profile
-    // 4 - re fetch provisioning file and overwrite it
-
     if(args.length != 3 || args[0] !== 'attach') return usage("Wrong arguments!");
 
     var uuid = args[1],
@@ -239,7 +229,7 @@ function attach(args, verbose) {
                     });
 
                     if(rslt.length) {
-                        console.log('device already in developer center');
+                        if(verbose) console.log('device already in developer center');
                         return addDeviceToProvisioningProfile(
                                 localSettings.deploy.apple_id,
                                 localSettings.deploy.apple_developer_team,
@@ -259,7 +249,7 @@ function attach(args, verbose) {
                         });
                     }
                     else {
-                        console.log('device not in developer center');
+                        if(verbose) console.log('device not in developer center');
                         return askDeviceName().then(function (name) {
                             return addDevice(
                                 localSettings.deploy.apple_id,
@@ -274,7 +264,7 @@ function attach(args, verbose) {
                                     uuid:uuid,
                                     enabled:true
                                 });
-                                console.log(output);
+                                if(verbose) console.log(output);
                             });
                         }).then(function () {
                             return addDeviceToProvisioningProfile(

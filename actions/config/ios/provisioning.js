@@ -92,7 +92,7 @@ function downloadProvisioningProfile(user, team, password, profile_path, verbose
                 defer.reject('ios stderr ' + err);
                 return;
             }
-            console.log('try to copy provision');
+            if (verbose) console.log('try to copy provision');
             ncp.limit = 1;
             var src = path.join(process.cwd(), name.replace(/-/g,'')+'.mobileprovision');
             if(src === profile_path) return defer.resolve('done');
@@ -102,7 +102,7 @@ function downloadProvisioningProfile(user, team, password, profile_path, verbose
                 if (verbose)
                     console.log(chalk.green('✔') + ' provisioning profile fetched');
                 var output = stdout.toString();
-                console.log(output);
+                if (verbose) console.log(output);
                 defer.resolve(output);
             });
         });
