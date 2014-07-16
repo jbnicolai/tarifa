@@ -207,6 +207,39 @@ function addDeviceToProvisioningProfile(user, team, password, uuid, profile_path
     });
 }
 
+function removeDeviceToProvisioningProfile(user, team, password, uuid, profile_path, devices, verbose) {
+    return parseProvisionFile(profile_path).then(function (provisioning) {
+        var defer = Q.defer(),
+            options = {
+                timeout : 40000,
+                maxBuffer: 1024 * 400
+            },
+            t = (team ?  (" --team " + team) : ''),
+            device = devices.filter(function (d) { return d.uuid.trim() === uuid; } );
+
+        if(!device[0])  return Q.reject("uuid is not included in the developer center!");
+
+        device = device[0];
+        var deviceTuple = '"' + device.name.trim() + '"=' + uuid,
+            cmd = "ios profiles:manage:devices:remove " + provisioning.name + " " + deviceTuple + " -u " + user + " -p "+ password + t;
+        exec(cmd, options, function (err, stdout, stderr) {
+            if(err) {
+                if(verbose) {
+                    console.log(chalk.red('command: ' + cmd));
+                }
+                defer.reject('ios stderr ' + err);
+                return;
+            }
+
+            var output = stdout.toString().split('\n');
+            if(verbose) console.log(output.toString());
+            defer.resolve(output.toString());
+        });
+
+        return defer.promise;
+    });
+}
+
 function attach(args, verbose) {
     if(args.length != 3 || args[0] !== 'attach') return usage("Wrong arguments!");
 
@@ -292,11 +325,49 @@ function attach(args, verbose) {
 }
 
 function detach(args, verbose) {
-    if(args.length !== 3 || args[0] !== 'detach') return usage("Wrong arguments!");
-    // TODO
-    // 1 - remove device from provisioning file
-    // 2 - re fetch provisioning file and overwrite it
-    return Q.resolve();
+    if(args.length != 3 || args[0] !== 'detach') return usage("Wrong arguments!");
+
+    var uuid = args[1],
+        config = args[2];
+
+    return tarifaFile.parseConfig(path.join(process.cwd(), 'tarifa.json'))
+        .then(function (localSettings) {
+            if(!localSettings.configurations.ios[config])
+                return Q.reject('configuration not found');
+            if(!localSettings.configurations.ios[config].provisioning_profile)
+                return Q.reject('no provisioning_profile attribute in configuration');
+
+            return askPassword().then(function (password) {
+                return parseProvisionFile(localSettings.configurations.ios[config].provisioning_profile)
+                    .then(function (provision) {
+                        if(provision.uuids.indexOf(uuid) < 0) return Q.reject('device is not included in the provisioning file!');
+                        return getDevices(
+                            localSettings.deploy.apple_id,
+                            localSettings.deploy.apple_developer_team,
+                            password,
+                            verbose
+                        ).then(function (devices) {
+                            return removeDeviceToProvisioningProfile(
+                                localSettings.deploy.apple_id,
+                                localSettings.deploy.apple_developer_team,
+                                password,
+                                uuid,
+                                localSettings.configurations.ios[config].provisioning_profile,
+                                devices,
+                                verbose
+                            );
+                        });
+                    }).then(function () {
+                        return downloadProvisioningProfile(
+                            localSettings.deploy.apple_id,
+                            localSettings.deploy.apple_developer_team,
+                            password,
+                            localSettings.configurations.ios[config].provisioning_profile,
+                            verbose
+                        );
+                    });
+            });
+        });
 }
 
 module.exports = {
