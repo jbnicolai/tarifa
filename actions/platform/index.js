@@ -10,9 +10,12 @@ function platform (action, type, verbose) {
     switch(action) {
         case 'add':
             return platformsLib.add([type], verbose);
+        case 'remove':
+            return platformsLib.remove([type], verbose);
+        case 'list':
+            return platformsLib.list(true);
         default:
-            console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
-            return Q.resolve();
+            return platformsLib.list(true);
     }
 }
 
