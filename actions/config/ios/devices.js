@@ -7,9 +7,11 @@ var Q = require('q'),
     fs = require('fs'),
     tarifaFile = require('../../../lib/tarifa-file'),
     parseProvisionFile = require('../../../lib/parse-mobileprovision'),
+    downloadProvisioningProfile = require('./provisioning').downloadProvisioningProfile,
+    askDeviceName = require('./ask_device_name'),
     askPassword = require('./ask_password');
 
-function getDevices(user, team, password, profile_path, verbose) {
+function getDevices(user, team, password, verbose) {
     var defer = Q.defer(),
         options = {
             timeout : 40000,
@@ -155,11 +157,7 @@ function addDevice(user, team, password, name, uuid, verbose) {
 }
 
 function add(args, verbose) {
-    // TODO
-    // take into account the over variant
-    // `tarifa config ios devices add myuuid configuration`
-
-    if(args.length !== 3 || args[0] !== 'add') return usage("Wrong arguments!");
+    if(args.length != 3 || args[0] !== 'add') return usage("Wrong arguments!");
 
     var name = args[1],
         uuid = args[2];
@@ -180,16 +178,140 @@ function add(args, verbose) {
         });
 }
 
-function remove(args, verbose) {
-    if(args.length !== 3 || args[0] !== 'remove') return usage("Wrong arguments!");
+function addDeviceToProvisioningProfile(user, team, password, uuid, profile_path, devices, verbose) {
+    return parseProvisionFile(profile_path).then(function (provisioning) {
+        var defer = Q.defer(),
+            options = {
+                timeout : 40000,
+                maxBuffer: 1024 * 400
+            },
+            t = (team ?  (" --team " + team) : ''),
+            device = devices.filter(function (d) { console.log( d.uuid.trim() === uuid, d.uuid); return d.uuid.trim() === uuid; } )[0],
+            deviceTuple = '"' + device.name.trim() + '"=' + uuid,
+            cmd = "ios profiles:manage:devices:add " + provisioning.name + " " + deviceTuple + " -u " + user + " -p "+ password + t;
+
+        exec(cmd, options, function (err, stdout, stderr) {
+            if(err) {
+                if(verbose) {
+                    console.log(chalk.red('command: ' + cmd));
+                }
+                defer.reject('ios stderr ' + err);
+                return;
+            }
+
+            var output = stdout.toString().split('\n');
+            console.log(output.toString());
+            defer.resolve(output.toString());
+        });
+
+        return defer.promise;
+    });
+}
+
+function attach(args, verbose) {
     // TODO
-    // remove device from provisioning file
-    // re fetch provisioning file and overwrite it
+    // take into account the over variant
+    // `tarifa config ios devices add myuuid configuration`
+    //
+    // 1 - (done) look if the uuid is already attached to the apple account
+    // 2 - if not add it with addDevice but ask for a label
+    // 3 - add uuid to the provisioning profile
+    // 4 - re fetch provisioning file and overwrite it
+
+    if(args.length != 3 || args[0] !== 'attach') return usage("Wrong arguments!");
+
+    var uuid = args[1],
+        config = args[2];
+
+    return tarifaFile.parseConfig(path.join(process.cwd(), 'tarifa.json'))
+        .then(function(localSettings) {
+            return askPassword().then(function (password) {
+                return getDevices(
+                    localSettings.deploy.apple_id,
+                    localSettings.deploy.apple_developer_team,
+                    password,
+                    verbose
+                ).then(function (devices) {
+                    var rslt =  devices.map(function (device) {
+                        return device.uuid.trim();
+                    }).filter(function (id) {
+                        return id === uuid;
+                    });
+
+                    if(rslt.length) {
+                        console.log('device already in developer center');
+                        return addDeviceToProvisioningProfile(
+                                localSettings.deploy.apple_id,
+                                localSettings.deploy.apple_developer_team,
+                                password,
+                                uuid,
+                                localSettings.configurations.ios[config].provisioning_profile,
+                                devices,
+                                verbose
+                            ).then(function () {
+                            return downloadProvisioningProfile(
+                                localSettings.deploy.apple_id,
+                                localSettings.deploy.apple_developer_team,
+                                password,
+                                localSettings.configurations.ios[config].provisioning_profile,
+                                verbose
+                            );
+                        });
+                    }
+                    else {
+                        console.log('device not in developer center');
+                        return askDeviceName().then(function (name) {
+                            return addDevice(
+                                localSettings.deploy.apple_id,
+                                localSettings.deploy.apple_developer_team,
+                                password,
+                                name,
+                                uuid,
+                                verbose
+                            ).then(function (output) {
+                                devices.push({
+                                    name:name,
+                                    uuid:uuid,
+                                    enabled:true
+                                });
+                                console.log(output);
+                            });
+                        }).then(function () {
+                            return addDeviceToProvisioningProfile(
+                                    localSettings.deploy.apple_id,
+                                    localSettings.deploy.apple_developer_team,
+                                    password,
+                                    uuid,
+                                    localSettings.configurations.ios[config].provisioning_profile,
+                                    devices,
+                                    verbose
+                                ).then(function () {
+                                return downloadProvisioningProfile(
+                                    localSettings.deploy.apple_id,
+                                    localSettings.deploy.apple_developer_team,
+                                    password,
+                                    localSettings.configurations.ios[config].provisioning_profile,
+                                    verbose
+                                );
+                            });
+                        });
+                    }
+                });
+            });
+        });
+}
+
+function detach(args, verbose) {
+    if(args.length !== 3 || args[0] !== 'detach') return usage("Wrong arguments!");
+    // TODO
+    // 1 - remove device from provisioning file
+    // 2 - re fetch provisioning file and overwrite it
     return Q.resolve();
 }
 
 module.exports = {
     list : list,
     add: add,
-    remove: remove
+    attach: attach,
+    detach: detach
 };

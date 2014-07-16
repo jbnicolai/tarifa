@@ -6,6 +6,7 @@ var Q = require('q'),
     path = require('path'),
     fs = require('fs'),
     tarifaFile = require('../../../lib/tarifa-file'),
+    provisionFileParse = require('../../../lib/parse-mobileprovision'),
     askPassword = require('./ask_password');
 
 function getProvisioningProfileList(user, team, password, verbose) {
@@ -73,35 +74,40 @@ function printList(args, verbose) {
 }
 
 function downloadProvisioningProfile(user, team, password, profile_path, verbose) {
-    var defer = Q.defer(),
-        options = {
-            timeout : 40000,
-            maxBuffer: 1024 * 400
-        },
-        name = path.basename(profile_path, '.mobileprovision');
-        t = (team ?  (" --team " + team) : ''),
-        cmd = "ios profiles:download " + name + " -u " + user + " -p "+ password + t + ' --type distribution';
+    return provisionFileParse(profile_path).then(function(provision) {
+        var name = provision.name,
+            defer = Q.defer(),
+            options = {
+                timeout : 40000,
+                maxBuffer: 1024 * 400
+            },
+            t = (team ?  (" --team " + team) : ''),
+            cmd = "ios profiles:download " + name + " -u " + user + " -p "+ password + t + ' --type distribution';
 
-    exec(cmd, options, function (err, stdout, stderr) {
-        if(err) {
-            if(verbose) {
-                console.log(chalk.red('command: ' + cmd));
+        exec(cmd, options, function (err, stdout, stderr) {
+            if(err) {
+                if(verbose) {
+                    console.log(chalk.red('command: ' + cmd));
+                }
+                defer.reject('ios stderr ' + err);
+                return;
             }
-            defer.reject('ios stderr ' + err);
-            return;
-        }
+            console.log('try to copy provision');
+            ncp.limit = 1;
+            var src = path.join(process.cwd(), name.replace(/-/g,'')+'.mobileprovision');
+            if(src === profile_path) return defer.resolve('done');
 
-        ncp.limit = 1;
-        ncp(path.join(process.cwd(), name+'.mobileprovision'), profile_path, function (err) {
-            if (err) return defer.reject(err);
-            if (verbose)
-                console.log(chalk.green('✔') + ' provisioning profile fetched');
-            var output = stdout.toString();
-            defer.resolve(output);
+            ncp(path.join(process.cwd(), name.replace(/-/g,'')+'.mobileprovision'), profile_path, function (err) {
+                if (err) return defer.reject(err);
+                if (verbose)
+                    console.log(chalk.green('✔') + ' provisioning profile fetched');
+                var output = stdout.toString();
+                console.log(output);
+                defer.resolve(output);
+            });
         });
+        return defer.promise;
     });
-
-    return defer.promise;
 }
 
 function fetch(args, verbose) {
@@ -135,5 +141,6 @@ function fetch(args, verbose) {
 
 module.exports = {
     fetch : fetch,
-    list : printList
+    list : printList,
+    downloadProvisioningProfile: downloadProvisioningProfile
 };

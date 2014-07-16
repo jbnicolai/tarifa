@@ -10,7 +10,9 @@ var cmds = {
         devices: {
             list: devices.list,
             add: devices.add,
-            remove: devices.remove
+            remove: devices.remove,
+            attach: devices.attach,
+            detach: devices.detach
         },
         provisioning: {
             fetch: provisioning.fetch,

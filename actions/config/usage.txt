@@ -12,10 +12,10 @@ Commands:
     ios devices add <name> <uuid>
         Add a device to the apple developer account
 
-    (TODO) ios devices add <name> <uuid> <configuration>
+    (TODO) ios devices attach <uuid> <configuration>
         Add a device to a configuration
 
-    (TODO) ios devices remove <uuid> <configuration>
+    (TODO) ios devices detach <uuid> <configuration>
         Remove a device from a configuration
 
     ios provisioning fetch <configuration>
