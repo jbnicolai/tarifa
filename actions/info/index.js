@@ -14,14 +14,14 @@ function getToolVersion(name, tool, verbose) {
             timeout : 6000,
             maxBuffer: 1024 * 400
         },
-        child = exec(tool + ' -v', options, function (err, stdout, stderr) {
+        child = exec(tool, options, function (err, stdout, stderr) {
             if(err) {
                 defer.reject(tool + ' ' + err);
                 return;
             }
             defer.resolve({
                 name: name,
-                version: stdout.toString().replace('\n', '')
+                version: stdout.toString().replace(/\n/g, '')
             });
         });
 

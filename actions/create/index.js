@@ -14,6 +14,7 @@ var Q = require('q'),
         require('./questions/description'),
         require('./questions/platforms'),
         require('./questions/plugins'),
+        require('./questions/color'),
         require('./questions/deploy')
     ],
 

@@ -9,6 +9,7 @@ Your friendly mobile app development toolchain on top of Cordova
 * [Android SDK](http://developer.android.com/)
 * [iOS SDK](http://developer.apple.com/)
 * [nomad cli: cupertino](https://github.com/nomad/cupertino)
+* [ImageMagick](http://www.imagemagick.org/)
 
 ### Install
 
