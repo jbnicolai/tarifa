@@ -32,6 +32,7 @@ var Q = require('q'),
         require('./tasks/cordova'),
         require('./tasks/platforms'),
         require('./tasks/plugins'),
+        require('./tasks/assets'),
         require('./tasks/ant-properties'),
         require('./tasks/fetch-provisioning-file')
     ],

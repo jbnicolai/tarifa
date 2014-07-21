@@ -15,14 +15,19 @@ var tasks = {
         'post-cordova-compile' : []
     },
     ios: {
-        'pre-cordova-prepare' : [],
-        'pre-cordova-compile' : ['product_file_name', 'bundle_id', 'set_code_sign_identity'],
-        'post-cordova-compile' : ['run_xcrun', 'undo_set_code_sign_identity']
+        'pre-cordova-prepare' : ['copy_icons', 'copy_splashscreens'],
+        'pre-cordova-compile' : ['ios/product_file_name', 'ios/bundle_id', 'ios/set_code_sign_identity'],
+        'post-cordova-compile' : ['ios/run_xcrun', 'ios/undo_set_code_sign_identity']
     },
     android: {
-        'pre-cordova-prepare' : ['set_cordova_id', 'change_template_activity'],
-        'pre-cordova-compile' : ['product_file_name', 'app_label'],
-        'post-cordova-compile' : ['reset_cordova_id']
+        'pre-cordova-prepare' : [
+            'copy_icons',
+            'copy_splashscreens',
+            'android/set_cordova_id',
+            'android/change_template_activity'
+        ],
+        'pre-cordova-compile' : ['android/product_file_name', 'android/app_label'],
+        'post-cordova-compile' : ['android/reset_cordova_id']
     }
 };
 
@@ -79,11 +84,12 @@ var runTasks = function (type, platform, config, localSettings, verbose) {
         if(!tasks[platform][type].length) { return Q.resolve(); }
 
         return tasks[platform][type].reduce(function (opt, task) {
-            return Q.when(opt, require('./tasks/' + platform  + '/' + task));
+            return Q.when(opt, require('./tasks/' + task));
         }, {
             config: config,
             verbose: verbose,
-            settings: localSettings
+            settings: localSettings,
+            platform: platform
         });
     };
 };
