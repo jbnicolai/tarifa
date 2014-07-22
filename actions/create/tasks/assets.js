@@ -37,9 +37,9 @@ function createFolders(root, platforms, withSplashscreens) {
 function log(msg, verbose) { return function () { if(verbose) console.log(msg); }; }
 
 function generateAssets(color, root, platforms, withSplash, verbose) {
-    return generateDefaultIcons(color, root, platforms, verbose)
+    return generateDefaultIcons(color, root, platforms, 'default', verbose)
         .then(function () {
-            if(withSplash) return generateDefaultSplashscreens(color, root, platforms, verbose);
+            if(withSplash) return generateDefaultSplashscreens(color, root, platforms, 'default', verbose);
             else return Q.resolve();
         });
 }
