@@ -69,7 +69,7 @@ module.exports = function (argv) {
         console.log(chalk.green('cordova version:            ') + pkg.dependencies.cordova);
 
     return devices.ios().then(function (devices) {
-        console.log(chalk.green('connected iOS devices:      \n\n\t') +  devices.join('\n\t'));
+        console.log(chalk.green('connected iOS devices:      \n\t') +  devices.join('\n\t'));
     }).then(function () {
         if(verbose) return devices.androidVerbose();
         else return devices.android();
@@ -81,7 +81,7 @@ module.exports = function (argv) {
             });
         }
         else {
-            console.log(chalk.green('connected Android devices:') +  devices.join('\n\t'));
+            console.log(chalk.green('connected Android devices: \n\t') +  devices.join('\n\t'));
         }
     }).then(function () {
         return check_tools(verbose);
