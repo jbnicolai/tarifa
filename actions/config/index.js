@@ -3,6 +3,7 @@ var Q = require('q'),
     path = require('path'),
     argsHelper = require('../../lib/args'),
     devices = require('./ios/devices'),
+    assets = require('./assets'),
     provisioning = require('./ios/provisioning');
 
 var cmds = {
@@ -18,7 +19,9 @@ var cmds = {
             fetch: provisioning.fetch,
             list: provisioning.list
         }
-    }
+    },
+    icons: assets.generateIcons,
+    splashscreens: assets.generateSplashscreens
 };
 
 var usage = function () {
@@ -34,6 +37,9 @@ var config = function (args, verbose) {
 
         if(cmd_exists) {
             return cmds[p][t][c](args.splice(2, args.length-1), verbose);
+        }
+        else if(['icons', 'splashscreens'].indexOf(p) > -1) {
+            return cmds[p](args.splice(1, args.length-1), verbose)
         }
         else {
             usage();

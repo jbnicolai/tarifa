@@ -10,29 +10,8 @@ var Q = require('q'),
     copyDefaultIcons = require('../../../lib/cordova/icon').copyDefault,
     copyDefaultSplashscreens = require('../../../lib/cordova/splashscreen').copyDefault,
     generateDefaultIcons = require('../../../lib/cordova/icon').generate,
-    generateDefaultSplashscreens = require('../../../lib/cordova/splashscreen').generate;
-
-function createFolder(root, platform, configuration, type) {
-    var defer = Q.defer(),
-        dirPath = path.join(root, settings.images, platform, configuration, type);
-    mkdirp(dirPath, function (err) {
-        if(err) return defer.reject("unable to create folder " + err);
-        defer.resolve();
-    });
-    return defer.promise;
-}
-
-function createFolders(root, platforms, withSplashscreens) {
-    var foldersPromises = [];
-
-    platforms.forEach(function (platform) {
-        foldersPromises.push(createFolder(root, platform, 'default', 'icons'));
-        if(withSplashscreens) {
-            foldersPromises.push(createFolder(root, platform, 'default', 'splashscreens'));
-        }
-    });
-    return foldersPromises;
-}
+    generateDefaultSplashscreens = require('../../../lib/cordova/splashscreen').generate,
+    createFolders = require('../../../lib/cordova/assets').createFolders;
 
 function log(msg, verbose) { return function () { if(verbose) console.log(msg); }; }
 
@@ -60,7 +39,7 @@ module.exports = function (response) {
         root = response.path,
         verbose = response.options.verbose;
 
-    return Q.all(createFolders(root, platforms, ['default'], withSplash, verbose))
+    return Q.all(createFolders(root, platforms, 'default', withSplash))
         .then(log(chalk.green('✔') + ' assets folder created', verbose))
         .then(function () {
             if(response.color) return generateAssets(response.color, root, platforms, withSplash, verbose);
