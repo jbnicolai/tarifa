@@ -11,7 +11,8 @@ var Q = require('q'),
     buildAction = require('../build'),
     installAndroidApp = require('./tasks/android/install'),
     openAndroidApp = require('./tasks/android/open'),
-    installiOSApp = require('./tasks/ios/install');
+    installiOSApp = require('./tasks/ios/install'),
+    askDevice = require('./ask_device');
 
 var run = function (platform, config, verbose) {
     var cwd = process.cwd();
@@ -23,11 +24,12 @@ var run = function (platform, config, verbose) {
         return buildAction.build(platform, config, verbose).then(function (msg) {
             switch(platform) {
                 case 'android':
-                    return installAndroidApp(localSettings, config, verbose).then(function () {
-                        return openAndroidApp(localSettings, config, verbose);
-                    });
+                    return askDevice('android')
+                        .then(function (device) { return installAndroidApp(localSettings, config, device, verbose); })
+                        .then(function (device) { return openAndroidApp(localSettings, config, device, verbose); });
                 case 'ios':
-                    return installiOSApp(localSettings, config, verbose);
+                    return askDevice('ios')
+                        .then(function(device) { return installiOSApp(localSettings, config, device, verbose); });
                 case 'web':
                     opener(path.join(settings.project_output, 'index.html'));
                     return Q.resolve();

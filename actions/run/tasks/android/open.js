@@ -3,11 +3,12 @@ var Q = require('q'),
     chalk = require('chalk'),
     settings = require('../../../../lib/settings');
 
-module.exports = function (localSettings, config, verbose) {
+module.exports = function (localSettings, config, device, verbose) {
     var defer = Q.defer();
     var name = localSettings.configurations['android'][config].name;
     var activity = localSettings.configurations['android'][config].id + '.' + name;
     var cmd = settings.external.adb.name
+        + ' -s ' + device
         + ' shell am start '
         + localSettings.configurations['android'][config].id
         + '/'+ activity;
