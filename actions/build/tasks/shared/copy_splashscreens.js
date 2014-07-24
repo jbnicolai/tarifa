@@ -1,7 +1,7 @@
 var Q = require('q'),
     chalk = require('chalk'),
     path = require('path'),
-    copySplashscreens = require('../../../lib/cordova/splashscreen').copySplashscreens;
+    copySplashscreens = require('../../../../lib/cordova/splashscreen').copySplashscreens;
 
 module.exports = function (msg) {
     if(msg.platform === 'web') return Q.resolve(msg);

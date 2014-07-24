@@ -1,7 +1,7 @@
 var Q = require('q'),
     chalk = require('chalk'),
     path = require('path'),
-    copyIcons = require('../../../lib/cordova/icon').copyIcons;
+    copyIcons = require('../../../../lib/cordova/icon').copyIcons;
 
 module.exports = function (msg) {
     if(msg.platform === 'web') return Q.resolve(msg);

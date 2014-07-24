@@ -15,19 +15,36 @@ var tasks = {
         'post-cordova-compile' : []
     },
     ios: {
-        'pre-cordova-prepare' : ['copy_icons', 'copy_splashscreens'],
-        'pre-cordova-compile' : ['ios/product_file_name', 'ios/bundle_id', 'ios/set_code_sign_identity'],
-        'post-cordova-compile' : ['ios/run_xcrun', 'ios/undo_set_code_sign_identity']
+        'pre-cordova-prepare' : [
+            'shared/populate_config_xml',
+            'shared/copy_icons',
+            'shared/copy_splashscreens'
+        ],
+        'pre-cordova-compile' : [
+            'ios/product_file_name',
+            'ios/bundle_id',
+            'ios/set_code_sign_identity'
+        ],
+        'post-cordova-compile' : [
+            'ios/run_xcrun',
+            'ios/undo_set_code_sign_identity'
+        ]
     },
     android: {
         'pre-cordova-prepare' : [
-            'copy_icons',
-            'copy_splashscreens',
+            'shared/populate_config_xml',
+            'shared/copy_icons',
+            'shared/copy_splashscreens',
             'android/set_cordova_id',
             'android/change_template_activity'
         ],
-        'pre-cordova-compile' : ['android/product_file_name', 'android/app_label'],
-        'post-cordova-compile' : ['android/reset_cordova_id']
+        'pre-cordova-compile' : [
+            'android/product_file_name',
+            'android/app_label'
+        ],
+        'post-cordova-compile' : [
+            'android/reset_cordova_id'
+        ]
     }
 };
 
