@@ -10,11 +10,13 @@ var Q = require('q'),
 
 var tasks = {
     web: {
+        'pre-cordova-prepare-release': [],
         'pre-cordova-prepare' : [],
         'pre-cordova-compile' : [],
         'post-cordova-compile' : []
     },
     ios: {
+        'pre-cordova-prepare-release': [],
         'pre-cordova-prepare' : [
             'shared/populate_config_xml',
             'shared/copy_icons',
@@ -31,6 +33,7 @@ var tasks = {
         ]
     },
     android: {
+        'pre-cordova-prepare-release': ['android/bump_version_code'],
         'pre-cordova-prepare' : [
             'shared/populate_config_xml',
             'shared/copy_icons',
@@ -111,6 +114,13 @@ var runTasks = function (type, platform, config, localSettings, verbose) {
     };
 };
 
+var runReleaseTasks = function (type, platform, config, localSettings, verbose) {
+    if (localSettings.mode == '--release') {
+        return runTasks(type, platform, config, localSettings, verbose);
+    }
+    else return Q.resolve();
+};
+
 var setMode = function (platform, config, localSettings) {
     var mode = null,
         localConf = localSettings.configurations[platform][config];
@@ -121,6 +131,7 @@ var setMode = function (platform, config, localSettings) {
     if(platform === 'ios' && localConf.apple_developer_identity && localConf.provisioning_profile_name) {
         mode = '--release'
     }
+    return mode;
 };
 
 var build = function (platform, config, verbose) {
@@ -133,6 +144,7 @@ var build = function (platform, config, verbose) {
         if(verbose) console.log(chalk.green('✔') + ' start to build the www project');
 
         return prepareAction.prepare(platform, config, verbose)
+            .then(runReleaseTasks('pre-cordova-prepare-release', platform, config, localSettings, verbose))
             .then(runTasks('pre-cordova-prepare', platform, config, localSettings, verbose))
             .then(prepare(platform, verbose))
             .then(runTasks('pre-cordova-compile', platform, config, localSettings, verbose))
