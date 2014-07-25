@@ -6,7 +6,6 @@ module.exports = function (platform) {
     var defer = Q.defer();
 
     devices[platform]().then(function (items) {
-        console.log(items);
         var question = {
             type:'list',
             name:'device',
