@@ -14,6 +14,7 @@ var argv = process.argv.slice(2),
     run = require('../actions/run'),
     config = require('../actions/config'),
     info = require('../actions/info'),
+    check = require('../actions/check'),
     clean = require('../actions/clean');
 
 var t0 = (new Date()).getTime();
@@ -26,7 +27,8 @@ var availableActions = [
         { name : 'config', action : config },
         { name : 'build', action : build },
         { name : 'run', action : run },
-        { name : 'clean', action : clean }
+        { name : 'clean', action : clean },
+        { name : 'check', action : check }
     ],
     singleOptions = [
         { small: 'v', name : 'version', action : printVersion },
