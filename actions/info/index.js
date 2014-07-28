@@ -38,7 +38,7 @@ function check_tools(verbose) {
                 );
     }
 
-    return Q.allSettled(rslts).then(function (results) {
+    return Q.allSettled(rslts).done(function (results) {
         results.forEach(function (result) {
             if (result.state === "fulfilled") {
                 console.log(chalk.green(result.value.name + ' version: ') + result.value.version);
