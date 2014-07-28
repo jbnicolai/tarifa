@@ -1,5 +1,5 @@
 {
     "version" : "version",
     "id" : "bundleId",
-    "app_label" : "appName"
+    "product_name" : "appName"
 }

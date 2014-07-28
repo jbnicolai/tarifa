@@ -6,7 +6,7 @@ var Q = require('q'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
-    var app_label = msg.settings.configurations.android[msg.config]['app_label'];
+    var app_label = msg.settings.configurations.android[msg.config]['product_name'];
     var strings_xml_file_path = path.join(process.cwd(), settings.cordovaAppPath, 'platforms', 'android', 'res', 'values', 'strings.xml');
     var doc = libxmljs.parseXml(fs.readFileSync(strings_xml_file_path));
 
@@ -14,6 +14,6 @@ module.exports = function (msg) {
     fs.writeFileSync(strings_xml_file_path, "<?xml version='1.0' encoding='utf-8'?>\n" + doc.root().toString());
 
     if(msg.verbose)
-        console.log(chalk.green('✔') + ' change app_label to ' + app_label);
+        console.log(chalk.green('✔') + ' change product name to ' + app_label);
     return Q.resolve(msg);
 };

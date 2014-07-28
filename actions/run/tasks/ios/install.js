@@ -5,8 +5,8 @@ var Q = require('q'),
 
 module.exports = function (localSettings, config, uuid, verbose) {
     var defer = Q.defer();
-    var product_name = localSettings.configurations['ios'][config].product_file_name;
-    var app_path = path.join('app/platforms/ios/build/device', product_name + '.app');
+    var product_name = localSettings.configurations['ios'][config].product_name;
+    var app_path = path.join('app/platforms/ios/build/device', product_name.replace(/ /g, '\\ ') + '.app');
     var bin = path.join(__dirname, '..', '..', '..', '..', 'node_modules', 'ios-deploy', 'ios-deploy');
     var cmd = bin + ' -r -I -i ' + uuid + ' -b ' + app_path + ' --verbose';
     var options = {

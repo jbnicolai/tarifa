@@ -42,6 +42,7 @@
     "q-io": "^1.11.3",
     "rimraf": "^2.2.8",
     "tmp": "0.0.23",
+    "valid-java-identifier": "0.0.1",
     "xcode": "^0.6.7"
   }
 }

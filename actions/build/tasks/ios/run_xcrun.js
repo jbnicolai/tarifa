@@ -17,7 +17,7 @@ module.exports = function (msg) {
         provisioning_profile_path = conf['provisioning_profile_path'];
 
     var defer = Q.defer(),
-        app_input = path.join('app/platforms/ios/build/device', conf['name'] + '.app'),
+        app_input = path.join('app/platforms/ios/build/device', conf['product_file_name'] + '.app'),
         cmd = 'xcrun -log -sdk iphoneos PackageApplication -v "'
             + app_input + '" -o "'
             + output

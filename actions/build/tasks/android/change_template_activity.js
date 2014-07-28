@@ -5,13 +5,14 @@ var Q = require('q'),
     path = require('path'),
     fs = require('fs'),
     settings = require('../../../../lib/settings'),
+    inferJavaClassNameFromProductName = require('../../../../lib/android/infer-classname'),
     libxmljs = require('libxmljs');
 
 module.exports = function (msg) {
     var defer = Q.defer();
     var cwd = process.cwd();
     var conf = msg.settings.configurations.android;
-    var name = conf[msg.config]['name'] || conf['default']['name'] || conf['name'];
+    var name = conf[msg.config]['product_name'] || conf['default']['product_name'] || conf['name'];
     var id = msg.settings.configurations.android[msg.config]['id'] || msg.settings.id;
     var srcPath = path.join(cwd, settings.cordovaAppPath, '/platforms/android/src/');
     var finder = find(path.join(cwd, settings.cordovaAppPath, '/platforms/android/src/'));
@@ -28,11 +29,12 @@ module.exports = function (msg) {
                 defer.reject("unable to create package " + asbPath);
             }
             else {
-                var activity = javaActivityTmpl.replace(/\$PACKAGE_NAME/, id).replace(/\$APP_NAME/, name);
-                fs.writeFileSync(path.join(asbPath, name + '.java'), activity);
+                var inferedName = inferJavaClassNameFromProductName(name);
+                var activity = javaActivityTmpl.replace(/\$PACKAGE_NAME/, id).replace(/\$APP_NAME/, inferedName);
+                fs.writeFileSync(path.join(asbPath, inferedName + '.java'), activity);
                 var androidManifestXml = libxmljs.parseXml(fs.readFileSync(androidManifestXmlPath));
                 androidManifestXml.root().attr('package', id);
-                androidManifestXml.get('/manifest/application/activity').attr('android:name', name);
+                androidManifestXml.get('/manifest/application/activity').attr('android:name', inferedName);
                 fs.writeFileSync(androidManifestXmlPath, androidManifestXml.root());
                 defer.resolve(msg);
             }

@@ -1,11 +1,12 @@
 var Q = require('q'),
     exec = require('child_process').exec,
     chalk = require('chalk'),
+    inferJavaClassNameFromProductName = require('../../../../lib/android/infer-classname'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (localSettings, config, device, verbose) {
     var defer = Q.defer();
-    var name = localSettings.configurations['android'][config].name;
+    var name = inferJavaClassNameFromProductName(localSettings.configurations['android'][config].product_name);
     var activity = localSettings.configurations['android'][config].id + '.' + name;
     var cmd = settings.external.adb.name
         + ' -s ' + device
