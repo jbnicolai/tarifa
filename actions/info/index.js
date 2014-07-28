@@ -35,7 +35,7 @@ function check_tools(verbose) {
         bins = settings.external;
 
     for(var bin in bins) {
-        if(bins[bin].os_platforms.indexOf(os.platform > -1)) {
+        if(bins[bin].os_platforms.indexOf(os.platform()) > -1) {
             rslts.push(getToolVersion(
                         bins[bin]['name'],
                         bins[bin]['print_version'],
