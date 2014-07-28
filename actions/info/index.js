@@ -29,7 +29,8 @@ function getToolVersion(name, tool, verbose) {
 }
 
 function check_tools(verbose) {
-    var rslts = [];
+    var rslts = [],
+        ok = true;
     for(var bin in settings.external) {
         rslts.push(getToolVersion(
                     settings.external[bin]['name'],
@@ -43,11 +44,12 @@ function check_tools(verbose) {
             if (result.state === "fulfilled") {
                 console.log(chalk.green(result.value.name + ' version: ') + result.value.version);
             } else {
+                ok = false;
                 console.log(chalk.cyan(result.reason.split(' ')[0] + ' not found!'));
                 if (verbose) console.log('\tReason: ' + chalk.cyan(result.reason));
             }
         });
-        return Q.resolve();
+        return Q.resolve(ok);
     });
 }
 
@@ -65,12 +67,13 @@ module.exports = function (argv) {
         return Q.resolve();
     }
 
-    console.log(chalk.green('node version:               ') + process.versions.node);
-    console.log(chalk.green('cordova version:            ') + pkg.dependencies.cordova);
+    console.log(chalk.green('node version: ') + process.versions.node);
+    console.log(chalk.green('cordova version: ') + pkg.dependencies.cordova);
 
-    return check_tools(verbose).then(function () {
+    return check_tools(verbose).then(function (ok) {
+        if(!ok) return Q.reject("not all needed tools are available, first install them!");
         return devices.ios().then(function (devices) {
-            console.log(chalk.green('connected iOS devices:      \n\t') +  devices.join('\n\t'));
+            console.log(chalk.green('connected iOS devices:\n\t') +  devices.join('\n\t'));
         }).then(function () {
             if(verbose) return devices.androidVerbose();
             else return devices.android();
@@ -82,7 +85,7 @@ module.exports = function (argv) {
                 });
             }
             else {
-                console.log(chalk.green('connected Android devices: \n\t') +  devices.join('\n\t'));
+                console.log(chalk.green('connected Android devices:\n\t') +  devices.join('\n\t'));
             }
         });
     });
