@@ -38,7 +38,7 @@ function check_tools(verbose) {
                 );
     }
 
-    return Q.allSettled(rslts).done(function (results) {
+    return Q.allSettled(rslts).then(function (results) {
         results.forEach(function (result) {
             if (result.state === "fulfilled") {
                 console.log(chalk.green(result.value.name + ' version: ') + result.value.version);
@@ -65,28 +65,27 @@ module.exports = function (argv) {
         return Q.resolve();
     }
 
-        console.log(chalk.green('node version:               ') + process.versions.node);
-        console.log(chalk.green('cordova version:            ') + pkg.dependencies.cordova);
+    console.log(chalk.green('node version:               ') + process.versions.node);
+    console.log(chalk.green('cordova version:            ') + pkg.dependencies.cordova);
 
-    return devices.ios().then(function (devices) {
-        console.log(chalk.green('connected iOS devices:      \n\t') +  devices.join('\n\t'));
-    }).then(function () {
-        if(verbose) return devices.androidVerbose();
-        else return devices.android();
-    }).then(function (devices) {
-        if(verbose) {
-            console.log(chalk.green('connected Android devices:'));
-            devices.forEach(function (device) {
-                console.log('\t' + device.join(' '));
-            });
-        }
-        else {
-            console.log(chalk.green('connected Android devices: \n\t') +  devices.join('\n\t'));
-        }
-    }).then(function () {
-        return check_tools(verbose);
+    return check_tools(verbose).then(function () {
+        return devices.ios().then(function (devices) {
+            console.log(chalk.green('connected iOS devices:      \n\t') +  devices.join('\n\t'));
+        }).then(function () {
+            if(verbose) return devices.androidVerbose();
+            else return devices.android();
+        }).then(function (devices) {
+            if(verbose) {
+                console.log(chalk.green('connected Android devices:'));
+                devices.forEach(function (device) {
+                    console.log('\t' + device.join(' '));
+                });
+            }
+            else {
+                console.log(chalk.green('connected Android devices: \n\t') +  devices.join('\n\t'));
+            }
+        });
     });
-
     // check installed xcode version if available
     // check android sdk version
     // check if we are in a tarifa project
