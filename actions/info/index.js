@@ -1,6 +1,7 @@
 var Q = require('q'),
     chalk = require('chalk'),
     fs = require('fs'),
+    os = require('os'),
     path = require('path'),
     exec = require('child_process').exec,
     argsHelper = require('../../lib/args'),
@@ -30,13 +31,17 @@ function getToolVersion(name, tool, verbose) {
 
 function check_tools(verbose) {
     var rslts = [],
-        ok = true;
-    for(var bin in settings.external) {
-        rslts.push(getToolVersion(
-                    settings.external[bin]['name'],
-                    settings.external[bin]['print_version'],
-                    verbose)
-                );
+        ok = true,
+        bins = settings.external;
+
+    for(var bin in bins) {
+        if(bins[bin].os_platforms.indexOf(os.platform > -1)) {
+            rslts.push(getToolVersion(
+                        bins[bin]['name'],
+                        bins[bin]['print_version'],
+                        verbose)
+                    );
+        }
     }
 
     return Q.allSettled(rslts).then(function (results) {
