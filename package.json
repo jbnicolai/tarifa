@@ -31,7 +31,6 @@
     "cordova": "3.4.1-0.1.0",
     "findit": "^2.0.0",
     "inquirer": "0.5.1",
-    "ios-deploy": "^1.0.8",
     "libxmljs": "^0.11.0",
     "minimist": "0.1.0",
     "mkdirp": "^0.5.0",
@@ -44,5 +43,8 @@
     "tmp": "0.0.23",
     "valid-java-identifier": "0.0.1",
     "xcode": "^0.6.7"
+  },
+  "optionalDependencies": {
+    "ios-deploy": "^1.0.8"
   }
 }
