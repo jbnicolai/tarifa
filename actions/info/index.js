@@ -12,7 +12,7 @@ var Q = require('q'),
 function getToolVersion(name, tool, verbose) {
     var defer = Q.defer(),
         options = {
-            timeout : 6000,
+            timeout : 10000,
             maxBuffer: 1024 * 400
         },
         child = exec(tool, options, function (err, stdout, stderr) {
