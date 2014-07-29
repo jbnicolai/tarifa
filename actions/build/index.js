@@ -15,6 +15,12 @@ var tasks = {
         'pre-cordova-compile' : [],
         'post-cordova-compile' : []
     },
+    wp8: {
+        'pre-cordova-prepare-release': [],
+        'pre-cordova-prepare' : [],
+        'pre-cordova-compile' : [],
+        'post-cordova-compile' : []
+    },
     ios: {
         'pre-cordova-prepare-release': [],
         'pre-cordova-prepare' : [

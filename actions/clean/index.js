@@ -11,6 +11,8 @@ var clean = function (platform, verbose) {
     spinner();
 
     return tarifaFile.parseConfig(tarifaFilePath).then(function (localSettings) {
+        // FIXME, it's more than that, it's also a platform which is supported by the
+        // host!
         if(platform && localSettings.platforms.indexOf(platform) < 0)
             return Q.reject('platform not available in project!');
         return cordovaClean(platform ? [platform] : localSettings.platforms, verbose);

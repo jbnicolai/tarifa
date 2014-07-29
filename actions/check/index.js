@@ -10,6 +10,7 @@ var tasks = {
         require('./tasks/android/update_project')
     ],
     ios : [],
+    wp8 : [],
     web : []
 };
 

@@ -33,6 +33,9 @@ var run = function (platform, config, verbose) {
                 case 'web':
                     opener(path.join(settings.project_output, 'index.html'));
                     return Q.resolve();
+                case 'wp8':
+                    console.log("work in progress");
+                    return Q.resolve();
                 default:
                      return Q.reject('platform unknown!');
             }
