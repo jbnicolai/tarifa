@@ -19,11 +19,17 @@ var tasks = {
         'pre-cordova-prepare-release': [],
         'pre-cordova-prepare' : [
             'shared/populate_config_xml',
-            //'shared/copy_icons',
-            //'shared/copy_splashscreens',
-            'shared/set_cordova_id'
+            'shared/copy_icons',
+            'shared/copy_splashscreens',
+            'shared/set_cordova_id',
+            'wp8/replace_package_name_assembly_info',
+            'wp8/replace_guid_assembly_info',
+            'wp8/replace_product_name_assembly_info'
         ],
-        'pre-cordova-compile' : [],
+        'pre-cordova-compile' : [
+            'wp8/replace_app_name_manifest',
+            'wp8/replace_product_id_manifest'
+        ],
         'post-cordova-compile' : [
             'shared/reset_cordova_id'
         ]
