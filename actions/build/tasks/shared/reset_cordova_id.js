@@ -5,12 +5,12 @@ var Q = require('q'),
     setId = require('../../../../lib/cordova/config').id;
 
 module.exports = function (msg) {
-    var id = msg.settings.configurations.android[msg.config]['id'];
+    var default_id = msg.settings.configurations[msg.platform]['default']['id'];
     var config_xml_path = path.join(process.cwd(), settings.cordovaAppPath, 'config.xml');
 
-    return setId(config_xml_path, id).then(function () {
+    return setId(config_xml_path, default_id).then(function () {
         if(msg.verbose)
-            console.log(chalk.green('✔') + ' set cordova id to ' + id);
+            console.log(chalk.green('✔') + ' reset cordova id to ' + default_id);
         return msg;
     });
 };

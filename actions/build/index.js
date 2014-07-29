@@ -17,9 +17,16 @@ var tasks = {
     },
     wp8: {
         'pre-cordova-prepare-release': [],
-        'pre-cordova-prepare' : [],
+        'pre-cordova-prepare' : [
+            'shared/populate_config_xml',
+            //'shared/copy_icons',
+            //'shared/copy_splashscreens',
+            'shared/set_cordova_id'
+        ],
         'pre-cordova-compile' : [],
-        'post-cordova-compile' : []
+        'post-cordova-compile' : [
+            'shared/reset_cordova_id'
+        ]
     },
     ios: {
         'pre-cordova-prepare-release': [],
@@ -44,7 +51,7 @@ var tasks = {
             'shared/populate_config_xml',
             'shared/copy_icons',
             'shared/copy_splashscreens',
-            'android/set_cordova_id',
+            'shared/set_cordova_id',
             'android/change_template_activity'
         ],
         'pre-cordova-compile' : [
@@ -52,7 +59,7 @@ var tasks = {
             'android/app_label'
         ],
         'post-cordova-compile' : [
-            'android/reset_cordova_id'
+            'shared/reset_cordova_id'
         ]
     }
 };
