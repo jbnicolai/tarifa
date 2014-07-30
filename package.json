@@ -45,6 +45,7 @@
     "xcode": "^0.6.7"
   },
   "optionalDependencies": {
-    "ios-deploy": "^1.0.8"
+    "ios-deploy": "^1.0.8",
+    "cordova-deploy-windows-phone": "3.5.0-1"
   }
 }
