@@ -31,7 +31,8 @@ var tasks = {
             'wp8/replace_product_id_manifest'
         ],
         'post-cordova-compile' : [
-            'shared/reset_cordova_id'
+            'shared/reset_cordova_id',
+            'wp8/run_xap_sign_tool'
         ]
     },
     ios: {
