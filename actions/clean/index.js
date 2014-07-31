@@ -2,6 +2,7 @@ var Q = require('q'),
     spinner = require("char-spinner"),
     argsHelper = require('../../lib/args'),
     tarifaFile = require('../../lib/tarifa-file'),
+    isAvailableOnHost = require('../../lib/platforms').isAvailableOnHost,
     cordovaClean = require('../../lib/cordova/clean'),
     path = require('path'),
     fs = require('fs');
@@ -11,10 +12,8 @@ var clean = function (platform, verbose) {
     spinner();
 
     return tarifaFile.parseConfig(tarifaFilePath).then(function (localSettings) {
-        // FIXME, it's more than that, it's also a platform which is supported by the
-        // host!
-        if(platform && localSettings.platforms.indexOf(platform) < 0)
-            return Q.reject('platform not available in project!');
+        if(!isAvailableOnHost(platform)) return Q.reject('platform not available in host!');
+        if(platform && localSettings.platforms.indexOf(platform) < 0) return Q.reject('platform not available in project!');
         return cordovaClean(platform ? [platform] : localSettings.platforms, verbose);
     });
 };
