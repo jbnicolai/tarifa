@@ -18,6 +18,7 @@ var tasks = {
     wp8: {
         'pre-cordova-prepare-release': [],
         'pre-cordova-prepare' : [
+            'wp8/clean',
             'shared/populate_config_xml',
             'shared/copy_icons',
             'shared/copy_splashscreens',
