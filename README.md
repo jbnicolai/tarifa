@@ -31,6 +31,7 @@ Commands:
     run            Run the project for a given platform and configuration on your device
     info           Get information about the current project
     config         Configure the current project
+    check          Check the current project after cloning
     clean          Clean the given platform
 
 Options:
