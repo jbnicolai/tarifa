@@ -92,6 +92,8 @@ module.exports = function (argv) {
             else {
                 console.log(chalk.green('connected Android devices:\n\t') +  devices.join('\n\t'));
             }
+        }).then(devices.wp8).then(function (devices) {
+            console.log(chalk.green('connected wp devices:\n\t') +  devices.join('\n\t'));
         });
     });
     // check installed xcode version if available
