@@ -6,6 +6,7 @@ var Q = require('q'),
     argsHelper = require('../../lib/args'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
+    isAvailableOnHost = require('../../lib/platforms').isAvailableOnHost,
     path = require('path'),
     fs = require('fs'),
     buildAction = require('../build'),
@@ -21,26 +22,28 @@ var run = function (platform, config, verbose) {
 
     spinner();
 
-    return tarifaFile.parseConfig(tarifaFilePath, platform, config).then(function (localSettings) {
-        return buildAction.build(platform, config, verbose).then(function (msg) {
-            switch(platform) {
-                case 'android':
-                    return askDevice('android')
-                        .then(function (device) { return installAndroidApp(localSettings, config, device.value, verbose); })
-                        .then(function (device) { return openAndroidApp(localSettings, config, device.value, verbose); });
-                case 'ios':
-                    return askDevice('ios')
-                        .then(function(device) { return installiOSApp(localSettings, config, device.value, verbose); });
-                case 'web':
-                    opener(path.join(settings.project_output, 'index.html'));
-                    return Q.resolve();
-                case 'wp8':
-                    return askDevice('wp8').then(function (device) { return installWP8App(device.index, verbose); });
-                default:
-                     return Q.reject('platform unknown!');
-            }
+    return tarifaFile.parseConfig(tarifaFilePath, platform, config)
+        .then(function () { return isAvailableOnHost(platform); })
+        .then(function (localSettings) {
+            return buildAction.build(platform, config, verbose).then(function (msg) {
+                switch(platform) {
+                    case 'android':
+                        return askDevice('android')
+                            .then(function (device) { return installAndroidApp(localSettings, config, device.value, verbose); })
+                            .then(function (device) { return openAndroidApp(localSettings, config, device.value, verbose); });
+                    case 'ios':
+                        return askDevice('ios')
+                            .then(function(device) { return installiOSApp(localSettings, config, device.value, verbose); });
+                    case 'web':
+                        opener(path.join(settings.project_output, 'index.html'));
+                        return Q.resolve();
+                    case 'wp8':
+                        return askDevice('wp8').then(function (device) { return installWP8App(device.index, verbose); });
+                    default:
+                         return Q.reject('platform unknown!');
+                }
+            });
         });
-    });
 };
 
 var action = function (argv) {
