@@ -13,7 +13,10 @@ module.exports = function (platform) {
             message:'Which device do you want to use?'
         };
         inquirer.prompt([question], function (response) {
-            defer.resolve(response.device);
+            defer.resolve({
+                value: response.device,
+                index : items.indexOf(response.device)
+            });
         });
     });
 

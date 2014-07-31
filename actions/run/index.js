@@ -12,6 +12,7 @@ var Q = require('q'),
     installAndroidApp = require('./tasks/android/install'),
     openAndroidApp = require('./tasks/android/open'),
     installiOSApp = require('./tasks/ios/install'),
+    installWP8App = require('./tasks/wp8/install'),
     askDevice = require('./ask_device');
 
 var run = function (platform, config, verbose) {
@@ -25,17 +26,16 @@ var run = function (platform, config, verbose) {
             switch(platform) {
                 case 'android':
                     return askDevice('android')
-                        .then(function (device) { return installAndroidApp(localSettings, config, device, verbose); })
-                        .then(function (device) { return openAndroidApp(localSettings, config, device, verbose); });
+                        .then(function (device) { return installAndroidApp(localSettings, config, device.value, verbose); })
+                        .then(function (device) { return openAndroidApp(localSettings, config, device.value, verbose); });
                 case 'ios':
                     return askDevice('ios')
-                        .then(function(device) { return installiOSApp(localSettings, config, device, verbose); });
+                        .then(function(device) { return installiOSApp(localSettings, config, device.value, verbose); });
                 case 'web':
                     opener(path.join(settings.project_output, 'index.html'));
                     return Q.resolve();
                 case 'wp8':
-                    console.log("work in progress");
-                    return Q.resolve();
+                    return askDevice('wp8').then(function (device) { return installWP8App(device.index, verbose); });
                 default:
                      return Q.reject('platform unknown!');
             }
