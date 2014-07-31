@@ -19,7 +19,10 @@ module.exports.generateIcons = function (args, verbose) {
     if(!validColor(color)) return Q.reject('invalid color!');
 
     return tarifaFile.parseConfig(path.join(cwd, 'tarifa.json')).then(function (localSettings) {
-        return Q.all(createFolders(cwd, localSettings.platforms, config)).then(function () {
+        var platforms = localSettings.platforms.filter(function (platform) {
+            return platform !== 'web';
+        }); 
+        return Q.all(createFolders(cwd, platforms, config)).then(function () {
             return generateIcons(color, cwd, localSettings.platforms, config, verbose);
         });
     });
