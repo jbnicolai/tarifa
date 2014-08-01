@@ -150,6 +150,10 @@ var setMode = function (platform, config, localSettings) {
     if(platform === 'ios' && localConf.apple_developer_identity && localConf.provisioning_profile_name) {
         mode = '--release'
     }
+    if(platform === 'wp8' && localConf.release_mode) {
+        mode = '--release'
+    }
+    
     return mode;
 };
 
