@@ -42,7 +42,8 @@
     "rimraf": "^2.2.8",
     "tmp": "0.0.23",
     "valid-java-identifier": "0.0.1",
-    "xcode": "^0.6.7"
+    "xcode": "^0.6.7",
+    "uuid": "^1.4.1"
   },
   "optionalDependencies": {
     "ios-deploy": "^1.0.8",
