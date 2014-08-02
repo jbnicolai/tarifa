@@ -31,7 +31,7 @@ var tasks = {
         ],
         'post-cordova-compile' : [
             'shared/reset_cordova_id',
-            'wp8/run_xap_sign_tool' //TODO (just in adhoc release mode)
+            'wp8/run_xap_sign_tool'
         ]
     },
     ios: {
@@ -153,7 +153,7 @@ var setMode = function (platform, config, localSettings) {
     if(platform === 'wp8' && localConf.release_mode) {
         mode = '--release'
     }
-    
+
     return mode;
 };
 
