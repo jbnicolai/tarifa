@@ -1,19 +1,19 @@
 var Q = require('q'),
     spinner = require("char-spinner"),
     cordova = require('cordova'),
-    opener = require("opener"),
     exec = require('child_process').exec,
+    path = require('path'),
+    fs = require('fs'),
     argsHelper = require('../../lib/args'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
     isAvailableOnHost = require('../../lib/platforms').isAvailableOnHost,
-    path = require('path'),
-    fs = require('fs'),
     buildAction = require('../build'),
     installAndroidApp = require('./tasks/android/install'),
     openAndroidApp = require('./tasks/android/open'),
     installiOSApp = require('./tasks/ios/install'),
     installWP8App = require('./tasks/wp8/install'),
+    openWebApp = require('./tasks/web/open'),
     askDevice = require('./ask_device');
 
 var run = function (platform, config, verbose) {
@@ -35,8 +35,7 @@ var run = function (platform, config, verbose) {
                         return askDevice('ios')
                             .then(function(device) { return installiOSApp(localSettings, config, device.value, verbose); });
                     case 'web':
-                        opener(path.join(settings.project_output, 'index.html'));
-                        return Q.resolve();
+                        return openWebApp(localSettings, config, verbose);
                     case 'wp8':
                         return askDevice('wp8').then(function (device) { return installWP8App(device.index, verbose); });
                     default:
