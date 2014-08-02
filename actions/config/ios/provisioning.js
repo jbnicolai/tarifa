@@ -7,7 +7,7 @@ var Q = require('q'),
     fs = require('fs'),
     tmp = require('tmp'),
     tarifaFile = require('../../../lib/tarifa-file'),
-    provisionFileParse = require('../../../lib/parse-mobileprovision'),
+    provisionFileParse = require('../../../lib/ios/parse-mobileprovision'),
     askPassword = require('./ask_password');
 
 function getProvisioningProfileList(user, team, password, verbose) {

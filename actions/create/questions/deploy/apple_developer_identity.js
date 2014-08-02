@@ -2,7 +2,7 @@ var Q = require('q'),
     chalk = require('chalk'),
     exec = require('child_process').exec,
     settings = require('../../../../lib/settings'),
-    getAppleDeveloperIdentities = require('../../../../lib/apple_developer_identity');
+    getAppleDeveloperIdentities = require('../../../../lib/ios/apple_developer_identity');
 
 var question = function (response, verbose) {
     return getAppleDeveloperIdentities(verbose).then(function (identities) {
