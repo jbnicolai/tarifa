@@ -3,19 +3,37 @@ tarifa [![experimental](http://hughsk.github.io/stability-badges/dist/experiment
 
 Your friendly mobile app development toolchain on top of Cordova
 
-
 ### Requirements
 
+#### Mac OS X
 * [Android SDK](http://developer.android.com/)
 * [iOS SDK](http://developer.apple.com/)
 * [nomad cli: cupertino](https://github.com/nomad/cupertino)
 * [ImageMagick](http://www.imagemagick.org/)
 
+#### win32
+* [Android SDK](http://developer.android.com/)
+* [ImageMagick](http://www.imagemagick.org/)
+* a Working Windows Phone development environment
+
+#### Linux (not tested right now)
+* [Android SDK](http://developer.android.com/)
+* [ImageMagick](http://www.imagemagick.org/)
+
+### Current supported platforms
+
+* ios
+* android
+* windows phone
+
 ### Install
 
 ```
-npm install tarifa
+npm install tarifa -g
 ```
+
+Some optional dependencies should failed depending on your os
+(like, cordova-deploy-windows-phone fails to install on linux or mac os x).
 
 ### Usage
 
