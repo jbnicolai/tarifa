@@ -5,7 +5,7 @@ var Q = require('q'),
     cordova = require('cordova'),
     fs = require('fs'),
     path = require('path'),
-    argsHelper = require('../../lib/args'),
+    argsHelper = require('../../lib/helper/args'),
 
     mainQuestions = [
         require('./questions/path'),

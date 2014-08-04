@@ -1,7 +1,7 @@
 var Q = require('q'),
     chalk = require('chalk'),
     cordova = require('cordova'),
-    argsHelper = require('../../lib/args'),
+    argsHelper = require('../../lib/helper/args'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
     path = require('path'),

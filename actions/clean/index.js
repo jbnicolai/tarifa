@@ -1,6 +1,6 @@
 var Q = require('q'),
     spinner = require("char-spinner"),
-    argsHelper = require('../../lib/args'),
+    argsHelper = require('../../lib/helper/args'),
     tarifaFile = require('../../lib/tarifa-file'),
     isAvailableOnHost = require('../../lib/cordova/platforms').isAvailableOnHost,
     cordovaClean = require('../../lib/cordova/clean'),

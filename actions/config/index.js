@@ -1,7 +1,7 @@
 var Q = require('q'),
     fs = require('fs'),
     path = require('path'),
-    argsHelper = require('../../lib/args'),
+    argsHelper = require('../../lib/helper/args'),
     devices = require('./ios/devices'),
     assets = require('./assets'),
     provisioning = require('./ios/provisioning');

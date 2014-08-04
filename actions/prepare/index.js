@@ -1,7 +1,7 @@
 var Q = require('q'),
     chalk = require('chalk'),
     rimraf = require('rimraf'),
-    argsHelper = require('../../lib/args'),
+    argsHelper = require('../../lib/helper/args'),
     tarifaFile = require('../../lib/tarifa-file'),
     settings = require('../../lib/settings'),
     path = require('path'),
