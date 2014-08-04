@@ -3,18 +3,18 @@ var Q = require('q'),
     exec = require('child_process').exec,
     path = require('path');
 
-module.exports = function (deviceIndex, verbose) {
+module.exports = function (device, verbose) {
     var defer = Q.defer();
     var app_path = path.join('app','platforms','wp8');
     var bin = path.join(__dirname, '..', '..', '..', '..', 'node_modules', 'cordova-deploy-windows-phone', 'CordovaDeploy', 'bin', 'Release','CordovaDeploy.exe');
-    var cmd = bin + ' ' +  app_path + ' -d:' + deviceIndex;
+    var cmd = bin + ' ' +  app_path + ' -d:' + device.index;
     var options = {
         timeout : 0,
         maxBuffer: 1024 * 400
     };
 
     if(verbose)
-        console.log(chalk.green('✔') + ' start wp app install and run to device: ' + deviceIndex);
+        console.log(chalk.green('✔') + ' start wp app install and run to device: ' + device.index);
 
     var child = exec(cmd, options, function (err, stdout, stderr) {
         if(err) {

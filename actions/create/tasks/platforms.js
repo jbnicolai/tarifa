@@ -2,7 +2,7 @@
  * add cordova platforms task
  */
 
-var platformsLib = require('../../../lib/platforms');
+var platformsLib = require('../../../lib/cordova/platforms');
 
 module.exports = function (response) {
     var platforms = response.platforms.filter(function (platform) { return platform != 'web'; });

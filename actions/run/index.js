@@ -7,7 +7,7 @@ var Q = require('q'),
     argsHelper = require('../../lib/args'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
-    isAvailableOnHost = require('../../lib/platforms').isAvailableOnHost,
+    isAvailableOnHost = require('../../lib/cordova/platforms').isAvailableOnHost,
     buildAction = require('../build'),
     installAndroidApp = require('./tasks/android/install'),
     openAndroidApp = require('./tasks/android/open'),
@@ -23,21 +23,24 @@ var run = function (platform, config, verbose) {
     spinner();
 
     return tarifaFile.parseConfig(tarifaFilePath, platform, config)
-        .then(function () { return isAvailableOnHost(platform); })
         .then(function (localSettings) {
+            return isAvailableOnHost(platform).then(function () {
+                return localSettings;
+            });
+        }).then(function (localSettings) {
             return buildAction.build(platform, config, verbose).then(function (msg) {
                 switch(platform) {
                     case 'android':
                         return askDevice('android')
-                            .then(function (device) { return installAndroidApp(localSettings, config, device.value, verbose); })
-                            .then(function (device) { return openAndroidApp(localSettings, config, device.value, verbose); });
+                            .then(function (device) { return installAndroidApp(localSettings, config, device, verbose); })
+                            .then(function (device) { return openAndroidApp(localSettings, config, device, verbose); });
                     case 'ios':
                         return askDevice('ios')
-                            .then(function(device) { return installiOSApp(localSettings, config, device.value, verbose); });
+                            .then(function(device) { return installiOSApp(localSettings, config, device, verbose); });
                     case 'web':
                         return openWebApp(localSettings, config, verbose);
                     case 'wp8':
-                        return askDevice('wp8').then(function (device) { return installWP8App(device.index, verbose); });
+                        return askDevice('wp8').then(function (device) { return installWP8App(device, verbose); });
                     default:
                          return Q.reject('platform unknown!');
                 }

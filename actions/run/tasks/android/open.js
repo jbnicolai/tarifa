@@ -9,7 +9,7 @@ module.exports = function (localSettings, config, device, verbose) {
     var name = inferJavaClassNameFromProductName(localSettings.configurations['android'][config].product_name);
     var activity = localSettings.configurations['android'][config].id + '.' + name;
     var cmd = settings.external.adb.name
-        + ' -s ' + device
+        + ' -s ' + device.value
         + ' shell am start '
         + localSettings.configurations['android'][config].id
         + '/'+ activity;

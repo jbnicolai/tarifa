@@ -3,12 +3,12 @@ var Q = require('q'),
     exec = require('child_process').exec,
     path = require('path');
 
-module.exports = function (localSettings, config, uuid, verbose) {
+module.exports = function (localSettings, config, device, verbose) {
     var defer = Q.defer();
     var product_name = localSettings.configurations['ios'][config].product_name;
     var app_path = path.join('app/platforms/ios/build/device', product_name.replace(/ /g, '\\ ') + '.app');
     var bin = path.join(__dirname, '..', '..', '..', '..', 'node_modules', 'ios-deploy', 'ios-deploy');
-    var cmd = bin + ' -r -I -i ' + uuid + ' -b ' + app_path + ' --verbose';
+    var cmd = bin + ' -r -I -i ' + device.value + ' -b ' + app_path + ' --verbose';
     var options = {
         // don't kill the ios-deploy process
         timeout : 0,
@@ -16,7 +16,7 @@ module.exports = function (localSettings, config, uuid, verbose) {
     };
 
     if(verbose)
-        console.log(chalk.green('✔') + ' start ios app install to device: ' + uuid);
+        console.log(chalk.green('✔') + ' start ios app install to device: ' + device.value);
 
     var child = exec(cmd, options, function (err, stdout, stderr) {
         if(err) {
