@@ -45,6 +45,7 @@ Commands:
     create         Create a tarifa project
     prepare        Prepare the www project with a given platform and configuration
     platform       Manage current project platforms
+    plugin         Add, remove or list cordova plugins in your project
     build          Build the project for a given platform and configuration
     run            Run the project for a given platform and configuration on your device
     info           Get information about the current project
