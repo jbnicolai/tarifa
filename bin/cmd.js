@@ -6,6 +6,7 @@ var argv = process.argv.slice(2),
     path = require('path'),
     args = require('minimist')(argv),
     pkg = require('../package.json'),
+    print = require('../lib/helper/print'),
     argsHelper = require('../lib/helper/args'),
     create = require('../actions/create'),
     platform = require('../actions/platform'),
@@ -36,13 +37,13 @@ var availableActions = [
     ];
 
 function printHelp(errMessage) {
-    if(errMessage) console.log(errMessage);
-    console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
+    if(errMessage) print(errMessage);
+    print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
     process.exit(0);
 }
 
 function printVersion() {
-    console.log(pkg.version);
+    print(pkg.version);
     process.exit(0);
 }
 
@@ -52,12 +53,12 @@ function matchAction(arg) {
 
 function actionSuccess(val) {
     var t = (new Date()).getTime();
-    console.log(chalk.magenta('done in ~ ' + Math.floor((t-t0)/1000) + 's'));
+    print(chalk.magenta('done in ~ %ds'), Math.floor((t-t0)/1000));
 }
 
 function actionError(name) {
     return function (err) {
-        console.log(chalk.red(err));
+        print(chalk.red(err));
     };
 }
 
