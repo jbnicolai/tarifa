@@ -22,7 +22,12 @@
     "tarifa": "bin/cmd.js"
   },
   "license": "Apache version 2.0",
-  "main": "lib/tarifa.js",
+  "contributors": [
+    {
+      "name": "Vincent Velociter",
+      "email": "vincent.velociter@gmail.com"
+    }
+  ],
   "homepage": "https://github.com/peutetre/tarifa",
   "dependencies": {
     "browserify": "^4.1.10",
