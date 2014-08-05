@@ -1,7 +1,7 @@
 var Q = require('q'),
-    chalk = require('chalk'),
     path = require('path'),
     settings = require('../../../../lib/settings'),
+    print = require('../../../../lib/helper/print'),
     setId = require('../../../../lib/cordova/config').id;
 
 module.exports = function (msg) {
@@ -10,7 +10,7 @@ module.exports = function (msg) {
 
     return setId(config_xml_path, id).then(function () {
         if(msg.verbose)
-            console.log(chalk.green('✔') + ' set cordova id to ' + id);
+            print.success('set cordova id to %s', id);
         return msg;
     });
 };

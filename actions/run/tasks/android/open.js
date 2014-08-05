@@ -1,6 +1,6 @@
 var Q = require('q'),
     exec = require('child_process').exec,
-    chalk = require('chalk'),
+    print = require('../../../../lib/helper/print'),
     inferJavaClassNameFromProductName = require('../../../../lib/android/infer-classname'),
     settings = require('../../../../lib/settings');
 
@@ -20,14 +20,14 @@ module.exports = function (localSettings, config, device, verbose) {
     };
 
     if(verbose)
-        console.log(chalk.green('✔') + ' trying to open android app with activity ' + activity);
+        print.success('trying to open android app with activity %s', activity);
 
     exec(cmd, options, function (err, stdout, stderr) {
-        if(verbose && !! err && stdout) console.log('adb output ' + stdout);
+        if(verbose && !! err && stdout) print('adb output %s', stdout);
         if(err) {
             if(verbose) {
-                console.log(chalk.red('command: ' + cmd));
-                console.log('adb stderr ' + stderr);
+                print.error('command: %s', cmd);
+                print.error('adb stderr %s', stderr);
             }
             return defer.reject('adb ' + err);
         }

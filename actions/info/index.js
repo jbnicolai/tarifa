@@ -7,6 +7,7 @@ var Q = require('q'),
     argsHelper = require('../../lib/helper/args'),
     devices = require('../../lib/devices'),
     settings = require('../../lib/settings'),
+    print = require('../../lib/helper/print'),
     pkg = require('../../package.json');
 
 function getToolVersion(name, tool, verbose) {
@@ -47,11 +48,11 @@ function check_tools(verbose) {
     return Q.allSettled(rslts).then(function (results) {
         results.forEach(function (result) {
             if (result.state === "fulfilled") {
-                console.log(chalk.green(result.value.name + ' version: ') + result.value.version);
+                print("%s %s %s", chalk.green(result.value.name), chalk.green('version:'), result.value.version);
             } else {
                 ok = false;
-                console.log(chalk.cyan(result.reason.split(' ')[0] + ' not found!'));
-                if (verbose) console.log('\tReason: ' + chalk.cyan(result.reason));
+                print(chalk.cyan('%s not found!'), result.reason.split(' ')[0]);
+                if (verbose) print('\tReason: %s', chalk.cyan(result.reason));
             }
         });
         return Q.resolve(ok);
@@ -68,32 +69,32 @@ module.exports = function (argv) {
     if(argsHelper.matchSingleOptions(argv, 'V', 'verbose')) {
         verbose = true;
     } else if(argv._.length != 0 || usage) {
-        console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
+        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
         return Q.resolve();
     }
 
-    console.log(chalk.green('node version: ') + process.versions.node);
-    console.log(chalk.green('cordova version: ') + pkg.dependencies.cordova);
+    print("%s %s", chalk.green('node version:'), process.versions.node);
+    print("%s %s", chalk.green('cordova version:'), pkg.dependencies.cordova);
 
     return check_tools(verbose).then(function (ok) {
         if(!ok) return Q.reject("not all needed tools are available, first install them!");
         return devices.ios().then(function (devices) {
-            console.log(chalk.green('connected iOS devices:\n\t') +  devices.join('\n\t'));
+            print("%s\n\t%s", chalk.green('connected iOS devices:'), devices.join('\n\t'));
         }).then(function () {
             if(verbose) return devices.androidVerbose();
             else return devices.android();
         }).then(function (devices) {
             if(verbose) {
-                console.log(chalk.green('connected Android devices:'));
+                print(chalk.green('connected Android devices:'));
                 devices.forEach(function (device) {
-                    console.log('\t' + device.join(' '));
+                    print('\t%s', device.join(' '));
                 });
             }
             else {
-                console.log(chalk.green('connected Android devices:\n\t') +  devices.join('\n\t'));
+                print("%s\n\t%s", chalk.green('connected Android devices:'), devices.join('\n\t'));
             }
         }).then(devices.wp8).then(function (devices) {
-            console.log(chalk.green('available wp devices:\n\t') +  devices.join('\n\t'));
+            print("%s\n\t%s", chalk.green('available wp devices:'), devices.join('\n\t'));
         });
     });
     // check installed xcode version if available

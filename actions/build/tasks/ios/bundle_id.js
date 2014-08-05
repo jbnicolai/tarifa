@@ -1,8 +1,8 @@
 var Q = require('q'),
-    chalk = require('chalk'),
     path = require('path'),
     fs = require('fs'),
     plist = require('plist'),
+    print = require('../../../../lib/helper/print'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
@@ -15,6 +15,6 @@ module.exports = function (msg) {
     plistObj.CFBundleIdentifier = id;
     fs.writeFileSync(plistPath, plist.build(plistObj).toString());
     if(msg.verbose)
-            console.log(chalk.green('✔') + ' bundleId set to ' + id);
+            print.success('bundleId set to %s', id);
     return Q.resolve(msg);
 };

@@ -6,6 +6,7 @@ var Q = require('q'),
     path = require('path'),
     fs = require('fs'),
     tarifaFile = require('../../../lib/tarifa-file'),
+    print = require('../../../lib/helper/print'),
     parseProvisionFile = require('../../../lib/ios/parse-mobileprovision'),
     downloadProvisioningProfile = require('./provisioning').downloadProvisioningProfile,
     askDeviceName = require('./ask_device_name'),
@@ -23,7 +24,7 @@ function getDevices(user, team, password, verbose) {
     exec(cmd, options, function (err, stdout, stderr) {
         if(err) {
             if(verbose) {
-                console.log(chalk.red('command: ' + cmd));
+                print.error('command: %s', cmd);
             }
             defer.reject('ios stderr ' + err);
             return;
@@ -65,7 +66,7 @@ function listAction(verbose) {
 }
 
 function usage(msg) {
-    console.log(fs.readFileSync(path.join(__dirname , '..', 'usage.txt'), 'utf-8'));
+    print(fs.readFileSync(path.join(__dirname , '..', 'usage.txt'), 'utf-8'));
     return Q.reject(msg);
 }
 
@@ -97,11 +98,11 @@ function listDeviceInProvisioningWithInfo(config, verbose) {
 
 function printDevices(title, msg) {
     return function (devices) {
-        if(title) console.log(chalk.cyan(title));
+        if(title) print(chalk.cyan(title));
         if (devices.length) {
-            if(msg) console.log(msg);
+            if(msg) print(msg);
             devices.forEach(function (device) {
-                console.log(
+                print(
                     "%s %s enabled: %s",
                     chalk.cyan(device.name),
                     chalk.yellow(device.uuid),
@@ -142,7 +143,7 @@ function addDevice(user, team, password, name, uuid, verbose) {
     exec(cmd, options, function (err, stdout, stderr) {
         if(err) {
             if(verbose) {
-                console.log(chalk.red('command: ' + cmd));
+                print.error('command: %s', cmd);
             }
             defer.reject('ios stderr ' + err);
             return;
@@ -172,7 +173,7 @@ function add(args, verbose) {
                     name,
                     uuid,
                     verbose
-                ).then(function (output) { if(verbose) console.log(output); });
+                ).then(function (output) { if(verbose) print(output); });
             });
         });
 }
@@ -192,14 +193,14 @@ function addDeviceToProvisioningProfile(user, team, password, uuid, profile_path
         exec(cmd, options, function (err, stdout, stderr) {
             if(err) {
                 if(verbose) {
-                    console.log(chalk.red('command: ' + cmd));
+                    print.error('command: %s', cmd);
                 }
                 defer.reject('ios stderr ' + err);
                 return;
             }
 
             var output = stdout.toString().split('\n');
-            if(verbose) console.log(output.toString());
+            if(verbose) print(output.toString());
             defer.resolve(output.toString());
         });
 
@@ -225,14 +226,14 @@ function removeDeviceToProvisioningProfile(user, team, password, uuid, profile_p
         exec(cmd, options, function (err, stdout, stderr) {
             if(err) {
                 if(verbose) {
-                    console.log(chalk.red('command: ' + cmd));
+                    print.error('command: %s', cmd);
                 }
                 defer.reject('ios stderr ' + err);
                 return;
             }
 
             var output = stdout.toString().split('\n');
-            if(verbose) console.log(output.toString());
+            if(verbose) print(output.toString());
             defer.resolve(output.toString());
         });
 
@@ -262,7 +263,7 @@ function attach(args, verbose) {
                     });
 
                     if(rslt.length) {
-                        if(verbose) console.log('device already in developer center');
+                        if(verbose) print('device already in developer center');
                         return addDeviceToProvisioningProfile(
                                 localSettings.deploy.apple_id,
                                 localSettings.deploy.apple_developer_team,
@@ -283,7 +284,7 @@ function attach(args, verbose) {
                         });
                     }
                     else {
-                        if(verbose) console.log('device not in developer center');
+                        if(verbose) print('device not in developer center');
                         return askDeviceName().then(function (name) {
                             return addDevice(
                                 localSettings.deploy.apple_id,
@@ -298,7 +299,7 @@ function attach(args, verbose) {
                                     uuid:uuid,
                                     enabled:true
                                 });
-                                if(verbose) console.log(output);
+                                if(verbose) print(output);
                             });
                         }).then(function () {
                             return addDeviceToProvisioningProfile(

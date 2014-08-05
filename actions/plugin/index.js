@@ -54,14 +54,14 @@ function action (argv) {
         }).length === 1;
 
     if(argsHelper.matchSingleOptions(argv, 'h', 'help')) {
-        console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
+        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
         return Q.resolve();
     }
 
     if(argsHelper.matchSingleOptions(argv, 'V', 'verbose')) {
         verbose = true;
     } else if(argv._.length != 1 && argv._.length != 2) {
-        console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
+        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
         return Q.resolve();
     }
 

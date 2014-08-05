@@ -6,6 +6,7 @@ var Q = require('q'),
     path = require('path'),
     fs = require('fs'),
     tmp = require('tmp'),
+    print = require('../../../lib/helper/print'),
     tarifaFile = require('../../../lib/tarifa-file'),
     provisionFileParse = require('../../../lib/ios/parse-mobileprovision'),
     askPassword = require('./ask_password');
@@ -22,7 +23,7 @@ function getProvisioningProfileList(user, team, password, verbose) {
     exec(cmd, options, function (err, stdout, stderr) {
         if(err) {
             if(verbose) {
-                console.log(chalk.red('command: ' + cmd));
+                print.error('command: %s', cmd);
             }
             defer.reject('ios stderr ' + err);
             return;
@@ -60,16 +61,16 @@ function list(verbose) {
 }
 
 function usage(msg) {
-    console.log(fs.readFileSync(path.join(__dirname , '..', 'usage.txt'), 'utf-8'));
+    print(fs.readFileSync(path.join(__dirname , '..', 'usage.txt'), 'utf-8'));
     return Q.reject(msg);
 }
 
 function printList(args, verbose) {
     if(args.length !== 1 && args[0] !== 'list') return usage("Wrong arguments!");
     else return list(verbose).then(function (items) {
-        console.log(chalk.underline("\nActive provisioning profiles:"));
+        print(chalk.underline("\nActive provisioning profiles:"));
         items.forEach(function (item) {
-            console.log("appid: %s name: %s ", chalk.yellow(item[1]), chalk.cyan(item[0]));
+            print("appid: %s name: %s ", chalk.yellow(item[1]), chalk.cyan(item[0]));
         });
     });
 }
@@ -89,19 +90,19 @@ function downloadProvisioningProfile(user, team, password, name, profile_path, v
         }, function (err, stdout, stderr) {
             if(err) {
                 if(verbose) {
-                    console.log(chalk.red('command: ' + cmd));
+                    print.error('command: %s', cmd);
                 }
                 defer.reject('ios stderr ' + err);
                 return;
             }
-            if (verbose) console.log('try to copy provision');
+            if (verbose) print('try to copy provision');
             ncp.limit = 1;
             ncp(path.join(tmppath, name.replace(/-/g,'')+'.mobileprovision'), profile_path, function (err) {
                 if (err) return defer.reject(err);
                 if (verbose)
-                    console.log(chalk.green('✔') + ' provisioning profile fetched');
+                    print.success('provisioning profile fetched');
                 var output = stdout.toString();
-                if (verbose) console.log(output);
+                if (verbose) print(output);
                 defer.resolve(output);
             });
         });

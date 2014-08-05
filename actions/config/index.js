@@ -4,6 +4,7 @@ var Q = require('q'),
     argsHelper = require('../../lib/helper/args'),
     devices = require('./ios/devices'),
     assets = require('./assets'),
+    print = require('../../lib/helper/print'),
     provisioning = require('./ios/provisioning');
 
 var cmds = {
@@ -25,7 +26,7 @@ var cmds = {
 };
 
 var usage = function () {
-    console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
+    print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
 };
 
 var config = function (args, verbose) {

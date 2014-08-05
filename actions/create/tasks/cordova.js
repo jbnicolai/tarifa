@@ -5,7 +5,7 @@
 var path = require('path'),
     cordova = require('cordova'),
     Q = require('q'),
-    chalk = require('chalk'),
+    print = require('../../../lib/helper/print'),
     settings = require('../../../lib/settings'),
     // setting an empty folder as the default www template
     cfg = {
@@ -28,7 +28,7 @@ module.exports = function (response) {
             defer.reject(err);
             return;
         }
-        if (response.options.verbose) console.log(chalk.green('✔') + ' cordova raw app created here ' + cordova_path);
+        if (response.options.verbose) print.success('cordova raw app created here %s', cordova_path);
         defer.resolve(response);
     });
 

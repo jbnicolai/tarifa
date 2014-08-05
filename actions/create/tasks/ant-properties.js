@@ -5,6 +5,7 @@
 var path = require('path'),
     Q = require('q'),
     chalk = require('chalk'),
+    print = require('../../../lib/helper/print'),
     settings = require('../../../lib/settings');
 
 module.exports = function (response) {
@@ -15,7 +16,7 @@ module.exports = function (response) {
         content += 'key.store=' + response.keystore_path + '\n';
         content += 'key.alias=' + response.keystore_alias;
         fs.writeFileSync(path.join(cordova_path, 'platforms', 'android', 'ant.properties'), content, 'utf-8');
-        console.log(chalk.green('✔') + ' ant.properties created');
+        print.success('ant.properties created');
     }
 
     return Q.resolve(response);

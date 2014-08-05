@@ -1,7 +1,7 @@
 var Q = require('q'),
     chalk = require('chalk'),
-    path = require('path'),
     fs = require('q-io/fs'),
+    print = require('../../../../lib/helper/print'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
@@ -18,7 +18,7 @@ module.exports = function (msg) {
         return fs.read(csproj_path).then(function (xmlContent) {
             return fs.write(csproj_path, xmlContent.replace(/<XapFilename>.*<\/XapFilename>/, value)).then(function () {
                 if(msg.verbose)
-                    console.log(chalk.green('✔') + ' change generated XapFilename to ' + product_file_name);
+                    print.success('change generated XapFilename to %s', product_file_name);
                     return Q.resolve(msg);
             });
         });

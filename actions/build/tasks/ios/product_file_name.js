@@ -1,8 +1,8 @@
 var Q = require('q'),
-    chalk = require('chalk'),
     path = require('path'),
     fs = require('fs'),
     xcode = require('xcode'),
+    print = require('../../../../lib/helper/print'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
@@ -22,7 +22,7 @@ module.exports = function (msg) {
         fs.writeFileSync(pbxprojPath, project.writeSync());
 
         if(msg.verbose)
-            console.log(chalk.green('✔') + ' product name set to ' + name);
+            print.success('product name set to %s', name);
         defer.resolve(msg);
     });
 

@@ -34,6 +34,7 @@
     "chalk": "0.4.0",
     "char-spinner": "^1.0.1",
     "cordova": "3.4.1-0.1.0",
+    "figures": "^1.1.0",
     "findit": "^2.0.0",
     "inquirer": "0.5.1",
     "libxmljs": "^0.11.0",
@@ -46,9 +47,9 @@
     "q-io": "^1.11.3",
     "rimraf": "^2.2.8",
     "tmp": "0.0.23",
+    "uuid": "^1.4.1",
     "valid-java-identifier": "0.0.1",
-    "xcode": "^0.6.7",
-    "uuid": "^1.4.1"
+    "xcode": "^0.6.7"
   },
   "optionalDependencies": {
     "ios-deploy": "^1.0.8",

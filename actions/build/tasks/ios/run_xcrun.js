@@ -1,7 +1,7 @@
 var Q = require('q'),
     exec = require('child_process').exec,
-    chalk = require('chalk'),
     path = require('path'),
+    print = require('../../../../lib/helper/print'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
@@ -35,8 +35,8 @@ module.exports = function (msg) {
                 return;
             }
             if(msg.verbose)
-                console.log(stdout.toString());
-                console.log(chalk.green('✔') + '  run xcrun and produced the ipa: ' + output.toString());
+                print(stdout.toString());
+                print.success('run xcrun and produced the ipa: %s', output.toString());
             defer.resolve(msg);
         });
 

@@ -1,6 +1,7 @@
 var Q = require('q'),
     spinner = require("char-spinner"),
     argsHelper = require('../../lib/helper/args'),
+    print = require('../../lib/helper/print'),
     tarifaFile = require('../../lib/tarifa-file'),
     isAvailableOnHost = require('../../lib/cordova/platforms').isAvailableOnHost,
     cordovaClean = require('../../lib/cordova/clean'),
@@ -21,14 +22,14 @@ var clean = function (platform, verbose) {
 var action = function (argv) {
     var verbose = false;
     if(argsHelper.matchSingleOptions(argv, 'h', 'help')) {
-        console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
+        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
         return Q.resolve();
     }
 
     if(argsHelper.matchSingleOptions(argv, 'V', 'verbose')) {
         verbose = true;
     } else if(argv._.length > 1) {
-        console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
+        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
         return Q.resolve();
     }
 

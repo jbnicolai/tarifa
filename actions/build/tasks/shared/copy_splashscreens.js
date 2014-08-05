@@ -1,6 +1,6 @@
 var Q = require('q'),
-    chalk = require('chalk'),
     path = require('path'),
+    print = require('../../../../lib/helper/print'),
     copySplashscreens = require('../../../../lib/cordova/splashscreen').copySplashscreens;
 
 module.exports = function (msg) {
@@ -9,7 +9,7 @@ module.exports = function (msg) {
     return copySplashscreens(msg.platform, msg.config)
         .then(function () {
             if(msg.verbose)
-                console.log(chalk.green('✔') + ' copied splash screens for platform ' + msg.platform);
+                print.success('copied splash screens for platform %s', msg.platform);
             return msg;
         });
 };

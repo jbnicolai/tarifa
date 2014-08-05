@@ -1,8 +1,8 @@
 var Q = require('q'),
-	path = require('path'),
-	chalk = require('chalk'),
-	fs = require('q-io/fs'),
-	settings = require('../../../../lib/settings');
+    path = require('path'),
+    fs = require('q-io/fs'),
+    print = require('../../../../lib/helper/print'),
+    settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
     var cwd = process.cwd();
@@ -20,20 +20,20 @@ module.exports = function (msg) {
     var trademark = "AssemblyTrademark(\"" + author + "\")";
     var guid =  "Guid(\"" + guid + "\")";
     var version =  "AssemblyVersion(\"" + v + "\")";
-    
-    return fs.read(assemblyPath).then(function (assemblyContent) {
-    	var content = assemblyContent.replace(/AssemblyTitle\(.*\)/, title)
-    					.replace(/AssemblyCompany\(.*\)/, company)
-    					.replace(/AssemblyProduct\(.*\)/, product)
-    					.replace(/AssemblyCopyright\(.*\)/, copyright)
-    					.replace(/AssemblyTrademark\(.*\)/, trademark)
-    					.replace(/AssemblyVersion\(.*\)/, version)
-    					.replace(/Guid\(.*\)/, guid);
 
-    	return fs.write(assemblyPath, content);
+    return fs.read(assemblyPath).then(function (assemblyContent) {
+        var content = assemblyContent.replace(/AssemblyTitle\(.*\)/, title)
+                        .replace(/AssemblyCompany\(.*\)/, company)
+                        .replace(/AssemblyProduct\(.*\)/, product)
+                        .replace(/AssemblyCopyright\(.*\)/, copyright)
+                        .replace(/AssemblyTrademark\(.*\)/, trademark)
+                        .replace(/AssemblyVersion\(.*\)/, version)
+                        .replace(/Guid\(.*\)/, guid);
+
+        return fs.write(assemblyPath, content);
     }).then(function () {
-    	if(msg.verbose)
-            console.log(chalk.green('✔') + ' changed AssemblyInfo.cs');
-		return msg;
-	});
+        if(msg.verbose)
+            print.success('changed AssemblyInfo.cs');
+        return msg;
+    });
 };

@@ -1,6 +1,6 @@
 var Q = require('q'),
-    chalk = require('chalk'),
     path = require('path'),
+    print = require('../../../../lib/helper/print'),
     copyIcons = require('../../../../lib/cordova/icon').copyIcons;
 
 module.exports = function (msg) {
@@ -8,7 +8,7 @@ module.exports = function (msg) {
     return copyIcons(msg.platform, msg.config)
         .then(function () {
             if(msg.verbose)
-                console.log(chalk.green('✔') + ' copied icons for platform ' + msg.platform);
+                print.success('copied icons for platform %s', msg.platform);
             return msg;
         });
 };

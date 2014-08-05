@@ -1,8 +1,8 @@
 var Q = require('q'),
     libxmljs = require('libxmljs'),
-    chalk = require('chalk'),
     path = require('path'),
     fs = require('fs'),
+    print = require('../../../../lib/helper/print'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
@@ -14,6 +14,6 @@ module.exports = function (msg) {
     fs.writeFileSync(strings_xml_file_path, "<?xml version='1.0' encoding='utf-8'?>\n" + doc.root().toString());
 
     if(msg.verbose)
-        console.log(chalk.green('✔') + ' change product name to ' + app_label);
+        print.success('change product name to %s', app_label);
     return Q.resolve(msg);
 };

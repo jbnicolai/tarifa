@@ -6,6 +6,7 @@ var Q = require('q'),
     path = require('path'),
     settings = require('../../lib/settings'),
     tarifaPath = require('../../lib/helper/path'),
+    print = require('../../lib/helper/print'),
     platformsLib = require('../../lib/cordova/platforms'),
     copyDefaultIcons = require('../../lib/cordova/icon').copyDefault,
     createDefaultAssetsFolders = require('../../lib/cordova/assets').createFolders,
@@ -27,7 +28,7 @@ function rmAssets(platform, verbose) {
     var platformAssetsPath = path.join(process.cwd(), settings.images, platform);
     rimraf(platformAssetsPath, function (err) {
         if(err) defer.reject(err);
-        if(verbose) console.log(chalk.green('✔') + ' removed asset folder');
+        if(verbose) print.success('removed asset folder');
         defer.resolve();
     });
     return defer.promise;
@@ -81,14 +82,14 @@ function action (argv) {
         }).length === 1;
 
     if(argsHelper.matchSingleOptions(argv, 'h', 'help')) {
-        console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
+        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
         return Q.resolve();
     }
 
     if(argsHelper.matchSingleOptions(argv, 'V', 'verbose')) {
         verbose = true;
     } else if(argv._.length != 1 && argv._.length != 2) {
-        console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
+        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
         return Q.resolve();
     }
 

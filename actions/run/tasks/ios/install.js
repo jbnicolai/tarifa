@@ -1,5 +1,5 @@
 var Q = require('q'),
-    chalk = require('chalk'),
+    print = require('../../../../lib/helper/print'),
     exec = require('child_process').exec,
     path = require('path');
 
@@ -16,13 +16,13 @@ module.exports = function (localSettings, config, device, verbose) {
     };
 
     if(verbose)
-        console.log(chalk.green('✔') + ' start ios app install to device: ' + device.value);
+        print.success('start ios app install to device: %s', device.value);
 
     var child = exec(cmd, options, function (err, stdout, stderr) {
         if(err) {
             if(verbose) {
-                console.log(chalk.red('command: ' + cmd));
-                console.log('ios-deploy stderr ' + stderr);
+                print.error('command: %s', cmd);
+                print.error('ios-deploy stderr %s', stderr);
             }
             defer.reject('ios-deploy ' + err);
             return;

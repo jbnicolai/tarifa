@@ -2,6 +2,7 @@ var Q = require('q'),
     chalk = require('chalk'),
     rimraf = require('rimraf'),
     argsHelper = require('../../lib/helper/args'),
+    print = require('../../lib/helper/print'),
     tarifaFile = require('../../lib/tarifa-file'),
     settings = require('../../lib/settings'),
     path = require('path'),
@@ -20,10 +21,10 @@ var prepare = function (platform, config, verbose) {
             // link app www to project output
             rimraf(cordovaWWW, function (err) {
                 if(err) defer.reject(err);
-                if(verbose) console.log(chalk.green('✔') + ' prepare, rm cordova www link');
+                if(verbose) print.success('prepare, rm cordova www link');
                 fs.symlink(projectWWW, cordovaWWW, 'dir', function (err) {
                     if (err) { defer.reject(err); }
-                    if(verbose) console.log(chalk.green('✔') + ' prepare, link www project to cordova www');
+                    if(verbose) print.success('prepare, link www project to cordova www');
                     defer.resolve();
                 });
             });
@@ -34,7 +35,7 @@ var prepare = function (platform, config, verbose) {
         // get www project builder lib
         var builder = require(path.join(cwd, settings.build));
         return defer.promise.then(function () {
-            if(verbose) console.log(chalk.green('✔') + ' prepare, launch www project build');
+            if(verbose) print.success('prepare, launch www project build');
             // execute www project builder lib with the asked configuration
             return builder(platform, localSettings, config, verbose);
         });
@@ -44,14 +45,14 @@ var prepare = function (platform, config, verbose) {
 var action = function (argv) {
     var verbose = false;
     if(argsHelper.matchSingleOptions(argv, 'h', 'help')) {
-        console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
+        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
         return Q.resolve();
     }
 
     if(argsHelper.matchSingleOptions(argv, 'V', 'verbose')) {
         verbose = true;
     } else if(argv._.length != 1 && argv._.length != 2) {
-        console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
+        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
         return Q.resolve();
     }
 

@@ -1,6 +1,5 @@
 var path = require('path'),
     Q = require('q'),
-    chalk = require('chalk'),
     path = require('path'),
     downloadProvisioningProfile = require('../../config/ios/provisioning').downloadProvisioningProfile,
     settings = require('../../../lib/settings');

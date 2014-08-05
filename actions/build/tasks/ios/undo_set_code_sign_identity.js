@@ -1,7 +1,7 @@
 var Q = require('q'),
-    chalk = require('chalk'),
     path = require('path'),
     fs = require('fs'),
+    print = require('../../../../lib/helper/print'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
@@ -10,6 +10,6 @@ module.exports = function (msg) {
     var xcconfigPath = path.join(process.cwd(), settings.cordovaAppPath, 'platforms', 'ios', 'cordova', 'build.xcconfig');
     fs.writeFileSync(xcconfigPath, fs.readFileSync(xcconfigPath, 'utf-8').replace(/CODE_SIGN_IDENTITY = .*$/, newIdentity));
     if(msg.verbose)
-        console.log(chalk.green('✔') + ' change back apple developer identity to default identity: ' + identity);
+        print.success('change back apple developer identity to default identity: %s', identity);
     return Q.resolve(msg);
 };

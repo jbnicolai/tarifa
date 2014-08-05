@@ -6,6 +6,7 @@ var Q = require('q'),
     fs = require('fs'),
     path = require('path'),
     argsHelper = require('../../lib/helper/args'),
+    print = require('../../lib/helper/print'),
 
     mainQuestions = [
         require('./questions/path'),
@@ -51,7 +52,7 @@ function askQuestions(questions, type) {
                     if (verbose) {
                         var helpPath =  path.join(__dirname, 'help', type, q.name + '.txt');
                         if(fs.existsSync(helpPath))
-                            console.log(fs.readFileSync(helpPath, 'utf-8'));
+                            print(fs.readFileSync(helpPath, 'utf-8'));
                     }
                     inquirer.prompt([q], function (answer) {
                         value[q.name] = answer[q.name];
@@ -78,7 +79,7 @@ function askQuestions(questions, type) {
                         return question(val, val.options.verbose).then(function (qst) {
                             ask(qst, val, val.options.verbose);
                         }, function (err) {
-                            console.log(chalk.red(err));
+                            print.error(err);
                         });
                     }
                     else {
@@ -92,7 +93,7 @@ function askQuestions(questions, type) {
 }
 
 function printBanner() {
-    console.log(
+    print(
         chalk.bold(chalk.red('t')
         + chalk.green('a')
         + chalk.magenta('r')
@@ -106,14 +107,14 @@ function printBanner() {
 function create(argv) {
 
     if(argsHelper.matchSingleOptions(argv, 'h', 'help')) {
-        console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
+        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
         return Q.resolve();
     }
 
     if(argsHelper.matchSingleOptions(argv, 'V', 'verbose') && argv._.length < 1) {
         verbose = true;
     } else if(argv._.length >= 1) {
-        console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
+        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
         return Q.resolve();
     }
 
@@ -125,7 +126,7 @@ function create(argv) {
             else return resp;
         })
         .then(function (resp) {
-            console.log();
+            print();
             spinner();
             return tasks.reduce(function (val, task){ return Q.when(val, task); }, resp);
         });

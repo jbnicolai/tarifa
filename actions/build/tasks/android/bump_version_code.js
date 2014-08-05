@@ -1,8 +1,8 @@
 var Q = require('q'),
     libxmljs = require('libxmljs'),
-    chalk = require('chalk'),
     path = require('path'),
     fs = require('fs'),
+    print = require('../../../../lib/helper/print'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
@@ -13,7 +13,7 @@ module.exports = function (msg) {
         var doc = libxmljs.parseXml(fs.readFileSync(android_manifest_path));
         fs.writeFileSync(android_manifest_path, doc.root().attr('android:versionCode', version_code));
         if(msg.verbose)
-            console.log(chalk.green('✔') + ' change android versionCode to ' + version_code);
+            print.success('change android versionCode to %s', version_code);
     }
 
     return Q.resolve(msg);

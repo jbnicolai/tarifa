@@ -1,6 +1,6 @@
 var Q = require('q'),
-    chalk = require('chalk'),
     exec = require('child_process').exec,
+    print = require('../../../../lib/helper/print'),
     path = require('path');
 
 module.exports = function (device, verbose) {
@@ -14,13 +14,13 @@ module.exports = function (device, verbose) {
     };
 
     if(verbose)
-        console.log(chalk.green('✔') + ' start wp app install and run to device: ' + device.index);
+        print.success('start wp app install and run to device: %s');
 
     var child = exec(cmd, options, function (err, stdout, stderr) {
         if(err) {
             if(verbose) {
-                console.log(chalk.red('command: ' + cmd));
-                console.log('CordovaDeploy.exe stderr ' + stderr);
+                print.error('command: %s', cmd);
+                print.error('CordovaDeploy.exe stderr %s', stderr);
             }
             defer.reject('CordovaDeploy.exe ' + err);
             return;

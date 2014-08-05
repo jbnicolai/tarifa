@@ -4,12 +4,13 @@ var Q = require('q'),
     path = require('path'),
     chalk = require('chalk'),
     ncp = require('ncp').ncp,
+    print = require('../../../lib/helper/print'),
     tarifaFile = require('../../../lib/tarifa-file'),
     settings = require('../../../lib/settings');
 
 function log(response) {
     if (response.options.verbose)
-        console.log(chalk.green('✔') + ' project folders created ' + response.path);
+        print.success(' project folders created %s', response.path);
     return Q.resolve(response);
 }
 
@@ -18,7 +19,7 @@ function createOutputFolder(response) {
     fs.mkdir(path.join(response.path, settings.output_folder), function (err) {
         if(err) defer.reject(err);
         if (response.options.verbose)
-            console.log(chalk.green('✔') + ' output folder created ');
+            print.success('output folder created ');
         defer.resolve(response);
     });
 
@@ -38,7 +39,7 @@ function copyWWWProject(response) {
     ncp(source, destination, function (err) {
         if (err) return defer.reject(err);
         if (response.options.verbose)
-            console.log(chalk.green('✔') + ' copied template www project');
+            print.success('copied template www project');
         defer.resolve(response);
     });
 
@@ -57,11 +58,11 @@ function npm_install(response) {
             process.chdir(cwd);
             if (error !== null) {
                 defer.resolve(response);
-                console.log(chalk.red('npm install error in www project' + error));
+                print.error('npm install error in www project: %s', error);
                 return;
             }
             if (response.options.verbose)
-                console.log(chalk.green('✔') + ' npm install www project');
+                print.success('npm install www project');
             defer.resolve(response);
     });
     return defer.promise;

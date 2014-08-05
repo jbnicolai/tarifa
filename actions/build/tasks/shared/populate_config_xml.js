@@ -1,7 +1,7 @@
 var Q = require('q'),
     chalk = require('chalk'),
-    path = require('path'),
     settings = require('../../../../lib/settings'),
+    print = require('../../../../lib/helper/print'),
     config = require('../../../../lib/cordova/config').config;
 
 module.exports = function (msg) {
@@ -14,7 +14,7 @@ module.exports = function (msg) {
 
     return config(config_xml_path, version, author, description, preferences, accessOrigin).then(function () {
         if(msg.verbose)
-            console.log(chalk.green('✔') + ' populated config.xml');
+            print.success('populated config.xml');
         return msg;
     });
 };

@@ -1,7 +1,7 @@
 var Q = require('q'),
     exec = require('child_process').exec,
-    chalk = require('chalk'),
     path = require('path'),
+    print = require('../../../../lib/helper/print'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
@@ -26,8 +26,8 @@ module.exports = function (msg) {
                 return;
             }
             if(msg.verbose)
-                console.log(stdout.toString());
-                console.log(chalk.green('✔') + '  signed ' + product_file_name);
+                print(stdout.toString());
+                print.success('signed %s', product_file_name);
             defer.resolve(msg);
         });
 

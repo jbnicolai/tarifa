@@ -1,6 +1,6 @@
 var Q = require('q'),
-    chalk = require('chalk'),
     settings = require('../../../../lib/settings'),
+    print = require('../../../../lib/helper/print'),
     exec = require('child_process').exec,
     path = require('path');
 
@@ -16,13 +16,13 @@ module.exports = function (msg) {
     var child = exec(cmd, options, function (err, stdout, stderr) {
         if(err) {
             if(msg.verbose) {
-                console.log(chalk.red('command: ' + cmd));
-                console.log('android stderr ' + stderr);
+                print.error('command: %s', cmd);
+                print.error('android stderr %s', stderr);
             }
             defer.reject('android ' + err);
             return;
         }
-        console.log(chalk.green('✔') + ' updated android project!');
+        print.success('updated android project!');
         defer.resolve(msg);
     });
     if (msg.verbose) {

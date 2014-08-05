@@ -2,6 +2,7 @@ var Q = require('q'),
     chalk = require('chalk'),
     cordova = require('cordova'),
     argsHelper = require('../../lib/helper/args'),
+    print = require('../../lib/helper/print'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
     path = require('path'),
@@ -77,7 +78,7 @@ var prepare = function (platform, verbose) {
         var defer = Q.defer();
 
         process.chdir(path.join(cwd, settings.cordovaAppPath));
-        if(verbose) console.log(chalk.green('✔') + ' start cordova prepare');
+        if(verbose) print.success('start cordova prepare');
 
         cordova.prepare({
             verbose: verbose,
@@ -102,7 +103,7 @@ var compile = function (platform, mode, verbose) {
         if(platform === 'ios') options.push('--device');
 
         process.chdir(path.join(cwd, settings.cordovaAppPath));
-        if(verbose) console.log(chalk.green('✔') + ' start cordova build');
+        if(verbose) print.success('start cordova build');
 
         cordova.compile({
             verbose: verbose,
@@ -164,7 +165,7 @@ var build = function (platform, config, verbose) {
     return tarifaFile.parseConfig(tarifaFilePath, platform, config).then(function (localSettings) {
         localSettings.mode = setMode(platform, config, localSettings);
 
-        if(verbose) console.log(chalk.green('✔') + ' start to build the www project');
+        if(verbose) print.success('start to build the www project');
 
         return prepareAction.prepare(platform, config, verbose)
             .then(runReleaseTasks('pre-cordova-prepare-release', platform, config, localSettings, verbose))
@@ -179,14 +180,14 @@ var build = function (platform, config, verbose) {
 var action = function (argv) {
     var verbose = false;
     if(argsHelper.matchSingleOptions(argv, 'h', 'help')) {
-        console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
+        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
         return Q.resolve();
     }
 
     if(argsHelper.matchSingleOptions(argv, 'V', 'verbose')) {
         verbose = true;
     } else if(argv._.length != 1 && argv._.length != 2) {
-        console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
+        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
         return Q.resolve();
     }
 
