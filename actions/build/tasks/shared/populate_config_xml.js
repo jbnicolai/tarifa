@@ -1,5 +1,4 @@
 var Q = require('q'),
-    chalk = require('chalk'),
     settings = require('../../../../lib/settings'),
     print = require('../../../../lib/helper/print'),
     config = require('../../../../lib/cordova/config').config;

@@ -1,5 +1,4 @@
 var Q = require('q'),
-    chalk = require('chalk'),
     rimraf = require('rimraf'),
     argsHelper = require('../../lib/helper/args'),
     print = require('../../lib/helper/print'),

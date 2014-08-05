@@ -4,7 +4,6 @@
 
 var path = require('path'),
     Q = require('q'),
-    chalk = require('chalk'),
     print = require('../../../lib/helper/print'),
     settings = require('../../../lib/settings');
 

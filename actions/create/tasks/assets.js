@@ -3,7 +3,6 @@
  */
 
 var Q = require('q'),
-    chalk = require('chalk'),
     path = require('path'),
     mkdirp = require('mkdirp'),
     settings = require('../../../lib/settings'),

@@ -3,7 +3,6 @@
  */
 
 var path = require('path'),
-    chalk = require('chalk'),
     plugins = require('../../../lib/cordova/plugins'),
     print = require('../../../lib/helper/print'),
     settings = require('../../../lib/settings');

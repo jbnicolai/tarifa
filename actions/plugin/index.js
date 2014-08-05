@@ -1,5 +1,4 @@
 var Q = require('q'),
-    chalk = require('chalk'),
     argsHelper = require('../../lib/helper/args'),
     tarifaFile = require('../../lib/tarifa-file'),
     path = require('path'),
