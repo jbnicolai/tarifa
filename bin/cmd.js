@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var chalk = require('chalk'),
-    fs = require('fs'),
+    fs = require('q-io/fs'),
     path = require('path'),
     argv = require('minimist')(process.argv.slice(2)),
     pkg = require('../package.json'),
@@ -39,8 +39,11 @@ var availableActions = [
 
 function printHelp(errMessage) {
     if(errMessage) print(errMessage);
-    print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
-    process.exit(0);
+    fs.read(path.join(__dirname, 'usage.txt'))
+        .then(function (help) {
+            print(help);
+            process.exit(0);
+        });
 }
 
 function printVersion() {
