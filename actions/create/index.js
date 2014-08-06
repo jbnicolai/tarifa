@@ -3,7 +3,7 @@ var Q = require('q'),
     inquirer = require('inquirer'),
     chalk = require('chalk'),
     cordova = require('cordova'),
-    fs = require('fs'),
+    fs = require('q-io/fs'),
     path = require('path'),
     argsHelper = require('../../lib/helper/args'),
     print = require('../../lib/helper/print'),
@@ -44,30 +44,45 @@ var Q = require('q'),
 
     verbose = false;
 
+function help(questionName, questionType, verbose) {
+    if(!verbose) return Q.resolve();
+    var helpFile = questionName + '.txt',
+        helpPath =  path.join(__dirname, 'help', questionType, helpFile);
+
+    return fs.isFile(helpPath).then(function (exists) {
+        if(exists) return fs.read(helpPath).then(print);
+    });
+}
+
+function ask(defer, question, type, value, verbose) {
+    help(question.name, type, verbose).then(function () {
+        inquirer.prompt([question], function (answer) {
+            value[question.name] = answer[question.name];
+            // linked question
+            if(question.question && answer){
+                return ask(
+                    defer,
+                    require(path.join(__dirname, question.question)),
+                    type,
+                    value,
+                    verbose
+                );
+            }
+            else {
+                defer.resolve(value);
+            }
+        });
+    });
+}
+
 function askQuestions(questions, type) {
     return function (answers) {
         return questions.reduce(function (promise, question) {
-            var d = Q.defer(),
-                ask = function (q, value, verbose) {
-                    if (verbose) {
-                        var helpPath =  path.join(__dirname, 'help', type, q.name + '.txt');
-                        if(fs.existsSync(helpPath))
-                            print(fs.readFileSync(helpPath, 'utf-8'));
-                    }
-                    inquirer.prompt([q], function (answer) {
-                        value[q.name] = answer[q.name];
-                        // linked question
-                        if(q.question && answer){
-                            return ask(require(path.join(__dirname, q.question)), value, verbose);
-                        }
-                        else {
-                            d.resolve(value);
-                        }
-                    });
-                };
-
+            var d = Q.defer();
             promise.then(function (val) {
-                if (val.platforms && question.dependency && val.platforms.indexOf(question.dependency) < 0) {
+                if (val.platforms
+                    && question.dependency
+                    && val.platforms.indexOf(question.dependency) < 0) {
                     // pass to the next question
                     d.resolve(val);
                 }
@@ -76,14 +91,12 @@ function askQuestions(questions, type) {
                     // that means, the question needs to do some async tasks
                     // in order to populate the choices
                     if(typeof question === 'function') {
-                        return question(val, val.options.verbose).then(function (qst) {
-                            ask(qst, val, val.options.verbose);
-                        }, function (err) {
-                            print.error(err);
-                        });
+                        question(val, val.options.verbose).then(function (qst) {
+                            ask(d, qst, type, val, val.options.verbose);
+                        }, function (err) { print.error(err); });
                     }
                     else {
-                        ask(question, val, val.options.verbose);
+                        ask(d, question, type, val, val.options.verbose);
                     }
                 }
             });
@@ -92,33 +105,19 @@ function askQuestions(questions, type) {
     };
 }
 
-function printBanner() {
-    print(
-        chalk.bold(chalk.red('t')
-        + chalk.green('a')
-        + chalk.magenta('r')
-        + chalk.cyan('i')
-        + chalk.yellow('f')
-        + chalk.blue('a'))
-        + '\n'
-    );
-}
-
 function create(argv) {
-
+    var helpPath = path.join(__dirname, 'usage.txt');
     if(argsHelper.matchSingleOption(argv, 'h', 'help')) {
-        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
-        return Q.resolve();
+        return fs.read(helpPath).then(print);
     }
 
-    if(argsHelper.matchSingleOption(argv, 'V', 'verbose') && argv._.length < 1) {
+    if(argsHelper.matchSingleOption(argv, 'V', 'verbose') && argv._.length == 0) {
         verbose = true;
-    } else if(argv._.length >= 1) {
-        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
-        return Q.resolve();
+    } else if(argv._.length) {
+        return fs.read(helpPath).then(print);
     }
 
-    if(verbose) printBanner();
+    if(verbose) print.banner();
 
     return askQuestions(mainQuestions, '')({ options : { verbose : verbose } })
         .then(function (resp) {

@@ -9,7 +9,7 @@ var Q = require('q'),
 
 function log(response) {
     if (response.options.verbose)
-        print.success(' project folders created %s', response.path);
+        print.success('project folders created %s', response.path);
     return Q.resolve(response);
 }
 
