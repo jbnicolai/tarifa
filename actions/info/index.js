@@ -66,7 +66,7 @@ module.exports = function (argv) {
 
     for(var a in argv) if(a != 'verbose' && a !="_") usage = true;
 
-    if(argsHelper.matchSingleOptions(argv, 'V', 'verbose')) {
+    if(argsHelper.matchSingleOption(argv, 'V', 'verbose')) {
         verbose = true;
     } else if(argv._.length != 0 || usage) {
         print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));

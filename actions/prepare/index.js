@@ -43,12 +43,12 @@ var prepare = function (platform, config, verbose) {
 
 var action = function (argv) {
     var verbose = false;
-    if(argsHelper.matchSingleOptions(argv, 'h', 'help')) {
+    if(argsHelper.matchSingleOption(argv, 'h', 'help')) {
         print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
         return Q.resolve();
     }
 
-    if(argsHelper.matchSingleOptions(argv, 'V', 'verbose')) {
+    if(argsHelper.matchSingleOption(argv, 'V', 'verbose')) {
         verbose = true;
     } else if(argv._.length != 1 && argv._.length != 2) {
         print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));

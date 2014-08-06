@@ -106,12 +106,12 @@ function printBanner() {
 
 function create(argv) {
 
-    if(argsHelper.matchSingleOptions(argv, 'h', 'help')) {
+    if(argsHelper.matchSingleOption(argv, 'h', 'help')) {
         print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
         return Q.resolve();
     }
 
-    if(argsHelper.matchSingleOptions(argv, 'V', 'verbose') && argv._.length < 1) {
+    if(argsHelper.matchSingleOption(argv, 'V', 'verbose') && argv._.length < 1) {
         verbose = true;
     } else if(argv._.length >= 1) {
         print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));

@@ -53,12 +53,12 @@ var config = function (args, verbose) {
 
 var action = function (argv) {
     var verbose = false;
-    if(argsHelper.matchSingleOptions(argv, 'h', 'help')) {
+    if(argsHelper.matchSingleOption(argv, 'h', 'help')) {
         usage();
         return Q.resolve();
     }
 
-    if(argsHelper.matchSingleOptions(argv, 'V', 'verbose')) verbose = true;
+    if(argsHelper.matchSingleOption(argv, 'V', 'verbose')) verbose = true;
     return config(argv._, verbose);
 };
 

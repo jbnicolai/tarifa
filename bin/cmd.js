@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 
-var argv = process.argv.slice(2),
-    chalk = require('chalk'),
+var chalk = require('chalk'),
     fs = require('fs'),
     path = require('path'),
-    args = require('minimist')(argv),
+    argv = require('minimist')(process.argv.slice(2)),
     pkg = require('../package.json'),
     print = require('../lib/helper/print'),
     argsHelper = require('../lib/helper/args'),
@@ -49,8 +48,9 @@ function printVersion() {
     process.exit(0);
 }
 
-function matchAction(arg) {
-    return arg._[0] && availableActions.map(function (a) { return a.name; }).indexOf(arg._[0]) >=0;
+function matchAction(args) {
+    var actions = availableActions.map(function (a) { return a.name; });
+    return args._[0] && actions.indexOf(args._[0]) >= 0;
 }
 
 function actionSuccess(val) {
@@ -64,19 +64,21 @@ function actionError(name) {
     };
 }
 
-function main(arg) {
-    singleOptions.forEach(function (option) {
-        if(argsHelper.matchSingleOptions(arg, option.small, option.name) && !arg._.length) option.action();
-    });
+function main(args) {
+    for(var i=0, l=singleOptions.length; i<l; i++) {
+        if(argsHelper.matchSingleOption(args, singleOptions[i].small, singleOptions[i].name)) {
+            return singleOptions[i].action();
+        }
+    }
 
-    if(matchAction(arg)) {
-        var action = arg._.shift(0);
+    if(matchAction(args)) {
+        var action = args._.shift(0);
         availableActions
-            .filter(function (a) { return a.name == action; })[0].action(arg)
+            .filter(function (a) { return a.name == action; })[0].action(args)
             .done(actionSuccess, actionError(action));
     } else {
-        printHelp(argv.length && "Tarifa does not know " + argv.join(' ') + '\n');
+        printHelp(args.length && "Tarifa does not know " + args._.join(' ') + '\n');
     }
 }
 
-main(args);
+main(argv);
