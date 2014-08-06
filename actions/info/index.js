@@ -48,7 +48,12 @@ function check_tools(verbose) {
     return Q.allSettled(rslts).then(function (results) {
         results.forEach(function (result) {
             if (result.state === "fulfilled") {
-                print("%s %s %s", chalk.green(result.value.name), chalk.green('version:'), result.value.version);
+                print(
+                    "%s %s %s",
+                    chalk.green(result.value.name),
+                    chalk.green('version:'),
+                    result.value.version
+                );
             } else {
                 ok = false;
                 print(chalk.cyan('%s not found!'), result.reason.split(' ')[0]);
@@ -57,6 +62,46 @@ function check_tools(verbose) {
         });
         return Q.resolve(ok);
     });
+}
+
+function printiOSDevices (verbose) {
+    return function (devicesList) {
+        print(
+            devicesList.length ? "%s\n\t%s" : "%s %s",
+            chalk.green('connected iOS devices:'),
+            devicesList.length ? devicesList.join('\n\t') : 'none'
+        );
+    };
+}
+function printWPDevices (verbose) {
+    return function (devicesList) {
+        print(
+            devicesList.length ? "%s\n\t%s" : "%s %s",
+            chalk.green('available wp devices:'),
+            devicesList.length ? devicesList.join('\n\t') : 'none'
+        );
+    };
+}
+
+function printAndroidDevices (verbose) {
+    return function (devicesList) {
+        if(!devicesList.length) {
+            print("%s %s", chalk.green('connected Android devices:'), 'none');
+        }
+        else if(verbose) {
+            print(chalk.green('connected Android devices:'));
+            devicesList.forEach(function (dev) {
+                print('\t%s', dev.join(' '));
+            });
+        }
+        else {
+            print(
+                "%s\n\t%s",
+                chalk.green('connected Android devices:'),
+                devicesList.join('\n\t')
+            );
+        }
+    }
 }
 
 module.exports = function (argv) {
@@ -78,26 +123,14 @@ module.exports = function (argv) {
 
     return check_tools(verbose).then(function (ok) {
         if(!ok) return Q.reject("not all needed tools are available, first install them!");
-        return devices.ios().then(function (devices) {
-            print("%s\n\t%s", chalk.green('connected iOS devices:'), devices.join('\n\t'));
-        }).then(function () {
-            if(verbose) return devices.androidVerbose();
-            else return devices.android();
-        }).then(function (devices) {
-            if(verbose) {
-                print(chalk.green('connected Android devices:'));
-                devices.forEach(function (device) {
-                    print('\t%s', device.join(' '));
-                });
-            }
-            else {
-                print("%s\n\t%s", chalk.green('connected Android devices:'), devices.join('\n\t'));
-            }
-        }).then(devices.wp8).then(function (devices) {
-            print("%s\n\t%s", chalk.green('available wp devices:'), devices.join('\n\t'));
-        });
+
+        return devices.ios().then(printiOSDevices(verbose))
+            .then(function () {
+                if(verbose) return devices.androidVerbose();
+                else return devices.android();
+            })
+            .then(printAndroidDevices(verbose))
+            .then(devices.wp8)
+            .then(printWPDevices(verbose));
     });
-    // check installed xcode version if available
-    // check android sdk version
-    // check if we are in a tarifa project
 };

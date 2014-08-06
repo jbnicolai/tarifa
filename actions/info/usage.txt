@@ -1,7 +1,6 @@
 Usage: tarifa info
 
-Get some informations about the current tarifa project, your environment
-and your attached devices.
+Get some informations about your environment and your devices.
 
 Options:
 
