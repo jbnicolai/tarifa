@@ -2,7 +2,8 @@
  * add cordova plugins task
  */
 
-var path = require('path'),
+var Q = require('q'),
+    path = require('path'),
     plugins = require('../../../lib/cordova/plugins'),
     print = require('../../../lib/helper/print'),
     settings = require('../../../lib/settings');
@@ -10,8 +11,13 @@ var path = require('path'),
 module.exports = function (response) {
     if(response.plugins.length === 0 ) return Q.resolve(response);
 
-    return plugins.add(response.path, response.plugins).then(function () {
-        if (response.options.verbose) print('cordova plugins added');
-        return response;
-    });
+    return response.plugins.reduce(function (promise, plugin) {
+        return promise.then(function () {
+            return plugins.add(response.path, plugin).then(function () {
+                if (response.options.verbose)
+                    print.success('cordova plugin %s added', plugin);
+                return Q.resolve(response);
+            });
+        });
+    }, Q.resolve());
 };
