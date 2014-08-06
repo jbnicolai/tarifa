@@ -5,7 +5,7 @@ var Q = require('q'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
     path = require('path'),
-    fs = require('fs'),
+    fs = require('q-io/fs'),
     prepareAction = require('../prepare');
 
 var tasks = {
@@ -70,84 +70,79 @@ var tasks = {
     }
 };
 
-var prepare = function (platform, verbose) {
-    return function () {
-        if(platform === 'web') return Q.resolve();
-        var cwd = process.cwd();
-        var defer = Q.defer();
+var prepare = function (conf) {
+    if(conf.platform === 'web') return Q.resolve(conf);
+    var cwd = process.cwd();
+    var defer = Q.defer();
 
-        process.chdir(path.join(cwd, settings.cordovaAppPath));
-        if(verbose) print.success('start cordova prepare');
+    process.chdir(path.join(cwd, settings.cordovaAppPath));
+    if(conf.verbose) print.success('start cordova prepare');
 
-        cordova.prepare({
-            verbose: verbose,
-            platforms: [ platform ],
-            options: []
-        }, function (err, result) {
-            process.chdir(cwd);
-            if(err) defer.reject(err);
-            defer.resolve();
-        });
-        return defer.promise;
-    };
+    cordova.prepare({
+        verbose: conf.verbose,
+        platforms: [ conf.platform ],
+        options: []
+    }, function (err, result) {
+        process.chdir(cwd);
+        if(err) defer.reject(err);
+        defer.resolve(conf);
+    });
+    return defer.promise;
 };
 
-var compile = function (platform, mode, verbose) {
-    return function () {
-        if(platform === 'web') return Q.resolve();
-        var cwd = process.cwd();
-        var defer = Q.defer();
-        var options = mode ? [ mode ] : [];
+var compile = function (conf) {
+    if(conf.platform === 'web') return Q.resolve(conf);
+    var cwd = process.cwd();
+    var defer = Q.defer();
+    var options = conf.localSettings.mode ? [ conf.localSettings.mode ] : [];
 
-        if(platform === 'ios') options.push('--device');
+    if(conf.platform === 'ios') options.push('--device');
 
-        process.chdir(path.join(cwd, settings.cordovaAppPath));
-        if(verbose) print.success('start cordova build');
+    process.chdir(path.join(cwd, settings.cordovaAppPath));
+    if(conf.verbose) print.success('start cordova build');
 
-        cordova.compile({
-            verbose: verbose,
-            platforms: [ platform ],
-            options: options
-        }, function (err, result) {
-            process.chdir(cwd);
-            if(err) defer.reject(err);
-            defer.resolve();
-        });
-        return defer.promise;
-    };
+    cordova.compile({
+        verbose: conf.verbose,
+        platforms: [ conf.platform ],
+        options: options
+    }, function (err, result) {
+        process.chdir(cwd);
+        if(err) defer.reject(err);
+        defer.resolve(conf);
+    });
+    return defer.promise;
 };
 
-var runTasks = function (type, platform, config, localSettings, verbose) {
-    return function () {
+var runTasks = function (type) {
+    return function (conf) {
+        if(!tasks[conf.platform][type].length) { return Q.resolve(conf); }
 
-        if(!tasks[platform][type].length) { return Q.resolve(); }
-
-        return tasks[platform][type].reduce(function (opt, task) {
+        return tasks[conf.platform][type].reduce(function (opt, task) {
             return Q.when(opt, require('./tasks/' + task));
-        }, {
-            config: config,
-            verbose: verbose,
-            settings: localSettings,
-            platform: platform
-        });
+        }, conf);
     };
 };
 
-var runReleaseTasks = function (type, platform, config, localSettings, verbose) {
-    if (localSettings.mode == '--release') {
-        return runTasks(type, platform, config, localSettings, verbose);
+var runReleaseTasks = function (type) {
+    return function (conf) {
+        if (conf.localSettings.mode == '--release')
+            return runTasks(type)(conf);
+        else return Q.resolve(conf);
     }
-    else return Q.resolve();
 };
 
 var setMode = function (platform, config, localSettings) {
     var mode = null,
         localConf = localSettings.configurations[platform][config];
 
-    if (platform === 'android' && localConf.keystore_path && localConf.keystore_alias) {
+    if (platform === 'android'
+            && localConf.keystore_path
+            && localConf.keystore_alias) {
         mode = '--release';
     }
-    if(platform === 'ios' && localConf.apple_developer_identity && localConf.provisioning_profile_name) {
+    if(platform === 'ios'
+            && localConf.apple_developer_identity
+            && localConf.provisioning_profile_name) {
         mode = '--release'
     }
     if(platform === 'wp8' && localConf.release_mode) {
@@ -166,31 +161,35 @@ var build = function (platform, config, verbose) {
 
         if(verbose) print.success('start to build the www project');
 
-        return prepareAction.prepare(platform, config, verbose)
-            .then(runReleaseTasks('pre-cordova-prepare-release', platform, config, localSettings, verbose))
-            .then(runTasks('pre-cordova-prepare', platform, config, localSettings, verbose))
-            .then(prepare(platform, verbose))
-            .then(runTasks('pre-cordova-compile', platform, config, localSettings, verbose))
-            .then(compile(platform, localSettings.mode, verbose))
-            .then(runTasks('post-cordova-compile', platform, config, localSettings, verbose));
+        return prepareAction.prepareƒ({
+                platform: platform,
+                configuration: config,
+                localSettings: localSettings,
+                verbose: verbose
+            })
+            .then(runReleaseTasks('pre-cordova-prepare-release'))
+            .then(runTasks('pre-cordova-prepare'))
+            .then(prepare)
+            .then(runTasks('pre-cordova-compile'))
+            .then(compile)
+            .then(runTasks('post-cordova-compile'));
     });
 };
 
 var action = function (argv) {
-    var verbose = false;
-    if(argsHelper.matchSingleOption(argv, 'h', 'help')) {
-        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
-        return Q.resolve();
-    }
+    var verbose = false,
+        helpPath = path.join(__dirname, 'usage.txt');
 
-    if(argsHelper.matchSingleOption(argv, 'V', 'verbose')) {
-        verbose = true;
-    } else if(argv._.length != 1 && argv._.length != 2) {
-        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
-        return Q.resolve();
+    if(argsHelper.matchArgumentsCount(argv, [1,2])
+            && argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
+        if(argsHelper.matchOption(argv, 'V', 'verbose')) {
+            verbose = true;
+        }
+        return build(argv._[0], argv._[1] || 'default', verbose);
     }
-
-    return build(argv._[0], argv._[1] || 'default', verbose);
+    else {
+        return fs.read(helpPath).then(print);
+    }
 };
 
 action.build = build;

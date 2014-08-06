@@ -6,7 +6,7 @@ var Q = require('q'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
-    var version_code = msg.settings.configurations.android[msg.config]['version_code'];
+    var version_code = msg.localSettings.configurations.android[msg.configuration]['version_code'];
     if(version_code) {
         var android_manifest_path = path.join(process.cwd(), settings.cordovaAppPath, 'platforms', 'android', 'AndroidManifest.xml');
 

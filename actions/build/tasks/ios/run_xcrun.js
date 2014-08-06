@@ -5,7 +5,7 @@ var Q = require('q'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
-    var conf = msg.settings.configurations.ios[msg.config];
+    var conf = msg.localSettings.configurations.ios[msg.configuration];
 
     if(!conf['product_file_name'] || !conf['apple_developer_identity']){
         return Q.resolve(msg);

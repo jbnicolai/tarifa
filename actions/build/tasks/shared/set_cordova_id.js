@@ -5,7 +5,7 @@ var Q = require('q'),
     setId = require('../../../../lib/cordova/config').id;
 
 module.exports = function (msg) {
-    var id = msg.settings.configurations[msg.platform][msg.config]['id'];
+    var id = msg.localSettings.configurations[msg.platform][msg.configuration]['id'];
     var config_xml_path = path.join(process.cwd(), settings.cordovaAppPath, 'config.xml');
 
     return setId(config_xml_path, id).then(function () {

@@ -69,7 +69,7 @@ function actionError(name) {
 
 function main(args) {
     for(var i=0, l=singleOptions.length; i<l; i++) {
-        if(argsHelper.matchSingleOption(args, singleOptions[i].small, singleOptions[i].name)) {
+        if(argsHelper.matchSingleOptionWithArguments(args, singleOptions[i].small, singleOptions[i].name, [0])) {
             return singleOptions[i].action();
         }
     }

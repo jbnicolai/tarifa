@@ -5,7 +5,7 @@ var Q = require('q'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
-    var identity = msg.settings.configurations.ios[msg.config]['apple_developer_identity'];
+    var identity = msg.localSettings.configurations.ios[msg.configuration]['apple_developer_identity'];
     var newIdentity = 'CODE_SIGN_IDENTITY = ' + identity;
     if(identity) {
         var xcconfigPath = path.join(process.cwd(), settings.cordovaAppPath, 'platforms', 'ios', 'cordova', 'build.xcconfig');

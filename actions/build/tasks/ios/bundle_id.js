@@ -6,8 +6,8 @@ var Q = require('q'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
-    var id = msg.settings.configurations.ios[msg.config]['id'] || msg.settings.configurations.ios['default']['id'];
-    var name = msg.settings.name;
+    var id = msg.localSettings.configurations.ios[msg.configuration]['id'] || msg.localSettings.configurations.ios['default']['id'];
+    var name = msg.localSettings.name;
     var plistFileName = name + '-Info.plist';
     var plistPath = path.join(process.cwd(), settings.cordovaAppPath, 'platforms', 'ios', name, plistFileName);
     var plistObj = plist.parseFileSync(plistPath);

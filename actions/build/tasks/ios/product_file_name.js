@@ -6,9 +6,9 @@ var Q = require('q'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
-    var ios = msg.settings.configurations.ios;
-    var name = ios[msg.config]['product_name'] || ios['default']['product_name'];
-    var xcodeProjFileName = msg.settings.name + '.xcodeproj/project.pbxproj';
+    var ios = msg.localSettings.configurations.ios;
+    var name = ios[msg.configuration]['product_name'] || ios['default']['product_name'];
+    var xcodeProjFileName = msg.localSettings.name + '.xcodeproj/project.pbxproj';
     var pbxprojPath = path.join(process.cwd(), settings.cordovaAppPath, 'platforms', 'ios', xcodeProjFileName);
     var project = xcode.project(pbxprojPath);
     var defer = Q.defer();

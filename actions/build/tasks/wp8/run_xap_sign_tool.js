@@ -5,7 +5,7 @@ var Q = require('q'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
-    var conf = msg.settings.configurations.wp8[msg.config];
+    var conf = msg.localSettings.configurations.wp8[msg.configuration];
     var release_mode = conf['release_mode'];
     var sign_mode = conf['sign_mode'];
 

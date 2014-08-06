@@ -3,6 +3,6 @@ var Q = require('q'),
 
 module.exports = function (msg) {
     return cordovaClean(['wp8'], msg.verbose).then(function () {
-		return msg;    	
+		return msg;
     });
 };

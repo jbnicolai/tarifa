@@ -4,7 +4,7 @@ var Q = require('q'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
-    var product_file_name = msg.settings.configurations.wp8[msg.config]['product_file_name'];
+    var product_file_name = msg.localSettings.configurations.wp8[msg.configuration]['product_file_name'];
     var wp8_path = path.join(process.cwd(), settings.cordovaAppPath, 'platforms', 'wp8');
     var value = "<XapFilename>" + product_file_name + '.xap' + "</XapFilename>";
 

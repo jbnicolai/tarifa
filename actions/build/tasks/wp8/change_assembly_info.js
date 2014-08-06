@@ -7,11 +7,11 @@ var Q = require('q'),
 module.exports = function (msg) {
     var cwd = process.cwd();
     var assemblyPath = path.join(cwd, settings.cordovaAppPath, 'platforms', 'wp8', 'Properties', 'AssemblyInfo.cs');
-    var product_file_name = msg.settings.configurations.wp8[msg.config]['product_file_name'];
-    var guid = msg.settings.configurations.wp8[msg.config]['guid'];
-    var author = msg.settings.author.name;
+    var product_file_name = msg.localSettings.configurations.wp8[msg.configuration]['product_file_name'];
+    var guid = msg.localSettings.configurations.wp8[msg.configurations]['guid'];
+    var author = msg.localSettings.author.name;
     var year = (new Date()).getFullYear();
-    var v = msg.settings.version + '.0';
+    var v = msg.localSettings.version + '.0';
 
     var title = "AssemblyTitle(\"" + product_file_name + "\")";
     var company = "AssemblyCompany(\"" + author + "\")";

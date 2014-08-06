@@ -6,7 +6,7 @@ var Q = require('q'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
-    var app_label = msg.settings.configurations.android[msg.config]['product_name'];
+    var app_label = msg.localSettings.configurations.android[msg.configuration]['product_name'];
     var strings_xml_file_path = path.join(process.cwd(), settings.cordovaAppPath, 'platforms', 'android', 'res', 'values', 'strings.xml');
     var doc = libxmljs.parseXml(fs.readFileSync(strings_xml_file_path));
 
