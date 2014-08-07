@@ -1,6 +1,6 @@
 var Q = require('q'),
     chalk = require('chalk'),
-    fs = require('fs'),
+    fs = require('q-io/fs'),
     os = require('os'),
     path = require('path'),
     exec = require('child_process').exec,
@@ -74,6 +74,7 @@ function printiOSDevices (verbose) {
         );
     };
 }
+
 function printWPDevices (verbose) {
     return function (devicesList) {
         print(
@@ -105,20 +106,7 @@ function printAndroidDevices (verbose) {
     }
 }
 
-module.exports = function (argv) {
-
-    var verbose = false;
-    var usage = false;
-
-    for(var a in argv) if(a != 'verbose' && a !="_") usage = true;
-
-    if(argsHelper.matchSingleOption(argv, 'V', 'verbose')) {
-        verbose = true;
-    } else if(argv._.length != 0 || usage) {
-        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
-        return Q.resolve();
-    }
-
+function info(verbose) {
     print("%s %s", chalk.green('node version:'), process.versions.node);
     print("%s %s", chalk.green('cordova version:'), pkg.dependencies.cordova);
 
@@ -134,4 +122,18 @@ module.exports = function (argv) {
             .then(devices.wp8)
             .then(printWPDevices(verbose));
     });
+}
+
+module.exports = function (argv) {
+    var verbose = false,
+        helpPath = path.join(__dirname, 'usage.txt');
+
+    if(argsHelper.matchArgumentsCount(argv, [0])
+            && argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
+        if(argsHelper.matchOption(argv, 'V', 'verbose')) {
+            verbose = true;
+        }
+        return info(verbose);
+    }
+    return fs.read(helpPath).then(print);
 };
