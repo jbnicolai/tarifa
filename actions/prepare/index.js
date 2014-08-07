@@ -5,7 +5,7 @@ var Q = require('q'),
     tarifaFile = require('../../lib/tarifa-file'),
     settings = require('../../lib/settings'),
     path = require('path'),
-    fs = require('fs');
+    fs = require('q-io/fs');
 
 var prepareƒ = function (conf) {
     var cwd = process.cwd();
@@ -18,11 +18,10 @@ var prepareƒ = function (conf) {
         rimraf(cordovaWWW, function (err) {
             if(err) defer.reject(err);
             if(conf.verbose) print.success('prepare, rm cordova www link');
-            fs.symlink(projectWWW, cordovaWWW, 'dir', function (err) {
-                if (err) { defer.reject(err); }
+            fs.symbolicLink(cordovaWWW, projectWWW, 'directory').then(function() {
                 if(conf.verbose) print.success('prepare, link www project to cordova www');
                 defer.resolve(conf);
-            });
+            }, function (err) { defer.reject(err); });
         });
     } else {
         defer.resolve(conf);
@@ -53,7 +52,8 @@ var prepare = function (platform, config, verbose) {
 };
 
 var action = function (argv) {
-    var verbose = false;
+    var verbose = false,
+        helpPath = path.join(__dirname, 'usage.txt');
 
     if(argsHelper.matchArgumentsCount(argv, [1,2])
             && argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
@@ -62,10 +62,7 @@ var action = function (argv) {
         }
         return prepare(argv._[0], argv._[1] || 'default', verbose);
     }
-    else {
-        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
-        return Q.resolve();
-    }
+    return fs.read(helpPath).then(print);
 };
 
 action.prepare = prepare;
