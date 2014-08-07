@@ -1,10 +1,11 @@
 var Q = require('q'),
     argsHelper = require('../../lib/helper/args'),
     print = require('../../lib/helper/print'),
+    pathHelper = require('../../lib/helper/path'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
     path = require('path'),
-    fs = require('fs');
+    fs = require('q-io/fs');
 
 var tasks = {
     android : [
@@ -16,8 +17,7 @@ var tasks = {
 };
 
 var check = function (verbose) {
-    var tarifaFilePath = path.join(process.cwd(), 'tarifa.json');
-    return tarifaFile.parseConfig(tarifaFilePath).then(function (localSettings) {
+    return tarifaFile.parseConfig(pathHelper.current()).then(function (localSettings) {
         return settings.platforms.reduce(function (promiseP, platform) {
             return tasks[platform].reduce(function (promiseT, task) {
                 return promiseT.then(task);
@@ -30,20 +30,18 @@ var check = function (verbose) {
 };
 
 var action = function (argv) {
-    var verbose = false;
-    if(argsHelper.matchSingleOption(argv, 'h', 'help')) {
-        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
-        return Q.resolve();
+    var verbose = false,
+        helpPath = path.join(__dirname, 'usage.txt');
+
+    if(argsHelper.matchArgumentsCount(argv, [0])
+            && argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
+        if(argsHelper.matchOption(argv, 'V', 'verbose')) {
+            verbose = true;
+        }
+        return check(verbose);
     }
 
-    if(argsHelper.matchSingleOption(argv, 'V', 'verbose')) {
-        verbose = true;
-    } else if(argv._.length > 0) {
-        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
-        return Q.resolve();
-    }
-
-    return check(verbose);
+    return fs.read(helpPath).then(print);
 };
 
 action.check = check;
