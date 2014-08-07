@@ -10,7 +10,7 @@ var Q = require('q'),
     copyDefaultIcons = require('../../lib/cordova/icon').copyDefault,
     createDefaultAssetsFolders = require('../../lib/cordova/assets').createFolders,
     copyDefaultSplash = require('../../lib/cordova/splashscreen').copyDefault,
-    fs = require('fs');
+    fs = require('q-io/fs');
 
 function addAssets(platform, splash, verbose) {
     var cwd = process.cwd();
@@ -34,70 +34,49 @@ function rmAssets(platform, verbose) {
 }
 
 function add(type, splash, verbose) {
-    return platformsLib.add([type], verbose)
-        .then(function () {
-            return tarifaFile.addPlatform(tarifaPath.current(), type);
-        }).then(function () { return addAssets(type, splash, verbose); });
+    return tarifaFile.addPlatform(tarifaPath.current(), type)
+        .then(function () { return platformsLib.add([type], verbose); })
+        .then(function () { return addAssets(type, splash, verbose); });
 }
 
 function remove(type, verbose) {
-    return platformsLib.remove([type], verbose)
-        .then(function () {
-            return tarifaFile.removePlatform(tarifaPath.current(), type);
-        }).then(function () { return rmAssets(type, verbose); });
+    return tarifaFile.removePlatform(tarifaPath.current(), type)
+        .then(function () { return platformsLib.remove([type], verbose); })
+        .then(function () { return rmAssets(type, verbose); });
 }
 
-function list(type, verbose) { return platformsLib.list(true); }
-
 function platform (action, type, verbose) {
-    return tarifaFile.parseConfig(tarifaPath.current())
-        .then(function (localSettings) {
-            if(type) {
-                return platformsLib.isAvailableOnHost(type)
-                    .then(function () { return localSettings; });
-            }
-            return localSettings;
-        })
-        .then(function (localSettings) {
-            var hasSplash = localSettings.plugins.indexOf("org.apache.cordova.splashscreen") > -1;
-            switch(action) {
-                case 'add':
-                    return add(type, hasSplash, verbose);
-                case 'remove':
-                    return remove(type, verbose);
-                case 'list':
-                    return list(true);
-                default:
-                    return list(true);
-            }
-        });
+    var promises = [
+        tarifaFile.parseConfig(tarifaPath.current()),
+        platformsLib.isAvailableOnHost(type)
+    ];
+
+    return Q.all(promises).spread(function (localSettings) {
+        var hasSplash = localSettings.plugins.indexOf("org.apache.cordova.splashscreen") > -1;
+        if(action === 'add') return add(type, hasSplash, verbose);
+        else return remove(type, verbose);
+    });
 }
 
 function action (argv) {
-    var verbose = false;
-    var actions = ['add', 'remove', 'list'];
-    var validAction = actions.filter(function (a) {
-            return a === argv._[0];
-        }).length === 1;
+    var verbose = false,
+        actions = ['add', 'remove'],
+        helpPath = path.join(__dirname, 'usage.txt');
 
-    if(argsHelper.matchSingleOption(argv, 'h', 'help')) {
-        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
-        return Q.resolve();
+    if(argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
+        if(argsHelper.matchOption(argv, 'V', 'verbose')) {
+            verbose = true;
+        }
+        if(argv._[0] === 'list' && argsHelper.matchArgumentsCount(argv, [1])){
+            return platformsLib.list(true);
+        }
+        if(actions.indexOf(argv._[0]) > -1
+            && argsHelper.matchArgumentsCount(argv, [2])) {
+            return platform(argv._[0], argv._[1], verbose);
+        }
     }
 
-    if(argsHelper.matchSingleOption(argv, 'V', 'verbose')) {
-        verbose = true;
-    } else if(argv._.length != 1 && argv._.length != 2) {
-        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
-        return Q.resolve();
-    }
-
-    if(!validAction) return Q.reject('action unknown!');
-    if(argv._[0] === undefined || argv._[0] === 'list')
-        return platform(argv._[0], null, verbose);
-    if(argv._[1] === undefined) return Q.reject('platform name unknown!');
-
-    return platform(argv._[0], argv._[1], verbose);
+    return fs.read(helpPath).then(print);
 }
 
 action.platform = platform;
