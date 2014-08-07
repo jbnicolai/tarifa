@@ -5,4 +5,4 @@ Clean the given platform
 Options:
 
     --help, -h     Show this message
-    --verbose, -v  Be more verbose on everything
+    --verbose, -V  Be more verbose on everything
