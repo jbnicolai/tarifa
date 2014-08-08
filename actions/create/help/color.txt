@@ -1,0 +1,6 @@
+
+> The choosen color must be a valid imagemagick color see
+>
+> http://www.imagemagick.org/script/color.php
+>
+> for more details.

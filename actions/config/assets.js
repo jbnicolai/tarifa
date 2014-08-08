@@ -3,20 +3,17 @@ var Q = require('q'),
     mkdirp = require('mkdirp'),
     tarifaFile = require('../../lib/tarifa-file'),
     settings = require('../../lib/settings'),
+    colorHelper = require('../../lib/helper/color'),
     generateIcons = require('../../lib/cordova/icon').generate,
     generateSplashscreens = require('../../lib/cordova/splashscreen').generate,
     createFolders = require('../../lib/cordova/assets').createFolders;
-
-// TODO
-// we support hexadecimal format + all formats supported by imagemagick
-function validColor(color) { return true; }
 
 module.exports.generateIcons = function (args, verbose) {
     var cwd = process.cwd(),
         color = args[0],
         config = args[1];
 
-    if(!validColor(color)) return Q.reject('invalid color!');
+    if(!colorHelper.validate(color)) return Q.reject('invalid color!');
 
     return tarifaFile.parseConfig(path.join(cwd, 'tarifa.json')).then(function (localSettings) {
         var platforms = localSettings.platforms.filter(function (platform) {
@@ -33,7 +30,7 @@ module.exports.generateSplashscreens = function (args, verbose) {
         color = args[0],
         config = args[1];
 
-    if(!validColor(color)) return Q.reject('invalid color!');
+    if(!colorHelper.validate(color)) return Q.reject('invalid color!');
 
     return tarifaFile.parseConfig(path.join(cwd, 'tarifa.json')).then(function (localSettings) {
         var platforms = localSettings.platforms.filter(function (platform) {
