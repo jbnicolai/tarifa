@@ -3,19 +3,34 @@ var Q = require('q'),
     cordova = require('cordova'),
     exec = require('child_process').exec,
     path = require('path'),
-    fs = require('fs'),
+    fs = require('q-io/fs'),
     argsHelper = require('../../lib/helper/args'),
     print = require('../../lib/helper/print'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
     isAvailableOnHost = require('../../lib/cordova/platforms').isAvailableOnHost,
     buildAction = require('../build'),
-    installAndroidApp = require('./tasks/android/install'),
-    openAndroidApp = require('./tasks/android/open'),
-    installiOSApp = require('./tasks/ios/install'),
-    installWP8App = require('./tasks/wp8/install'),
-    openWebApp = require('./tasks/web/open'),
-    askDevice = require('./ask_device');
+    askDevice = require('./ask_device'),
+
+    tasks = {
+        android : [
+            './tasks/android/install',
+            './tasks/android/open'
+        ],
+        ios : [ './tasks/ios/install' ],
+        wp8: [ './tasks/wp8/install' ],
+        web: [ './tasks/web/open' ]
+    };
+
+var runƒ = function (conf) {
+    return buildAction.buildƒ(conf)
+        .then(askDevice)
+        .then(function (c) {
+            return tasks[c.platform].reduce(function (opt, task) {
+                return Q.when(opt, require(task));
+            }, c);
+        });
+};
 
 var run = function (platform, config, verbose) {
     var cwd = process.cwd();
@@ -23,47 +38,32 @@ var run = function (platform, config, verbose) {
 
     spinner();
 
-    return tarifaFile.parseConfig(tarifaFilePath, platform, config)
-        .then(function (localSettings) {
-            return isAvailableOnHost(platform).then(function () {
-                return localSettings;
-            });
-        }).then(function (localSettings) {
-            return buildAction.build(platform, config, verbose).then(function (msg) {
-                switch(platform) {
-                    case 'android':
-                        return askDevice('android')
-                            .then(function (device) { return installAndroidApp(localSettings, config, device, verbose); })
-                            .then(function (device) { return openAndroidApp(localSettings, config, device, verbose); });
-                    case 'ios':
-                        return askDevice('ios')
-                            .then(function(device) { return installiOSApp(localSettings, config, device, verbose); });
-                    case 'web':
-                        return openWebApp(localSettings, config, verbose);
-                    case 'wp8':
-                        return askDevice('wp8').then(function (device) { return installWP8App(device, verbose); });
-                    default:
-                         return Q.reject('platform unknown!');
-                }
+    return Q.all([
+            tarifaFile.parseConfig(tarifaFilePath, platform, config),
+            isAvailableOnHost(platform)
+        ]).spread(function (localSettings) {
+            return runƒ({
+                localSettings: localSettings,
+                platform: platform,
+                configuration: config,
+                verbose: verbose
             });
         });
 };
 
 var action = function (argv) {
-    var verbose = false;
-    if(argsHelper.matchSingleOption(argv, 'h', 'help')) {
-        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
-        return Q.resolve();
+    var verbose = false,
+        helpPath = path.join(__dirname, 'usage.txt');
+
+    if(argsHelper.matchArgumentsCount(argv, [1,2])
+            && argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
+        if(argsHelper.matchOption(argv, 'V', 'verbose')) {
+            verbose = true;
+        }
+        return run(argv._[0], argv._[1] || 'default', verbose);
     }
 
-    if(argsHelper.matchSingleOption(argv, 'V', 'verbose')) {
-        verbose = true;
-    } else if(argv._.length != 1 && argv._.length != 2) {
-        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
-        return Q.resolve();
-    }
-
-    return run(argv._[0], argv._[1] || 'default', verbose);
+    return fs.read(helpPath).then(print);
 };
 
 action.run = run;
