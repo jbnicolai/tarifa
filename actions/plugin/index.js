@@ -1,17 +1,23 @@
 var Q = require('q'),
+    fs = require('q-io/fs'),
+    path = require('path'),
     argsHelper = require('../../lib/helper/args'),
     tarifaFile = require('../../lib/tarifa-file'),
-    path = require('path'),
     tarifaPath = require('../../lib/helper/path'),
     print = require('../../lib/helper/print'),
-    plugins = require('../../lib/cordova/plugins'),
-    fs = require('fs');
+    plugins = require('../../lib/cordova/plugins');
 
 function printPlugins(items) {
     print(items.length ?  items.join('\n') : "no plugin installed!");
 }
+
 function log(action, verbose) {
-    return function (val) { if(verbose) print("plugin %sed: %s", action, val); }
+    return function (val) {
+        if(verbose) {
+            if(val) print("plugin %sed: %s", action, val);
+            else print("no plugin added!");
+        }
+    }
 }
 
 function addToTarifaFile(root) {
@@ -22,56 +28,43 @@ function removeFromTarifaFile(root) {
     return function (val) { return tarifaFile.removePlugin(root, val); }
 }
 
+function list(verbose) {
+    return plugins.list(path.dirname(tarifaPath.current())).then(printPlugins);
+}
+
 function plugin (action, arg, verbose) {
 
-    var rootFile = tarifaPath.current();
-    var root = path.dirname(rootFile);
+    var rootFile = tarifaPath.current(),
+        root = path.dirname(rootFile);
 
     return tarifaFile.parseConfig(rootFile)
         .then(function () {
-            switch(action) {
-                case 'add':
-                    return plugins.add(root, arg)
-                        .then(addToTarifaFile(rootFile))
-                        .then(log(action, verbose));
-                case 'remove':
-                    return plugins.remove(root, arg)
-                        .then(removeFromTarifaFile(rootFile))
-                        .then(log(action, verbose));
-                case 'list':
-                default:
-                    return plugins.list(root).then(printPlugins);
-            }
+            return plugins[action](root, arg)
+                .then(addToTarifaFile(rootFile))
+                .then(log(action, verbose));
         });
 }
 
 function action (argv) {
-    var verbose = false;
-    var actions = ['add', 'remove', 'list'];
-    var validAction = actions.filter(function (a) {
-            return a === argv._[0];
-        }).length === 1;
+    var verbose = false,
+        actions = ['add', 'remove'],
+        helpPath = path.join(__dirname, 'usage.txt');
 
-    if(argsHelper.matchSingleOption(argv, 'h', 'help')) {
-        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
-        return Q.resolve();
+    if(argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
+        if(argsHelper.matchOption(argv, 'V', 'verbose')) {
+            verbose = true;
+        }
+        if(argv._[0] === 'list' && argsHelper.matchArgumentsCount(argv, [1])){
+            return list(verbose);
+        }
+        if(actions.indexOf(argv._[0]) > -1
+            && argsHelper.matchArgumentsCount(argv, [2])) {
+            return plugin(argv._[0], argv._[1], verbose);
+        }
     }
 
-    if(argsHelper.matchSingleOption(argv, 'V', 'verbose')) {
-        verbose = true;
-    } else if(argv._.length != 1 && argv._.length != 2) {
-        print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
-        return Q.resolve();
-    }
-
-    if(!validAction) return Q.reject('action unknown!');
-    if(argv._[0] === undefined || argv._[0] === 'list')
-        return plugin(argv._[0], null, verbose);
-    if(argv._[1] === undefined) return Q.reject('plugin name unknown!');
-
-    return plugin(argv._[0], argv._[1], verbose);
+    return fs.read(helpPath).then(print);
 }
 
 action.plugin = plugin;
-
 module.exports = action;
