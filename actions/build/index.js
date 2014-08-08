@@ -2,6 +2,7 @@ var Q = require('q'),
     cordova = require('cordova'),
     argsHelper = require('../../lib/helper/args'),
     print = require('../../lib/helper/print'),
+    tarfifaPath = require('../../lib/helper/path'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
     path = require('path'),
@@ -152,27 +153,31 @@ var setMode = function (platform, config, localSettings) {
     return mode;
 };
 
+var buildƒ = function (conf){
+    conf.localSettings.mode = setMode(conf.platform, conf.configuration, conf.localSettings);
+
+    if(conf.verbose) print.success('start to build the www project');
+
+    return prepareAction.prepareƒ(conf)
+        .then(runReleaseTasks('pre-cordova-prepare-release'))
+        .then(runTasks('pre-cordova-prepare'))
+        .then(prepare)
+        .then(runTasks('pre-cordova-compile'))
+        .then(compile)
+        .then(runTasks('post-cordova-compile'));
+};
+
 var build = function (platform, config, verbose) {
     var cwd = process.cwd();
     var tarifaFilePath = path.join(cwd, 'tarifa.json');
 
-    return tarifaFile.parseConfig(tarifaFilePath, platform, config).then(function (localSettings) {
-        localSettings.mode = setMode(platform, config, localSettings);
-
-        if(verbose) print.success('start to build the www project');
-
-        return prepareAction.prepareƒ({
-                platform: platform,
-                configuration: config,
-                localSettings: localSettings,
-                verbose: verbose
-            })
-            .then(runReleaseTasks('pre-cordova-prepare-release'))
-            .then(runTasks('pre-cordova-prepare'))
-            .then(prepare)
-            .then(runTasks('pre-cordova-compile'))
-            .then(compile)
-            .then(runTasks('post-cordova-compile'));
+    return tarifaFile.parseConfig(tarfifaPath.current(), platform, config).then(function (localSettings) {
+        return buildƒ({
+            platform: platform,
+            configuration: config,
+            localSettings: localSettings,
+            verbose: verbose
+        });
     });
 };
 
@@ -187,11 +192,10 @@ var action = function (argv) {
         }
         return build(argv._[0], argv._[1] || 'default', verbose);
     }
-    else {
-        return fs.read(helpPath).then(print);
-    }
+
+    return fs.read(helpPath).then(print);
 };
 
 action.build = build;
-
+action.buildƒ = buildƒ;
 module.exports = action;
