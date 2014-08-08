@@ -40,9 +40,7 @@ var Q = require('q'),
         require('./tasks/assets'),
         require('./tasks/ant-properties'),
         require('./tasks/fetch-provisioning-file')
-    ],
-
-    verbose = false;
+    ];
 
 function help(questionName, questionType, verbose) {
     if(!verbose) return Q.resolve();
@@ -105,30 +103,31 @@ function askQuestions(questions, type) {
     };
 }
 
-function create(argv) {
-    var helpPath = path.join(__dirname, 'usage.txt');
-    if(argsHelper.matchSingleOption(argv, 'h', 'help')) {
-        return fs.read(helpPath).then(print);
-    }
-
-    if(argsHelper.matchSingleOption(argv, 'V', 'verbose') && argv._.length == 0) {
-        verbose = true;
-    } else if(argv._.length) {
-        return fs.read(helpPath).then(print);
-    }
-
+function create(verbose) {
     if(verbose) print.banner();
-
     return askQuestions(mainQuestions, '')({ options : { verbose : verbose } })
         .then(function (resp) {
             if(resp.deploy) return askQuestions(deployQuestions, 'deploy')(resp);
             else return resp;
-        })
-        .then(function (resp) {
+        }).then(function (resp) {
             print();
             spinner();
-            return tasks.reduce(function (val, task){ return Q.when(val, task); }, resp);
+            return tasks.reduce(function (val, task){
+                return Q.when(val, task);
+            }, resp);
         });
 };
 
-module.exports = create;
+function action(argv) {
+    var helpPath = path.join(__dirname, 'usage.txt');
+
+    if(argsHelper.matchArgumentsCount(argv, [0])
+            && argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
+        return create(argsHelper.matchOption(argv, 'V', 'verbose'));
+    }
+
+    return fs.read(helpPath).then(print);
+}
+
+action.create = create;
+module.exports = action;
