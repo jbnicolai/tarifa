@@ -1,5 +1,5 @@
 var Q = require('q'),
-    fs = require('fs'),
+    fs = require('q-io/fs'),
     path = require('path'),
     argsHelper = require('../../lib/helper/args'),
     devices = require('./ios/devices'),
@@ -23,10 +23,6 @@ var cmds = {
     },
     icons: assets.generateIcons,
     splashscreens: assets.generateSplashscreens
-};
-
-var usage = function () {
-    print(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf-8'));
 };
 
 var config = function (args, verbose) {
@@ -54,8 +50,7 @@ var config = function (args, verbose) {
 var action = function (argv) {
     var verbose = false;
     if(argsHelper.matchSingleOption(argv, 'h', 'help')) {
-        usage();
-        return Q.resolve();
+        return fs.read(path.join(__dirname, 'usage.txt')).then(print);
     }
 
     if(argsHelper.matchSingleOption(argv, 'V', 'verbose')) verbose = true;
