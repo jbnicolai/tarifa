@@ -4,8 +4,10 @@ var Q = require('q'),
     ncp = require('ncp').ncp,
     exec = require('child_process').exec,
     path = require('path'),
+    format = require('util').format,
     fs = require('fs'),
     tarifaFile = require('../../../lib/tarifa-file'),
+    tarifaPath = require('../../../lib/helper/path'),
     print = require('../../../lib/helper/print'),
     parseProvisionFile = require('../../../lib/ios/parse-mobileprovision'),
     downloadProvisioningProfile = require('./provisioning').downloadProvisioningProfile,
@@ -51,10 +53,12 @@ function getDevices(user, team, password, verbose) {
 }
 
 function listAction(verbose) {
-    return askPassword().then(function (password) {
-        spinner();
-        return tarifaFile.parseConfig(path.join(process.cwd(), 'tarifa.json'))
-            .then(function (localSettings) {
+    return tarifaFile.parseConfig(tarifaPath.current()).then(function (localSettings) {
+        if(!localSettings.deploy || !localSettings.delpoy.apple_id)
+            return Q.reject("No deploy informations are available in the current tarifa.json file.");
+        return askPassword()
+            .then(function (password) {
+                spinner();
                 return getDevices(
                     localSettings.deploy.apple_id,
                     localSettings.deploy.apple_developer_team,
@@ -113,18 +117,12 @@ function printDevices(title, msg) {
     };
 }
 
-function list(args, verbose) {
-    if(args.length > 2 || args[0] !== 'list')
-        return usage("Wrong arguments!");
-    else if(args.length == 2)
-        return listDeviceInProvisioningWithInfo(args[1], verbose)
+function list(config, verbose) {
+    if(config)
+        return listDeviceInProvisioningWithInfo(config, verbose)
             .then(function (provision) {
-                var title = "Provisioning Profile "
-                            + provision.name
-                            + " with Type: "
-                            + provision.type,
-                    msg = "\nDevices in configuration: "
-                            + args[1];
+                var title = format("Provisioning Profile %s with Type: %s", provision.name, provision.type),
+                    msg = format("\nDevices in configuration: %s", config);
                 printDevices(title, msg)(provision.devices);
             });
     else
@@ -156,13 +154,8 @@ function addDevice(user, team, password, name, uuid, verbose) {
     return defer.promise;
 }
 
-function add(args, verbose) {
-    if(args.length != 3 || args[0] !== 'add') return usage("Wrong arguments!");
-
-    var name = args[1],
-        uuid = args[2];
-
-    return tarifaFile.parseConfig(path.join(process.cwd(), 'tarifa.json'))
+function add(name, uuid, verbose) {
+    return tarifaFile.parseConfig(tarifaPath.current())
         .then(function(localSettings) {
             return askPassword().then(function (password) {
                 spinner();
@@ -241,13 +234,9 @@ function removeDeviceToProvisioningProfile(user, team, password, uuid, profile_p
     });
 }
 
-function attach(args, verbose) {
-    if(args.length != 3 || args[0] !== 'attach') return usage("Wrong arguments!");
+function attach(uuid, config, verbose) {
 
-    var uuid = args[1],
-        config = args[2];
-
-    return tarifaFile.parseConfig(path.join(process.cwd(), 'tarifa.json'))
+    return tarifaFile.parseConfig(tarifaPath.current())
         .then(function(localSettings) {
             return askPassword().then(function (password) {
                 return getDevices(
@@ -327,13 +316,9 @@ function attach(args, verbose) {
         });
 }
 
-function detach(args, verbose) {
-    if(args.length != 3 || args[0] !== 'detach') return usage("Wrong arguments!");
+function detach(uuid, config, verbose) {
 
-    var uuid = args[1],
-        config = args[2];
-
-    return tarifaFile.parseConfig(path.join(process.cwd(), 'tarifa.json'))
+    return tarifaFile.parseConfig(tarifaPath.current())
         .then(function (localSettings) {
             if(!localSettings.configurations.ios[config])
                 return Q.reject('configuration not found');

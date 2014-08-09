@@ -9,11 +9,8 @@ var Q = require('q'),
     generateSplashscreens = require('../../lib/cordova/splashscreen').generate,
     createFolders = require('../../lib/cordova/assets').createFolders;
 
-function generate(args, f, verbose) {
-    var cwd = process.cwd(),
-        color = args[0],
-        config = args[1];
-
+function generate(color, config, f, verbose) {
+    var cwd = process.cwd();
     if(!colorHelper.validate(color)) return Q.reject('invalid color!');
 
     return tarifaFile.parseConfig(tarifaPath.current()).then(function (localSettings) {
@@ -26,10 +23,10 @@ function generate(args, f, verbose) {
     });
 }
 
-module.exports.generateIcons = function (args, verbose) {
-    return generate(args, generateIcons, verbose);
+module.exports.generateIcons = function (color, config, verbose) {
+    return generate(color, config, generateIcons, verbose);
 };
 
-module.exports.generateSplashscreens = function (args, verbose) {
-    return generate(args, generateSplashscreens, verbose);
+module.exports.generateSplashscreens = function (color, config, verbose) {
+    return generate(color, config, generateSplashscreens, verbose);
 };

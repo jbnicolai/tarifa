@@ -7,54 +7,42 @@ var Q = require('q'),
     print = require('../../lib/helper/print'),
     provisioning = require('./ios/provisioning');
 
-var cmds = {
-    ios: {
-        devices: {
-            list:   { action: devices.list,   n: [0, 1] },
-            add:    { action: devices.add,    n: [2] },
-            remove: { action: devices.remove, n: [2] },
-            attach: { action: devices.attach, n: [2] },
-            detach: { action: devices.detach, n: [2] }
-        },
-        provisioning: {
-            fetch: { action: provisioning.fetch, n: [1] },
-            list:  { action: provisioning.list,  n: [0] }
-        }
-    },
-    icons:         { action: assets.generateIcons,         n: [2] },
-    splashscreens: { action: assets.generateSplashscreens, n: [2] }
-};
-
 function printHelp() {
     return fs.read(path.join(__dirname, 'usage.txt')).then(print);
 }
 
-var config = function (args, verbose) {
-    var p = args[0],
-        t = args[1],
-        c = args[2],
-        cmd_exists = cmds[p] && cmds[p][t] && cmds[p][t][c],
-        validArgsCount = cmd_exists && cmds[p][t][c]['n'].indexOf(args.length-3) >-1,
-        isAssetsCmds = ['icons', 'splashscreens'].indexOf(p) > -1;
-
-    if(cmd_exists && validArgsCount)
-        return cmds[p][t][c]['action'](args.splice(2, args.length-1), verbose);
-    else if(isAssetsCmds && args.length === 3)
-        return cmds[p](args.splice(1, args.length-1), verbose)
-    else return printHelp();
-};
+function match(_, cmd) {
+    if(_.length > cmd.length) return false;
+    return cmd.reduce(function(val, word, idx) {
+        if(!val) return val;
+        if(word === '+') return val;
+        if(word === '*' && _[idx]) return val;
+        if(word === _[idx]) return val;
+        return !val;
+    }, true);
+}
 
 var action = function (argv) {
     var verbose = false;
 
-    if(argsHelper.matchArgumentsCount(argv, [3,5])
-            && argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
+    if(argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
         if(argsHelper.matchOption(argv, 'V', 'verbose'))
             verbose = true;
-        return config(argv._, verbose);
+
+        if(match(argv._, ['ios', 'devices', 'list', '+'])) return devices.list(argv._[3], verbose);
+        if(match(argv._, ['ios', 'devices', 'add', '*', '*'])) return devices.add(argv._[3], argv._[4], verbose);
+        if(match(argv._, ['ios', 'devices', 'attach', '*', '*'])) return devices.attach(argv._[3], argv._[4], verbose);
+        if(match(argv._, ['ios', 'devices', 'detach', '*', '*'])) return devices.detach(argv._[3], argv._[4], verbose);
+
+        if(match(argv._, ['provisioning', 'fetch', '*'])) return provisioning.fetch(argv._[3], verbose);
+        if(match(argv._, ['provisioning', 'list'])) return provisioning.fetch(verbose);
+
+        if(match(argv._, ['icons', '*', '*'])) return assets.generateIcons(argv._[1], argv._[2], verbose);
+        if(match(argv._, ['splashscreens', '*', '*'])) return assets.generateSplashscreens(argv._[1], argv._[2], verbose);
+
+        return printHelp();
     }
     return printHelp();
 };
 
-action.config = config;
 module.exports = action;

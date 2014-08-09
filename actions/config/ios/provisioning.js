@@ -8,6 +8,7 @@ var Q = require('q'),
     tmp = require('tmp'),
     print = require('../../../lib/helper/print'),
     tarifaFile = require('../../../lib/tarifa-file'),
+    tarifaPath = require('../../../lib/helper/path'),
     provisionFileParse = require('../../../lib/ios/parse-mobileprovision'),
     askPassword = require('./ask_password');
 
@@ -65,12 +66,11 @@ function usage(msg) {
     return Q.reject(msg);
 }
 
-function printList(args, verbose) {
-    if(args.length !== 1 && args[0] !== 'list') return usage("Wrong arguments!");
-    else return list(verbose).then(function (items) {
+function printList(verbose) {
+    return list(verbose).then(function (items) {
         print(chalk.underline("\nActive provisioning profiles:"));
         items.forEach(function (item) {
-            print("appid: %s name: %s ", chalk.yellow(item[1]), chalk.cyan(item[0]));
+            print("appid: %s name: %s", chalk.yellow(item[1]), chalk.cyan(item[0]));
         });
     });
 }
@@ -111,14 +111,8 @@ function downloadProvisioningProfile(user, team, password, name, profile_path, v
     return defer.promise;
 }
 
-function fetch(args, verbose) {
-    if(args.length !== 2 && args[0] !== 'fetch') {
-        return usage("Wrong arguments!");
-    }
-    var name = args[0],
-        conf = args[1];
-
-    return tarifaFile.parseConfig(path.join(process.cwd(), 'tarifa.json')).then(function (localSettings) {
+function fetch(name, conf, verbose) {
+    return tarifaFile.parseConfig(tarifaPath.current()).then(function (localSettings) {
         if(!localSettings.configurations['ios'][conf]) {
             return Q.reject('Error: configuration ' + conf + 'not found!');
         } else {
@@ -137,8 +131,6 @@ function fetch(args, verbose) {
             verbose
         );
     });
-
-    return Q.resolve();
 }
 
 module.exports = {
