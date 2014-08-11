@@ -10,55 +10,20 @@ var Q = require('q'),
     tarifaFile = require('../../../lib/tarifa-file'),
     tarifaPath = require('../../../lib/helper/path'),
     provisionFileParse = require('../../../lib/ios/parse-mobileprovision'),
+    provisioningList = require('../../../lib/ios/nomad/provisioning/list'),
+    downloadProvisioning = require('../../../lib/ios/nomad/provisioning/download'),
     askPassword = require('./ask_password');
 
-function getProvisioningProfileList(user, team, password, verbose) {
-    var defer = Q.defer(),
-        options = {
-            timeout : 40000,
-            maxBuffer: 1024 * 400
-        },
-        t = (team ?  (" --team " + team) : ''),
-        cmd = "ios profiles:list -u " + user + " -p "+ password + t + ' --type distribution';
-
-    exec(cmd, options, function (err, stdout, stderr) {
-        if(err) {
-            if(verbose) {
-                print.error('command: %s', cmd);
-            }
-            defer.reject('ios stderr ' + err);
-            return;
-        }
-
-        var output = stdout.toString()
-                        .split('\n')
-                        .filter(function (line) {
-                            return line.search("Active") >= 0;
-                        })
-                        .map(function (line) {
-                            var elts = line.split('|');
-                            return [elts[1], elts[2]];
-                        });
-
-        defer.resolve(output);
-    });
-
-    return defer.promise;
-}
-
 function list(verbose) {
-    return askPassword().then(function (password) {
-        spinner();
-        return tarifaFile.parseConfig(path.join(process.cwd(), 'tarifa.json'))
-            .then(function (localSettings) {
-                return getProvisioningProfileList(
-                    localSettings.deploy.apple_id,
-                    localSettings.deploy.apple_developer_team,
-                    password,
-                    verbose
-                );
+    return tarifaFile.parseConfig(tarifaPath.current())
+        .then(function (localSettings) {
+            spinner();
+            return askPassword().then(function (password) {
+                var id = localSettings.deploy.apple_id,
+                    team = localSettings.deploy.apple_developer_team;
+                return provisioningList(id, team, password, verbose);
             });
-    });
+        });
 }
 
 function usage(msg) {
@@ -75,42 +40,6 @@ function printList(verbose) {
     });
 }
 
-function downloadProvisioningProfile(user, team, password, name, profile_path, verbose) {
-    var defer = Q.defer(),
-        t = (team ?  (" --team " + team) : ''),
-        cmd = "ios profiles:download " + name + " -u " + user + " -p "+ password + t + ' --type distribution';
-
-    tmp.dir(function _tempDirCreated(err, tmppath) {
-        if (err) return defer.reject('downloadProvisioningProfile ' + err);;
-
-        exec(cmd, {
-            cwd: tmppath,
-            timeout : 40000,
-            maxBuffer: 1024 * 400
-        }, function (err, stdout, stderr) {
-            if(err) {
-                if(verbose) {
-                    print.error('command: %s', cmd);
-                }
-                defer.reject('ios stderr ' + err);
-                return;
-            }
-            if (verbose) print('try to copy provision');
-            ncp.limit = 1;
-            ncp(path.join(tmppath, name.replace(/-/g,'')+'.mobileprovision'), profile_path, function (err) {
-                if (err) return defer.reject(err);
-                if (verbose)
-                    print.success('provisioning profile fetched');
-                var output = stdout.toString();
-                if (verbose) print(output);
-                defer.resolve(output);
-            });
-        });
-    });
-
-    return defer.promise;
-}
-
 function fetch(name, conf, verbose) {
     return tarifaFile.parseConfig(tarifaPath.current()).then(function (localSettings) {
         if(!localSettings.configurations['ios'][conf]) {
@@ -122,7 +51,7 @@ function fetch(name, conf, verbose) {
         }
     }).spread(function (password, localSettings) {
         spinner();
-        return downloadProvisioningProfile(
+        return downloadProvisioning(
             localSettings.deploy.apple_id,
             localSettings.deploy.apple_developer_team,
             password,
@@ -135,7 +64,5 @@ function fetch(name, conf, verbose) {
 
 module.exports = {
     fetch : fetch,
-    list : printList,
-    downloadProvisioningProfile: downloadProvisioningProfile,
-    getProvisioningProfileList: getProvisioningProfileList
+    list : printList
 };

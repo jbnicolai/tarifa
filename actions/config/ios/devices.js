@@ -10,7 +10,7 @@ var Q = require('q'),
     tarifaPath = require('../../../lib/helper/path'),
     print = require('../../../lib/helper/print'),
     parseProvisionFile = require('../../../lib/ios/parse-mobileprovision'),
-    downloadProvisioningProfile = require('./provisioning').downloadProvisioningProfile,
+    downloadProvisioning = require('../../../lib/ios/nomad/provisioning/download'),
     getDevices = require('../../../lib/ios/nomad/device/list'),
     addDevice = require('../../../lib/ios/nomad/device/add'),
     provisioningManager = require('../../../lib/ios/nomad/provisioning/device'),
@@ -97,16 +97,14 @@ function list(config, verbose) {
 function add(name, uuid, verbose) {
     return tarifaFile.parseConfig(tarifaPath.current())
         .then(function(localSettings) {
+
+            var id = localSettings.deploy.apple_id,
+                team = localSettings.deploy.apple_developer_team;
+
             return askPassword().then(function (password) {
                 spinner();
-                return addDevice(
-                    localSettings.deploy.apple_id,
-                    localSettings.deploy.apple_developer_team,
-                    password,
-                    name,
-                    uuid,
-                    verbose
-                ).then(function (output) { if(verbose) print(output); });
+                return addDevice(id, team, password, name, uuid, verbose)
+                    .then(function (output) { if(verbose) print(output); });
             });
         });
 }
@@ -139,7 +137,7 @@ function attach(uuid, config, verbose) {
                                 devices,
                                 verbose
                             ).then(function () {
-                            return downloadProvisioningProfile(
+                            return downloadProvisioning(
                                 localSettings.deploy.apple_id,
                                 localSettings.deploy.apple_developer_team,
                                 password,
@@ -177,7 +175,7 @@ function attach(uuid, config, verbose) {
                                     devices,
                                     verbose
                                 ).then(function () {
-                                return downloadProvisioningProfile(
+                                return downloadProvisioning(
                                     localSettings.deploy.apple_id,
                                     localSettings.deploy.apple_developer_team,
                                     password,
@@ -225,7 +223,7 @@ function detach(uuid, config, verbose) {
                             );
                         });
                     }).then(function () {
-                        return downloadProvisioningProfile(
+                        return downloadProvisioning(
                             localSettings.deploy.apple_id,
                             localSettings.deploy.apple_developer_team,
                             password,
