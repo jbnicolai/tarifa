@@ -15,7 +15,7 @@ var Q = require('q'),
 
 function listDevice(verbose) {
     return tarifaFile.parseConfig(tarifaPath.current()).then(function (localSettings) {
-        if(!localSettings.deploy || !localSettings.delpoy.apple_id)
+        if(!localSettings.deploy || !localSettings.deploy.apple_id)
             return Q.reject("No deploy informations are available in the current tarifa.json file.");
         return askPassword()
             .then(function (password) {
@@ -44,7 +44,7 @@ function listDeviceInProvisioningWithInfo(config, verbose) {
             var provisioning_path = localConf.provisioning_profile_path;
             return parseProvisionFile(provisioning_path).then(function (provision) {
                 var devices = provision.uuids.map(function (uuid){
-                    return { name: null, uuid: uuid, enabled: null };
+                    return { name: null, uuid: uuid, enabled: true };
                 });
                 return {
                     type: provision.type,
