@@ -13,7 +13,7 @@ var Q = require('q'),
     downloadProvisioningProfile = require('./provisioning').downloadProvisioningProfile,
     getDevices = require('../../../lib/ios/nomad/device/list'),
     addDevice = require('../../../lib/ios/nomad/device/add'),
-    addDeviceToProvisioningProfile = require('../../../lib/ios/nomad/provisioning/add-device'),
+    provisioningManager = require('../../../lib/ios/nomad/provisioning/device'),
     askDeviceName = require('./ask_device_name'),
     askPassword = require('./ask_password');
 
@@ -111,39 +111,6 @@ function add(name, uuid, verbose) {
         });
 }
 
-function removeDeviceToProvisioningProfile(user, team, password, uuid, profile_path, devices, verbose) {
-    return parseProvisionFile(profile_path).then(function (provisioning) {
-        var defer = Q.defer(),
-            options = {
-                timeout : 40000,
-                maxBuffer: 1024 * 400
-            },
-            t = (team ?  (" --team " + team) : ''),
-            device = devices.filter(function (d) { return d.uuid.trim() === uuid; } );
-
-        if(!device[0])  return Q.reject("uuid is not included in the developer center!");
-
-        device = device[0];
-        var deviceTuple = '"' + device.name.trim() + '"=' + uuid,
-            cmd = "ios profiles:manage:devices:remove " + provisioning.name + " " + deviceTuple + " -u " + user + " -p "+ password + t;
-        exec(cmd, options, function (err, stdout, stderr) {
-            if(err) {
-                if(verbose) {
-                    print.error('command: %s', cmd);
-                }
-                defer.reject('ios stderr ' + err);
-                return;
-            }
-
-            var output = stdout.toString().split('\n');
-            if(verbose) print(output.toString());
-            defer.resolve(output.toString());
-        });
-
-        return defer.promise;
-    });
-}
-
 function attach(uuid, config, verbose) {
 
     return tarifaFile.parseConfig(tarifaPath.current())
@@ -163,7 +130,7 @@ function attach(uuid, config, verbose) {
 
                     if(rslt.length) {
                         if(verbose) print('device already in developer center');
-                        return addDeviceToProvisioningProfile(
+                        return provisioningManager.add(
                                 localSettings.deploy.apple_id,
                                 localSettings.deploy.apple_developer_team,
                                 password,
@@ -201,7 +168,7 @@ function attach(uuid, config, verbose) {
                                 if(verbose) print(output);
                             });
                         }).then(function () {
-                            return addDeviceToProvisioningProfile(
+                            return provisioningManager.add(
                                     localSettings.deploy.apple_id,
                                     localSettings.deploy.apple_developer_team,
                                     password,
@@ -247,7 +214,7 @@ function detach(uuid, config, verbose) {
                             password,
                             verbose
                         ).then(function (devices) {
-                            return removeDeviceToProvisioningProfile(
+                            return provisioningManager.remove(
                                 localSettings.deploy.apple_id,
                                 localSettings.deploy.apple_developer_team,
                                 password,
