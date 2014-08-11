@@ -1,15 +1,10 @@
 var Q = require('q'),
     chalk = require('chalk'),
     spinner = require("char-spinner"),
-    ncp = require('ncp').ncp,
-    exec = require('child_process').exec,
-    path = require('path'),
-    fs = require('fs'),
-    tmp = require('tmp'),
+    format = require('util').format,
     print = require('../../../lib/helper/print'),
     tarifaFile = require('../../../lib/tarifa-file'),
     tarifaPath = require('../../../lib/helper/path'),
-    provisionFileParse = require('../../../lib/ios/parse-mobileprovision'),
     provisioningList = require('../../../lib/ios/nomad/provisioning/list'),
     downloadProvisioning = require('../../../lib/ios/nomad/provisioning/download'),
     askPassword = require('./ask_password');
@@ -26,11 +21,6 @@ function list(verbose) {
         });
 }
 
-function usage(msg) {
-    print(fs.readFileSync(path.join(__dirname , '..', 'usage.txt'), 'utf-8'));
-    return Q.reject(msg);
-}
-
 function printList(verbose) {
     return list(verbose).then(function (items) {
         print(chalk.underline("\nActive provisioning profiles:"));
@@ -42,8 +32,9 @@ function printList(verbose) {
 
 function fetch(name, conf, verbose) {
     return tarifaFile.parseConfig(tarifaPath.current()).then(function (localSettings) {
-        if(!localSettings.configurations['ios'][conf]) {
-            return Q.reject('Error: configuration ' + conf + 'not found!');
+        var config = localSettings.configurations['ios'][conf];
+        if(!config) {
+            return Q.reject(format('Error: configuration %s not found!', conf);
         } else {
             return askPassword().then(function (password) {
                 return [password, localSettings];
@@ -51,14 +42,12 @@ function fetch(name, conf, verbose) {
         }
     }).spread(function (password, localSettings) {
         spinner();
-        return downloadProvisioning(
-            localSettings.deploy.apple_id,
-            localSettings.deploy.apple_developer_team,
-            password,
-            localSettings.configurations['ios'][conf].provisioning_profile_name,
-            localSettings.configurations['ios'][conf].provisioning_profile_path,
-            verbose
-        );
+        var id = localSettings.deploy.apple_id,
+            team = localSettings.deploy.apple_developer_team,
+            profile_name = localSettings.deploy.provisioning_profile_name,
+            profile_path = localSettings.deploy.provisioning_profile_name;
+
+        return downloadProvisioning(id, team, password, profile_name, profile_path, verbose);
     });
 }
 
