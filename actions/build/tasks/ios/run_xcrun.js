@@ -13,7 +13,7 @@ module.exports = function (msg) {
 
     var product_file_name = conf['product_file_name'] + '.ipa',
         developer_identity = conf['apple_developer_identity'],
-        output = path.join(process.cwd(), settings.output_folder, product_file_name),
+        output = path.join(process.cwd(), 'app/platforms/ios/build', product_file_name),
         provisioning_profile_path = conf['provisioning_profile_path'];
 
     var defer = Q.defer(),

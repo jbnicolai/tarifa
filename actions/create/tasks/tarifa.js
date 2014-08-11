@@ -13,18 +13,6 @@ function log(response) {
     return Q.resolve(response);
 }
 
-function createOutputFolder(response) {
-    var defer = Q.defer();
-    fs.mkdir(path.join(response.path, settings.output_folder), function (err) {
-        if(err) defer.reject(err);
-        if (response.options.verbose)
-            print.success('output folder created ');
-        defer.resolve(response);
-    });
-
-    return defer.promise;
-}
-
 function copyWWWProject(response) {
     // create tarifa web app folder
     fs.mkdirSync(path.join(response.path, settings.webAppPath));
@@ -70,7 +58,6 @@ function npm_install(response) {
 module.exports = function (response) {
     if(!fs.existsSync(response.path)) fs.mkdirSync(response.path);
     return copyWWWProject(response)
-        .then(createOutputFolder)
         .then(npm_install)
         .then(tarifaFile.createFileFromResponse)
         .then(log);
