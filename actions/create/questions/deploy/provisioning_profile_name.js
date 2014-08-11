@@ -1,7 +1,7 @@
 var Q = require('q'),
     path = require('path'),
     askPassword = require('../../../config/ios/ask_password'),
-    provisioningList = require('../../../lib/ios/nomad/provisioning/list');
+    provisioningList = require('../../../../lib/ios/nomad/provisioning/list');
 
 var question = function (response, verbose) {
     return askPassword().then(function (password) {

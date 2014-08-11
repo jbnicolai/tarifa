@@ -34,7 +34,7 @@ function fetch(name, conf, verbose) {
     return tarifaFile.parseConfig(tarifaPath.current()).then(function (localSettings) {
         var config = localSettings.configurations['ios'][conf];
         if(!config) {
-            return Q.reject(format('Error: configuration %s not found!', conf);
+            return Q.reject(format('Error: configuration %s not found!', conf));
         } else {
             return askPassword().then(function (password) {
                 return [password, localSettings];
