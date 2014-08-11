@@ -11,46 +11,11 @@ var Q = require('q'),
     print = require('../../../lib/helper/print'),
     parseProvisionFile = require('../../../lib/ios/parse-mobileprovision'),
     downloadProvisioningProfile = require('./provisioning').downloadProvisioningProfile,
+    getDevices = require('../../../lib/ios/nomad/device/list'),
+    addDevice = require('../../../lib/ios/nomad/device/add'),
+    addDeviceToProvisioningProfile = require('../../../lib/ios/nomad/provisioning/add-device'),
     askDeviceName = require('./ask_device_name'),
     askPassword = require('./ask_password');
-
-function getDevices(user, team, password, verbose) {
-    var defer = Q.defer(),
-        options = {
-            timeout : 40000,
-            maxBuffer: 1024 * 400
-        },
-        t = (team ?  (" --team " + team) : ''),
-        cmd = "ios devices:list -u " + user + " -p "+ password + t;
-
-    exec(cmd, options, function (err, stdout, stderr) {
-        if(err) {
-            if(verbose) {
-                print.error('command: %s', cmd);
-            }
-            defer.reject('ios stderr ' + err);
-            return;
-        }
-
-        var output = stdout.toString().split('\n');
-        output = output.slice(5, output.length-2);
-
-        output = output.map(function (line) {
-            var r = line.split('|').filter(function (w) {
-                return w.length > 0;
-            });
-            return {
-                name: r[0],
-                uuid: r[1],
-                enabled: r[2].trim() === 'Y'
-            }
-        });
-
-        defer.resolve(output);
-    });
-
-    return defer.promise;
-}
 
 function listAction(verbose) {
     return tarifaFile.parseConfig(tarifaPath.current()).then(function (localSettings) {
@@ -75,7 +40,7 @@ function usage(msg) {
 }
 
 function listDeviceInProvisioningWithInfo(config, verbose) {
-    return tarifaFile.parseConfig(path.join(process.cwd(), 'tarifa.json'))
+    return tarifaFile.parseConfig(tarifaPath.current())
         .then(function (localSettings) {
             if(!localSettings.configurations.ios[config]) {
                 return Q.reject('configuration not available!');
@@ -129,31 +94,6 @@ function list(config, verbose) {
         return listAction(verbose).then(printDevices("\nAll Devices :"));
 }
 
-function addDevice(user, team, password, name, uuid, verbose) {
-    var defer = Q.defer(),
-        options = {
-            timeout : 40000,
-            maxBuffer: 1024 * 400
-        },
-        t = (team ?  (" --team " + team) : ''),
-        cmd = "ios devices:add " + name + "=" + uuid +" -u " + user + " -p "+ password + t;
-
-    exec(cmd, options, function (err, stdout, stderr) {
-        if(err) {
-            if(verbose) {
-                print.error('command: %s', cmd);
-            }
-            defer.reject('ios stderr ' + err);
-            return;
-        }
-
-        var output = stdout.toString();
-        defer.resolve(output);
-    });
-
-    return defer.promise;
-}
-
 function add(name, uuid, verbose) {
     return tarifaFile.parseConfig(tarifaPath.current())
         .then(function(localSettings) {
@@ -169,36 +109,6 @@ function add(name, uuid, verbose) {
                 ).then(function (output) { if(verbose) print(output); });
             });
         });
-}
-
-function addDeviceToProvisioningProfile(user, team, password, uuid, profile_path, devices, verbose) {
-    return parseProvisionFile(profile_path).then(function (provisioning) {
-        var defer = Q.defer(),
-            options = {
-                timeout : 40000,
-                maxBuffer: 1024 * 400
-            },
-            t = (team ?  (" --team " + team) : ''),
-            device = devices.filter(function (d) { return d.uuid.trim() === uuid; } )[0],
-            deviceTuple = '"' + device.name.trim() + '"=' + uuid,
-            cmd = "ios profiles:manage:devices:add " + provisioning.name + " " + deviceTuple + " -u " + user + " -p "+ password + t;
-
-        exec(cmd, options, function (err, stdout, stderr) {
-            if(err) {
-                if(verbose) {
-                    print.error('command: %s', cmd);
-                }
-                defer.reject('ios stderr ' + err);
-                return;
-            }
-
-            var output = stdout.toString().split('\n');
-            if(verbose) print(output.toString());
-            defer.resolve(output.toString());
-        });
-
-        return defer.promise;
-    });
 }
 
 function removeDeviceToProvisioningProfile(user, team, password, uuid, profile_path, devices, verbose) {
