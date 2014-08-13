@@ -10,4 +10,4 @@ Options:
 
 Examples:
 
-    tarifa build android production
+    tarifa build android prod

@@ -9,4 +9,4 @@ Options:
 
 Examples:
 
-    tarifa prepare android production
+    tarifa prepare android prod
