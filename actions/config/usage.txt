@@ -38,4 +38,4 @@ Options:
 
 Examples:
 
-    tarifa ios devices list staging
+    tarifa config ios devices list staging
