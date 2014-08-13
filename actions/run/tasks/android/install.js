@@ -30,7 +30,7 @@ module.exports = function (conf) {
                 print.error('command: %s', cmd);
                 print.error('adb stderr %s', stderr);
             }
-            defer.reject('adb ' + err);
+            defer.reject('adb command failed; try to plug again the device if the error persist.');
         }
         else {
             defer.resolve(conf);
