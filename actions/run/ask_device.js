@@ -6,10 +6,19 @@ module.exports = function (conf) {
     var defer = Q.defer();
 
     devices[conf.platform]().then(function (items) {
-        if (items.length === 0 && conf.platform !== 'web')
-            return defer.reject("Error: no devices available!");
-        if(conf.platform === 'web')
+        if (conf.platform === 'web')
             return defer.resolve(conf);
+
+        if (items.length === 0)
+            return defer.reject("Error: no devices available!");
+
+        if (items.length === 1) {
+            conf.device = {
+                value: items[0],
+                index : 0
+            };
+            return defer.resolve(conf);
+        }
 
         var question = {
             type:'list',
@@ -21,7 +30,7 @@ module.exports = function (conf) {
             conf.device = {
                 value: response.device,
                 index : items.indexOf(response.device)
-            }
+            };
             defer.resolve(conf);
         });
     });
