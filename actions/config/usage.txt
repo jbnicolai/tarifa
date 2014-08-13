@@ -25,8 +25,11 @@ Commands:
         List all available provisioning profiles on the current apple developer account
 
 
-    icons <color> <configuration>
+    icons generate <color> <configuration>
         Generate all icons with the given color in the given configuration
+
+    icons file <path> <configuration>
+        Generate all icons from given file in the given configuration
 
     splashscreens <color> <configuration>
         Generate all splash screens with the given color in the given configuration

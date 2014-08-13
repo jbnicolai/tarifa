@@ -37,7 +37,8 @@ var action = function (argv) {
         if(match(argv._, ['provisioning', 'fetch', '*'])) return provisioning.fetch(argv._[3], verbose);
         if(match(argv._, ['provisioning', 'list'])) return provisioning.fetch(verbose);
 
-        if(match(argv._, ['icons', '*', '*'])) return assets.generateIcons(argv._[1], argv._[2], verbose);
+        if(match(argv._, ['icons', 'generate', '*', '*'])) return assets.generateIcons(argv._[2], argv._[3], verbose);
+        if(match(argv._, ['icons', 'file', '*', '*'])) return assets.generateIconsFromFile(argv._[2], argv._[3], verbose);
         if(match(argv._, ['splashscreens', '*', '*'])) return assets.generateSplashscreens(argv._[1], argv._[2], verbose);
 
         return printHelp();
