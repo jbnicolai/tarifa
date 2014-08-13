@@ -40,12 +40,20 @@ function npm_install(response) {
 
     process.chdir(destination);
 
+    var options = {
+        timeout: 30 * 1000,
+        cwd: null,
+        env: null
+    };
     exec('npm install',
+        options,
         function (error, stdout, stderr) {
             process.chdir(cwd);
             if (error !== null) {
                 defer.resolve(response);
-                print.error('npm install error in www project: %s', error);
+                var advice = 'You may have a problem with your network connectivity. ' +
+                             'Try to run npm install when your network settings are fixed.';
+                print.warning('npm install error in ' + destination + ', reason:\n%s%s', error, advice);
                 return;
             }
             if (response.options.verbose)

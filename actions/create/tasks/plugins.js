@@ -19,5 +19,10 @@ module.exports = function (response) {
                 return Q.resolve(response);
             });
         });
-    }, Q.resolve());
+    }, Q.resolve()).fail(function (reason) {
+        var advice = 'You may have a problem with your network connectivity. ' +
+                     'Try to add your plugins with tarifa plugin add when your network settings are fixed.';
+        print.warning('tarifa plugin add error in ' + response.path + ', reason:\n%s\n%s', reason, advice);
+        return Q.resolve(response);
+    });
 };
