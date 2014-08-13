@@ -53,7 +53,7 @@ function npm_install(response) {
                 defer.resolve(response);
                 var advice = 'You may have a problem with your network connectivity. ' +
                              'Try to run npm install when your network settings are fixed.';
-                print.warning('npm install error in ' + destination + ', reason:\n%s%s', error, advice);
+                print.warning('npm install error in %s, reason:\n%s%s', destination, error, advice);
                 return;
             }
             if (response.options.verbose)
