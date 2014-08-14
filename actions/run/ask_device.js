@@ -3,12 +3,11 @@ var Q = require('q'),
     devices = require('../../lib/devices');
 
 module.exports = function (conf) {
+
+    if (conf.platform === 'web') return Q(conf);
+
     var defer = Q.defer();
-
     devices[conf.platform]().then(function (items) {
-        if (conf.platform === 'web')
-            return defer.resolve(conf);
-
         if (items.length === 0)
             return defer.reject("Error: no devices available!");
 
