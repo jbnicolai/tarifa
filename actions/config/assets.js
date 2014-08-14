@@ -8,9 +8,11 @@ var Q = require('q'),
     generateIcons = require('../../lib/cordova/icon').generate,
     generateIconsFromFile = require('../../lib/cordova/icon').generateFromFile,
     generateSplashscreens = require('../../lib/cordova/splashscreen').generate,
+    generateSplashscreensFromFile = require('../../lib/cordova/splashscreen').generateFromFile,
     createFolders = require('../../lib/cordova/assets').createFolders;
 
 function generate(color, config, f, verbose) {
+    config = config || 'default';
     var cwd = process.cwd();
     if(!colorHelper.validate(color)) return Q.reject('invalid color!');
 
@@ -25,6 +27,7 @@ function generate(color, config, f, verbose) {
 }
 
 function generateFromFile(file, config, f, verbose) {
+    config = config || 'default';
     var cwd = process.cwd();
 
     return tarifaFile.parseConfig(tarifaPath.current()).then(function (localSettings) {
@@ -47,4 +50,8 @@ module.exports.generateIconsFromFile = function (file, config, verbose) {
 
 module.exports.generateSplashscreens = function (color, config, verbose) {
     return generate(color, config, generateSplashscreens, verbose);
+};
+
+module.exports.generateSplashscreensFromFile = function (file, config, verbose) {
+    return generateFromFile(file, config, generateSplashscreensFromFile, verbose);
 };
