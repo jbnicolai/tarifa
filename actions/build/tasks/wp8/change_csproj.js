@@ -1,5 +1,6 @@
 var Q = require('q'),
     fs = require('q-io/fs'),
+    path = require('path'),
     print = require('../../../../lib/helper/print'),
     settings = require('../../../../lib/settings');
 

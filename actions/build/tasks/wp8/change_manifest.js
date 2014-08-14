@@ -15,7 +15,7 @@ module.exports = function (msg) {
 
     return fs.read(manifestPath).then(function (manifestContent) {
     	var content = manifestContent.replace(/<Title>.*<\/Title>/, title)
-    					.replace(/Title=\"[a-z,A-Z,0-9, ]*\"/, title2)
+    					.replace(/Title=\"([^\"]*)\"/, title2)
     					.replace(/ProductID=\"{[a-z,A-Z,0-9,-]*}\"/, productId);
 
     	return fs.write(manifestPath, content);
