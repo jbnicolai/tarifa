@@ -12,6 +12,7 @@ var Q = require('q'),
     createFolders = require('../../lib/cordova/assets').createFolders;
 
 function generate(color, config, f, verbose) {
+    config = config || 'default';
     var cwd = process.cwd();
     if(!colorHelper.validate(color)) return Q.reject('invalid color!');
 
@@ -26,6 +27,7 @@ function generate(color, config, f, verbose) {
 }
 
 function generateFromFile(file, config, f, verbose) {
+    config = config || 'default';
     var cwd = process.cwd();
 
     return tarifaFile.parseConfig(tarifaPath.current()).then(function (localSettings) {
