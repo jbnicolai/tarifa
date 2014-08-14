@@ -39,7 +39,8 @@ var action = function (argv) {
 
         if(match(argv._, ['icons', 'generate', '*', '*'])) return assets.generateIcons(argv._[2], argv._[3], verbose);
         if(match(argv._, ['icons', 'file', '*', '*'])) return assets.generateIconsFromFile(argv._[2], argv._[3], verbose);
-        if(match(argv._, ['splashscreens', '*', '*'])) return assets.generateSplashscreens(argv._[1], argv._[2], verbose);
+        if(match(argv._, ['splashscreens', 'generate', '*', '*'])) return assets.generateSplashscreens(argv._[2], argv._[3], verbose);
+        if(match(argv._, ['splashscreens', 'file', '*', '*'])) return assets.generateSplashscreensFromFile(argv._[2], argv._[3], verbose);
 
         return printHelp();
     }
