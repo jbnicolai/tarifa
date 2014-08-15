@@ -10,9 +10,9 @@ function availablePlatforms() {
 module.exports = {
     type : 'checkbox',
     name : 'platforms',
-    validate : function (val) { return val.length > 1 || "More than one platform is mandatory!"; },
+    validate : function (val) { return val.length > 1 || "more than one platform is mandatory"; },
     choices : availablePlatforms().map(function (setting) {
         return { name : setting, value : setting };
     }),
-    message : 'What are the supported platform of your project?'
+    message : 'What are the supported platforms of your project?'
 };

@@ -10,7 +10,7 @@ module.exports = {
     type:'input',
     name:'path',
     validate : function (answer) {
-        var msg = "folder already exist!";
+        var msg = "folder already exists";
         return isPathValid(answer) || msg;
     },
     message:'Where do you want to create your project?'

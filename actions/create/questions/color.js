@@ -5,7 +5,7 @@ module.exports = {
     type:'input',
     name:'color',
     validate: function (response) {
-        return colorHelper.validate(response) || "color must be a valid imagemagick color!"
+        return colorHelper.validate(response) || "must be a valid imagemagick color"
     },
     filter: colorHelper.format,
     when: function (answers) {
