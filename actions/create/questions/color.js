@@ -1,12 +1,12 @@
-var colorHelper = require('../../../lib/helper/color'),
-    canGenerate = require('../../../lib/cordova/assets').canGenerate;
+var canGenerate = require('../../../lib/cordova/assets').canGenerate,
+    colorHelper = require('../../../lib/helper/color'),
+    validator = require('../../../lib/helper/validator'),
+    validateColor = validator.toInquirerValidateƒ(validator.isColor);
 
 module.exports = {
     type:'input',
     name:'color',
-    validate: function (response) {
-        return colorHelper.validate(response) || "must be a valid imagemagick color"
-    },
+    validate: validateColor,
     filter: colorHelper.format,
     when: function (answers) {
         var done = this.async();

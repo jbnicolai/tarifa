@@ -1,6 +1,9 @@
+var validator = require('../../../lib/helper/validator'),
+    validateDescription = validator.toInquirerValidateƒ(validator.isDescription);
+
 module.exports = {
     type:'input',
     name:'description',
-    validate : function (answer) { return answer.length > 0; },
+    validate: validateDescription,
     message:'What\'s your project about?'
 };

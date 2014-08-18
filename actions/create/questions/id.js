@@ -1,9 +1,9 @@
 var validator = require('../../../lib/helper/validator'),
-    validateId = validator.toInquirerValidateƒ(validator.isId);
+    validateProjectId = validator.toInquirerValidateƒ(validator.isProjectId);
 
 module.exports = {
     type:'input',
     name:'id',
-    validate: validateId,
+    validate: validateProjectId,
     message:'Choose a default namespace/bundleid/packagename for your project'
 };

@@ -1,17 +1,9 @@
-var path = require('path'),
-    fs = require('fs');
-
-function isPathValid(str) {
-    var resolvedPath = path.resolve(str);
-    return !fs.existsSync(resolvedPath) || fs.readdirSync(resolvedPath).length == 0;
-}
+var validator = require('../../../lib/helper/validator'),
+    validateProjectPath = validator.toInquirerValidateƒ(validator.isProjectPath);
 
 module.exports = {
     type:'input',
     name:'path',
-    validate : function (answer) {
-        var msg = "folder already exists";
-        return isPathValid(answer) || msg;
-    },
+    validate: validateProjectPath,
     message:'Where do you want to create your project?'
 };

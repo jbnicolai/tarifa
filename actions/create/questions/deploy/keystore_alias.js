@@ -1,7 +1,10 @@
+var validator = require('../../../../lib/helper/validator'),
+    validateKeystoreAlias = validator.toInquirerValidateƒ(validator.isKeystoreAlias);
+
 module.exports = {
     dependency: 'android',
     type:'input',
     name:'keystore_alias',
-    validate : function (answer) { return answer.length > 0 || 'alias can not be empty'; },
+    validate: validateKeystoreAlias,
     message:'What is the keystore alias?'
 };
