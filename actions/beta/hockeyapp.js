@@ -1,12 +1,13 @@
 var Q = require('q'),
-    fs = require('q-io/fs'),
-    path = require('path'),
-    tarifaFile = require('../../lib/tarifa-file'),
-    pathHelper = require('../../lib/helper/path'),
-    setMode = require('../../lib/helper/setReleaseMode'),
-    argsHelper = require('../../lib/helper/args'),
-    hockeyapp = require('../../lib/hockeyapp'),
-    print = require('../../lib/helper/print');
+fs = require('q-io/fs'),
+path = require('path'),
+tarifaFile = require('../../lib/tarifa-file'),
+pathHelper = require('../../lib/helper/path'),
+confHelper = require('../../lib/helper/conf'),
+setMode = require('../../lib/helper/setReleaseMode'),
+argsHelper = require('../../lib/helper/args'),
+hockeyapp = require('../../lib/hockeyapp/hockeyapp'),
+print = require('../../lib/helper/print');
 
 var deployƒ = function (conf) {
     conf.localSettings.mode = setMode(conf.platform, conf.configuration, conf.localSettings);
@@ -31,8 +32,8 @@ var deploy = function (platform, verbose) {
             return Q.reject('No hockeyapp_id key is available in stage for current platform');
 
         if (!localSettings.deploy || !localSettings.deploy.hockeyapp_apiurl
-            || !localSettings.deploy.hockeyapp_token)
-            return Q.reject('No deploy informations are available in the current tarifa.json' +
+        || !localSettings.deploy.hockeyapp_token)
+        return Q.reject('No deploy informations are available in the current tarifa.json' +
             'file for the choosen provider (hockeyapp)');
 
         return deployƒ({
@@ -45,19 +46,17 @@ var deploy = function (platform, verbose) {
     });
 };
 
+var clean = function(verbose, nbToKeep) {
+    var cwd = process.cwd();
+    var tarifaFilePath = path.join(cwd, 'tarifa.json');
 
-var action = function (argv) {
-    var verbose = false,
-        helpPath = path.join(__dirname, 'usage.txt');
-
-    if(argsHelper.matchArgumentsCount(argv, [1])
-            && argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
-        if(argsHelper.matchOption(argv, 'V', 'verbose')) {
-            verbose = true;
-        }
-        return deploy(argv._[0], verbose);
-    }
-    return fs.read(helpPath).then(print);
+    return tarifaFile.parseConfig(pathHelper.current()).then(function (localSettings) {
+        var appIds = confHelper.findByKey(localSettings, 'hockeyapp_id');
+        return hockeyapp.clean(appIds, localSettings, nbToKeep).then(function (total) {
+            print.success('Successfully deleted ' + total + ' version(s)');
+        });
+    });
 };
 
-module.exports = action;
+module.exports.deploy = deploy;
+module.exports.clean = clean;

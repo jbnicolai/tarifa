@@ -5,21 +5,11 @@ var Q = require('q'),
     devices = require('./ios/devices'),
     assets = require('./assets'),
     print = require('../../lib/helper/print'),
+    match = require('../../lib/helper/args').matchCmd,
     provisioning = require('./ios/provisioning');
 
 function printHelp() {
     return fs.read(path.join(__dirname, 'usage.txt')).then(print);
-}
-
-function match(_, cmd) {
-    if(_.length > cmd.length) return false;
-    return cmd.reduce(function(val, word, idx) {
-        if(!val) return val;
-        if(word === '+') return val;
-        if(word === '*' && _[idx]) return val;
-        if(word === _[idx]) return val;
-        return !val;
-    }, true);
 }
 
 var action = function (argv) {

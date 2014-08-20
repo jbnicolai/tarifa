@@ -1,9 +1,0 @@
-Usage: tarifa deploy <platform>
-
-Deploy a new version of the given platform to hokeyapp (for now)
-
-Options:
-
-    --help, -h     Show this message
-    --verbose, -V  Be more verbose on everything
-
