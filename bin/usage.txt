@@ -12,6 +12,7 @@ Commands:
     config         Configure the current project
     check          Check the current project after cloning
     clean          Clean the given platform
+    deploy         Deploy to testing platforms like hockeyapp
 
 Options:
 
