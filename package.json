@@ -53,7 +53,8 @@
     "tmp": "0.0.23",
     "uuid": "^1.4.1",
     "valid-java-identifier": "0.0.1",
-    "xcode": "^0.6.7"
+    "xcode": "^0.6.7",
+    "restler": "3.2.2"
   },
   "optionalDependencies": {
     "ios-deploy": "^1.0.8",

@@ -1,0 +1,17 @@
+Usage: tarifa beta <task>
+
+Tasks:
+
+    hockeyapp deploy <platform>
+        Deploy stage env package to hockeyapp for given platform.
+
+    hockeyapp clean <keep>
+        Clean all version for all apps found in tarifa.json; specify how many
+        versions to keep (default to 3).
+
+
+Options:
+
+    --help, -h     Show this message
+    --verbose, -V  Be more verbose on everything
+

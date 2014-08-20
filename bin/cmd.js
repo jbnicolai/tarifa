@@ -16,6 +16,7 @@ var chalk = require('chalk'),
     config = require('../actions/config'),
     info = require('../actions/info'),
     check = require('../actions/check'),
+    beta = require('../actions/beta'),
     clean = require('../actions/clean');
 
 var t0 = (new Date()).getTime();
@@ -30,7 +31,8 @@ var availableActions = [
         { name : 'build', action : build },
         { name : 'run', action : run },
         { name : 'clean', action : clean },
-        { name : 'check', action : check }
+        { name : 'check', action : check },
+        { name : 'beta', action: beta }
     ],
     singleOptions = [
         { small: 'v', name : 'version', action : printVersion },
