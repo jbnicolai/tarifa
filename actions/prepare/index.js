@@ -1,5 +1,7 @@
 var Q = require('q'),
     rimraf = require('rimraf'),
+    os = require('os'),
+    ncp = require('ncp').ncp,
     argsHelper = require('../../lib/helper/args'),
     print = require('../../lib/helper/print'),
     tarifaFile = require('../../lib/tarifa-file'),
@@ -7,19 +9,35 @@ var Q = require('q'),
     path = require('path'),
     fs = require('q-io/fs');
 
+var method = {
+    copy: function (cordovaWWW, projectWWW) {
+        var defer = Q.defer();
+        ncp.limit = 1024;
+        ncp(projectWWW, cordovaWWW, function (err) {
+            if (err) return defer.reject(err);
+            defer.resolve();
+        });
+        return defer.promise;
+    },
+    link : function (cordovaWWW, projectWWW) {
+        return fs.symbolicLink(cordovaWWW, projectWWW, 'directory');
+    }
+};
+
 var prepareƒ = function (conf) {
-    var cwd = process.cwd();
-    var defer = Q.defer();
-    var cordovaWWW = path.join(cwd, settings.cordovaAppPath, 'www');
-    var projectWWW = path.join(cwd, settings.project_output);
+    var cwd = process.cwd(),
+        defer = Q.defer(),
+        cordovaWWW = path.join(cwd, settings.cordovaAppPath, 'www'),
+        projectWWW = path.join(cwd, settings.project_output),
+        link_method = settings.www_link_method[os.platform()];
 
     if (conf.platform !== 'web') {
-        // link app www to project output
+        // link/copy app www to project output
         rimraf(cordovaWWW, function (err) {
             if(err) defer.reject(err);
-            if(conf.verbose) print.success('prepare, rm cordova www link');
-            fs.symbolicLink(cordovaWWW, projectWWW, 'directory').then(function() {
-                if(conf.verbose) print.success('prepare, link www project to cordova www');
+            if(conf.verbose) print.success('prepare, rm cordova www folder');
+            method[link_method](cordovaWWW, projectWWW).then(function() {
+                if(conf.verbose) print.success('prepare, %s www project to cordova www', link_method);
                 defer.resolve(conf);
             }, function (err) { defer.reject(err); });
         });
