@@ -9,7 +9,7 @@ argsHelper = require('../../lib/helper/args'),
 hockeyapp = require('../../lib/hockeyapp/hockeyapp'),
 print = require('../../lib/helper/print');
 
-var deployƒ = function (conf) {
+var uploadƒ = function (conf) {
     conf.localSettings.mode = setMode(conf.platform, conf.configuration, conf.localSettings);
     var productFileName = pathHelper.productFile(
         conf.platform,
@@ -20,7 +20,7 @@ var deployƒ = function (conf) {
     return hockeyapp.uploadVersion(productFileName, conf);
 };
 
-var deploy = function (platform, argv, verbose) {
+var upload = function (platform, argv, verbose) {
     var cwd = process.cwd();
     var tarifaFilePath = path.join(cwd, 'tarifa.json');
 
@@ -60,7 +60,7 @@ var deploy = function (platform, argv, verbose) {
 
         params = collsHelper.mergeObject(params, opts);
 
-        return deployƒ({
+        return uploadƒ({
             platform: platform,
             configuration: config,
             localSettings: localSettings,
@@ -83,5 +83,5 @@ var clean = function(nbToKeep, argv, verbose) {
     });
 };
 
-module.exports.deploy = deploy;
+module.exports.upload = upload;
 module.exports.clean = clean;

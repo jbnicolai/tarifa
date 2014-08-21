@@ -3,7 +3,7 @@ var Q = require('q'),
     path = require('path'),
     argsHelper = require('../../lib/helper/args'),
     print = require('../../lib/helper/print'),
-    hockeyapp = require('./hockeyapp'),
+    tasks = require('./tasks'),
     match = require('../../lib/helper/args').matchCmd;
 
 function printHelp() {
@@ -16,8 +16,8 @@ var action = function (argv) {
     if(argsHelper.matchOption(argv, 'V', 'verbose'))
         verbose = true;
 
-    if(match(argv._, ['hockeyapp', 'deploy', '+'])) return hockeyapp.deploy(argv._[2], argv, verbose);
-    if(match(argv._, ['hockeyapp', 'clean', '*'])) return hockeyapp.clean(argv._[2], argv, verbose);
+    if(match(argv._, ['version', 'upload', '+'])) return tasks.upload(argv._[2], argv, verbose);
+    if(match(argv._, ['version', 'clean', '*'])) return tasks.clean(argv._[2], argv, verbose);
 
     return printHelp();
 };
