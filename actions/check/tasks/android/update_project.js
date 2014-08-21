@@ -22,7 +22,7 @@ module.exports = function (msg) {
             defer.reject('android ' + err);
             return;
         }
-        print.success('updated android project!');
+        if(msg.verbose) print.success('updated android project!');
         defer.resolve(msg);
     });
     if (msg.verbose) {
