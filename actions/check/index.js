@@ -13,7 +13,8 @@ var tasks = {
     ],
     ios : [],
     wp8 : [],
-    web : []
+    web : [],
+    windows8: []
 };
 
 var check = function (verbose) {

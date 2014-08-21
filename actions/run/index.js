@@ -19,7 +19,8 @@ var Q = require('q'),
         ],
         ios : [ './tasks/ios/install' ],
         wp8: [ './tasks/wp8/install' ],
-        web: [ './tasks/web/open' ]
+        web: [ './tasks/web/open' ],
+        windows8: [ ]
     };
 
 var runƒ = function (conf) {
