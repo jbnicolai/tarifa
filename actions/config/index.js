@@ -24,8 +24,7 @@ var action = function (argv) {
         if(match(argv._, ['ios', 'devices', 'attach', '*', '*'])) return devices.attach(argv._[3], argv._[4], verbose);
         if(match(argv._, ['ios', 'devices', 'detach', '*', '*'])) return devices.detach(argv._[3], argv._[4], verbose);
 
-        if(match(argv._, ['provisioning', 'fetch', '*'])) return provisioning.fetch(argv._[3], verbose);
-        if(match(argv._, ['provisioning', 'list'])) return provisioning.fetch(verbose);
+        if(match(argv._, ['provisioning', 'list'])) return provisioning.list(verbose);
 
         if(match(argv._, ['icons', 'generate', '*', '+'])) return assets.generateIcons(argv._[2], argv._[3], verbose);
         if(match(argv._, ['icons', 'file', '*', '+'])) return assets.generateIconsFromFile(argv._[2], argv._[3], verbose);
