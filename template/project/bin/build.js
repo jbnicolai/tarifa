@@ -33,7 +33,7 @@ function mapSettings(settings, platform, configurationName) {
     return result;
 }
 
-module.exports = function build(platform, settings, configurationName, verbose) {
+module.exports = function build(platform, settings, configurationName) {
     var b = browserify();
     var defer = Q.defer();
     var output = path.join(__dirname, '../www/main.js');
@@ -58,8 +58,6 @@ module.exports = function build(platform, settings, configurationName, verbose) 
                 PLATFORM : platform
             });
 
-            if(verbose)
-                console.log('✔ www project build done with configuration ' + configurationName + '!');
             defer.resolve();
         });
     });

@@ -57,7 +57,7 @@ function ask(defer, question, type, value, verbose) {
         inquirer.prompt([question], function (answer) {
             value[question.name] = answer[question.name];
             // linked question
-            if(question.question && answer){
+            if(question.question && value[question.name]){
                 return ask(
                     defer,
                     require(path.join(__dirname, question.question)),

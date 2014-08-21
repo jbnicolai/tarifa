@@ -110,13 +110,13 @@ function attach(uuid, config, verbose) {
                         profile_name = conf.provisioning_profile_name;
 
                     if(rslt.length) {
-                        if(verbose) print('device already in developer center');
+                        if(verbose) print.success('device already in developer center');
                         return provisioningManager.add(id, team, password, uuid, profile_path, devices, verbose).then(function () {
                             return downloadProvisioning(id, team, password, profile_name, profile_path, verbose);
                         });
                     }
                     else {
-                        if(verbose) print('device not in developer center');
+                        if(verbose) print.success('device not in developer center');
                         return askDeviceName().then(function (name) {
                             return addDevice(id, team, password, name, uuid, verbose).then(function (output) {
                                 devices.push({ name:name, uuid:uuid, enabled:true });
@@ -147,8 +147,8 @@ function detach(uuid, config, verbose) {
             return askPassword().then(function (password) {
                 var profile_path = conf.provisioning_profile_path,
                     profile_name = conf.provisioning_profile_name,
-                    id = conf.deploy.apple_id,
-                    team = conf.deploy.apple_developer_team;
+                    id = localSettings.deploy.apple_id,
+                    team = localSettings.deploy.apple_developer_team;
                 return parseProvisionFile(profile_path)
                     .then(function (provision) {
                         if(provision.uuids.indexOf(uuid) < 0)

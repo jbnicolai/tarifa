@@ -18,10 +18,8 @@ Commands:
     ios devices detach <uuid> <configuration>
         Remove a device from a configuration
 
-    ios provisioning fetch <configuration>
-        Download provisioning profile from the given configuration
 
-    ios provisioning list
+    provisioning list
         List all available provisioning profiles on the current apple developer account
 
 

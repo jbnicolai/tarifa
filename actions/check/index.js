@@ -4,6 +4,7 @@ var Q = require('q'),
     pathHelper = require('../../lib/helper/path'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
+    builder = require('../../lib/builder'),
     path = require('path'),
     fs = require('q-io/fs');
 
@@ -27,6 +28,8 @@ var check = function (verbose) {
             settings: localSettings,
             verbose: verbose
         }));
+    }).then(function (msg) {
+        return builder.init(process.cwd(), msg.verbose);
     });
 };
 

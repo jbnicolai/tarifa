@@ -5,7 +5,8 @@ var Q = require('q'),
     ncp = require('ncp').ncp,
     print = require('../../../lib/helper/print'),
     tarifaFile = require('../../../lib/tarifa-file'),
-    settings = require('../../../lib/settings');
+    settings = require('../../../lib/settings'),
+    builder = require('../../../lib/builder');
 
 function log(response) {
     if (response.options.verbose)
@@ -33,40 +34,19 @@ function copyWWWProject(response) {
     return defer.promise;
 }
 
-function npm_install(response) {
-    var destination = path.join(response.path, settings.webAppPath);
-    var cwd = process.cwd();
-    var defer = Q.defer();
-
-    process.chdir(destination);
-
-    var options = {
-        timeout: 30 * 1000,
-        cwd: null,
-        env: null
-    };
-    exec('npm install',
-        options,
-        function (error, stdout, stderr) {
-            process.chdir(cwd);
-            if (error !== null) {
-                defer.resolve(response);
-                var advice = 'You may have a problem with your network connectivity. ' +
-                             'Try to run npm install when your network settings are fixed.';
-                print.warning('npm install error in %s, reason:\n%s%s', destination, error, advice);
-                return;
-            }
-            if (response.options.verbose)
-                print.success('npm install www project');
-            defer.resolve(response);
+function initBuilder(response) {
+    return builder.init(response.path, response.options.verbose).then(function () {
+        return response;
+    }).fail(function (error) {
+        print('Try to run tarifa check when your environment is properly configured.');
+        return response;
     });
-    return defer.promise;
 }
 
 module.exports = function (response) {
     if(!fs.existsSync(response.path)) fs.mkdirSync(response.path);
     return copyWWWProject(response)
-        .then(npm_install)
+        .then(initBuilder)
         .then(tarifaFile.createFileFromResponse)
         .then(log);
 };
