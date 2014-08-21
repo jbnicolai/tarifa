@@ -7,7 +7,7 @@ module.exports = function (conf) {
 
     if (conf.platform === 'web') return Q(conf);
     if(!devices[conf.platform])
-        return defer.reject(format("Get devices for platform %s not implemented!", conf.platform));
+        return Q.reject(format("Get devices for platform %s not implemented!", conf.platform));
     var defer = Q.defer();
     devices[conf.platform]().then(function (items) {
         if (items.length === 0)
