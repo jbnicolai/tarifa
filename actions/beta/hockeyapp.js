@@ -3,7 +3,7 @@ fs = require('q-io/fs'),
 path = require('path'),
 tarifaFile = require('../../lib/tarifa-file'),
 pathHelper = require('../../lib/helper/path'),
-confHelper = require('../../lib/helper/conf'),
+collsHelper = require('../../lib/helper/collections'),
 setMode = require('../../lib/helper/setReleaseMode'),
 argsHelper = require('../../lib/helper/args'),
 hockeyapp = require('../../lib/hockeyapp/hockeyapp'),
@@ -20,7 +20,7 @@ var deployƒ = function (conf) {
     return hockeyapp.uploadVersion(productFileName, conf);
 };
 
-var deploy = function (platform, verbose) {
+var deploy = function (platform, argv, verbose) {
     var cwd = process.cwd();
     var tarifaFilePath = path.join(cwd, 'tarifa.json');
 
@@ -33,25 +33,50 @@ var deploy = function (platform, verbose) {
 
         if (!localSettings.deploy || !localSettings.deploy.hockeyapp_apiurl
         || !localSettings.deploy.hockeyapp_token)
-        return Q.reject('No deploy informations are available in the current tarifa.json' +
-            'file for the choosen provider (hockeyapp)');
+            return Q.reject('No deploy informations are available in the current tarifa.json' +
+                'file for the choosen provider (hockeyapp)');
+
+        // check for hockeyapp options in conf
+        var params = {};
+        if (localSettings.hockeyapp instanceof Object) {
+            params = collsHelper.filterKeys(localSettings.hockeyapp, function (e) {
+                return [
+                    'versions_notify',
+                    'versions_status',
+                    'versions_tags',
+                    'versions_teams',
+                    'versions_users'
+                ].indexOf(e) > -1;
+            });
+            params = collsHelper.mapKeys(params, function (e) {
+                return e.replace(/^versions_/, '');
+            });
+        }
+
+        // get relevant options in cmd args
+        var opts = collsHelper.filterKeys(argv, function(e) {
+            return ['notes', 'notify', 'status', 'tags', 'teams', 'users'].indexOf(e) > -1;
+        });
+
+        params = collsHelper.mergeObject(params, opts);
 
         return deployƒ({
             platform: platform,
             configuration: config,
             localSettings: localSettings,
             envSettings: localSettings.configurations[platform][config],
+            uploadParams: params,
             verbose: verbose
         });
     });
 };
 
-var clean = function(verbose, nbToKeep) {
+var clean = function(nbToKeep, argv, verbose) {
     var cwd = process.cwd();
     var tarifaFilePath = path.join(cwd, 'tarifa.json');
 
     return tarifaFile.parseConfig(pathHelper.current()).then(function (localSettings) {
-        var appIds = confHelper.findByKey(localSettings, 'hockeyapp_id');
+        var appIds = collsHelper.findByKey(localSettings, 'hockeyapp_id');
         return hockeyapp.clean(appIds, localSettings, nbToKeep).then(function (total) {
             print.success('Successfully deleted ' + total + ' version(s)');
         });

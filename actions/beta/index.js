@@ -13,15 +13,12 @@ function printHelp() {
 var action = function (argv) {
     var verbose = false;
 
-    if(argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
-        if(argsHelper.matchOption(argv, 'V', 'verbose'))
-            verbose = true;
+    if(argsHelper.matchOption(argv, 'V', 'verbose'))
+        verbose = true;
 
-        if(match(argv._, ['hockeyapp', 'deploy', '+'])) return hockeyapp.deploy(argv._[2], verbose);
-        if(match(argv._, ['hockeyapp', 'clean', '*'])) return hockeyapp.clean(argv._[2], verbose);
+    if(match(argv._, ['hockeyapp', 'deploy', '+'])) return hockeyapp.deploy(argv._[2], argv, verbose);
+    if(match(argv._, ['hockeyapp', 'clean', '*'])) return hockeyapp.clean(argv._[2], argv, verbose);
 
-        return printHelp();
-    }
     return printHelp();
 };
 
