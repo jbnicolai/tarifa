@@ -52,6 +52,7 @@ Commands:
     config         Configure the current project
     check          Check the current project after cloning
     clean          Clean the given platform
+    hockeyapp      Interface with hockeyapp beta testing platform
 
 Options:
 
