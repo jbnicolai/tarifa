@@ -6,6 +6,7 @@ var Q = require('q'),
     print = require('../../lib/helper/print'),
     tarifaFile = require('../../lib/tarifa-file'),
     settings = require('../../lib/settings'),
+    builder = require('../../lib/builder'),
     path = require('path'),
     fs = require('q-io/fs');
 
@@ -45,13 +46,16 @@ var prepareƒ = function (conf) {
         defer.resolve(conf);
     }
 
-    // get www project builder lib
-    var builder = require(path.join(cwd, settings.build));
     return defer.promise.then(function (c) {
         if(c.verbose) print.success('prepare, launch www project build');
         // execute www project builder lib with the asked configuration
-        return builder(c.platform, c.localSettings, c.configuration, c.verbose);
-    }).then(function () { return conf; });
+        return builder.build(c.platform, c.localSettings, c.configuration, c.verbose);
+    }).then(function () {
+        return conf;
+    }).fail(function (error) {
+        print.warning('Try to run tarifa check when your environment is properly configured.');
+        throw error;
+    });
 }
 
 var prepare = function (platform, config, verbose) {
