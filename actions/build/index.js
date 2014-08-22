@@ -26,7 +26,8 @@ var tasks = {
             'shared/set_cordova_id'
         ],
         'pre-cordova-compile' : [
-            'windows8/patch_cordova_deploy'
+            'windows8/patch_cordova_deploy',
+            'windows8/change_appxmanifest'
         ],
         'post-cordova-compile' : [
             'shared/reset_cordova_id'
