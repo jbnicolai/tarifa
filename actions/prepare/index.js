@@ -27,31 +27,27 @@ var method = {
 
 var prepareƒ = function (conf) {
     var cwd = process.cwd(),
-        defer = Q.defer(),
         cordovaWWW = path.join(cwd, settings.cordovaAppPath, 'www'),
         projectWWW = path.join(cwd, settings.project_output),
         link_method = settings.www_link_method[os.platform()];
 
-    if (conf.platform !== 'web') {
-        // link/copy app www to project output
-        rimraf(cordovaWWW, function (err) {
-            if(err) defer.reject(err);
-            if(conf.verbose) print.success('prepare, rm cordova www folder');
-            method[link_method](cordovaWWW, projectWWW).then(function() {
-                if(conf.verbose) print.success('prepare, %s www project to cordova www', link_method);
-                defer.resolve(conf);
-            }, function (err) { defer.reject(err); });
-        });
-    } else {
-        defer.resolve(conf);
-    }
-
-    return defer.promise.then(function (c) {
-        if(c.verbose) print.success('prepare, launch www project build');
-        // execute www project builder lib with the asked configuration
-        return builder.build(c.platform, c.localSettings, c.configuration, c.verbose);
-    }).then(function () {
-        return conf;
+    if(conf.verbose) print.success('prepare, launch www project build');
+    return builder.build(conf.platform, conf.localSettings, conf.configuration, conf.verbose).then(function () {
+        var defer = Q.defer();
+        if (conf.platform !== 'web') {
+            rimraf(cordovaWWW, function (err) {
+                if(err) defer.reject(err);
+                if(conf.verbose) print.success('prepare, rm cordova www folder');
+                // link/copy app www to project output
+                method[link_method](cordovaWWW, projectWWW).then(function() {
+                    if(conf.verbose) print.success('prepare, %s www project to cordova www', link_method);
+                    defer.resolve(conf);
+                }, function (err) { defer.reject(err); });
+            });
+        } else {
+            defer.resolve(conf);
+        }
+        return defer.promise;
     }).fail(function (error) {
         print.warning('Try to run tarifa check when your environment is properly configured.');
         throw error;
