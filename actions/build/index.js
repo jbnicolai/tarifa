@@ -19,9 +19,18 @@ var tasks = {
     },
     windows8: {
         'pre-cordova-prepare-release': [],
-        'pre-cordova-prepare' : [],
-        'pre-cordova-compile' : [],
-        'post-cordova-compile' : []
+        'pre-cordova-prepare' : [
+            'shared/populate_config_xml',
+            'shared/copy_icons',
+            'shared/copy_splashscreens',
+            'shared/set_cordova_id'
+        ],
+        'pre-cordova-compile' : [
+            'windows8/patch_cordova_deploy'
+        ],
+        'post-cordova-compile' : [
+            'shared/reset_cordova_id'
+        ]
     },
     wp8: {
         'pre-cordova-prepare-release': [],
