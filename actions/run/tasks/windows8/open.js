@@ -5,6 +5,10 @@ var Q = require('q'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (conf) {
+    if(conf.localSettings.mode === '--release') {
+        print.warning('can\'t run app in release mode right now!');
+        return Q.resolve(conf);
+    }
     var defer = Q.defer();
     var options = {
     	cwd: path.resolve('app/platforms/windows8/cordova'),
@@ -16,9 +20,9 @@ module.exports = function (conf) {
         if(err) {
             if(conf.verbose) {
                 print.error('command: %s', cmd);
-                print.error('run.bat --nobuild stderr %s', stderr);
+                print.error('%s stderr %s', cmd, stderr);
             }
-            defer.reject('run.bat --nobuild ' + err);
+            defer.reject(cmd + ' ' + err);
             return;
         }
         defer.resolve(conf);
