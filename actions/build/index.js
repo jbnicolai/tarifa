@@ -30,7 +30,8 @@ var tasks = {
             'windows8/change_appxmanifest'
         ],
         'post-cordova-compile' : [
-            'shared/reset_cordova_id'
+            'shared/reset_cordova_id',
+            'windows8/rename_app_file.js'
         ]
     },
     wp8: {
