@@ -65,7 +65,7 @@ function actionSuccess(val) {
 
 function actionError(name) {
     return function (err) {
-        print(chalk.red(err));
+        print.trace(err);
     };
 }
 
