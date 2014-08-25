@@ -59,10 +59,7 @@ var prepareƒ = function (conf) {
 }
 
 var prepare = function (platform, config, verbose) {
-    var cwd = process.cwd();
-    var tarifaFilePath = path.join(cwd, 'tarifa.json');
-
-    return tarifaFile.parseConfig(tarifaFilePath, platform, config)
+    return tarifaFile.parse(process.cwd(), platform, config)
         .then(function (localSettings) {
             return prepareƒ({
                 localSettings: localSettings,

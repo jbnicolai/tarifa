@@ -43,10 +43,23 @@ function initBuilder(response) {
     });
 }
 
+function createGitIgnore (response) {
+    var d = Q.defer(),
+        f = path.join(response.path, '.gitignore'),
+        buf = settings.privateTarifaFileName + '\n';
+    fs.writeFile(f, buf, function (err) {
+        if(err) return d.reject(err);
+        if(response.options.verbose) print.success('created .gitignore');
+        d.resolve(response);
+    });
+    return d.promise;
+};
+
 module.exports = function (response) {
     if(!fs.existsSync(response.path)) fs.mkdirSync(response.path);
     return copyWWWProject(response)
         .then(initBuilder)
-        .then(tarifaFile.createFileFromResponse)
+        .then(createGitIgnore)
+        .then(tarifaFile.createFromResponse)
         .then(log);
 };

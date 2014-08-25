@@ -33,13 +33,9 @@ var runƒ = function (conf) {
 };
 
 var run = function (platform, config, verbose) {
-    var cwd = process.cwd();
-    var tarifaFilePath = path.join(cwd, 'tarifa.json');
-
     spinner();
-
     return Q.all([
-            tarifaFile.parseConfig(tarifaFilePath, platform, config),
+            tarifaFile.parse(process.cwd(), platform, config),
             isAvailableOnHost(platform)
         ]).spread(function (localSettings) {
             return runƒ({

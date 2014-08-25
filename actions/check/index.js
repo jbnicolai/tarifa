@@ -1,7 +1,6 @@
 var Q = require('q'),
     argsHelper = require('../../lib/helper/args'),
     print = require('../../lib/helper/print'),
-    pathHelper = require('../../lib/helper/path'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
     builder = require('../../lib/builder'),
@@ -18,7 +17,7 @@ var tasks = {
 };
 
 var check = function (verbose) {
-    return tarifaFile.parseConfig(pathHelper.current()).then(function (localSettings) {
+    return tarifaFile.parse(process.cwd()).then(function (localSettings) {
         return settings.platforms.reduce(function (promiseP, platform) {
             return tasks[platform].reduce(function (promiseT, task) {
                 return promiseT.then(task);

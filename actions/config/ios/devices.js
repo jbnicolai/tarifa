@@ -3,7 +3,6 @@ var Q = require('q'),
     spinner = require("char-spinner"),
     format = require('util').format,
     tarifaFile = require('../../../lib/tarifa-file'),
-    tarifaPath = require('../../../lib/helper/path'),
     print = require('../../../lib/helper/print'),
     parseProvisionFile = require('../../../lib/ios/parse-mobileprovision'),
     downloadProvisioning = require('../../../lib/ios/nomad/provisioning/download'),
@@ -14,7 +13,7 @@ var Q = require('q'),
     askPassword = require('./ask_password');
 
 function listDevice(verbose) {
-    return tarifaFile.parseConfig(tarifaPath.current()).then(function (localSettings) {
+    return tarifaFile.parse(process.cwd()).then(function (localSettings) {
         if(!localSettings.deploy || !localSettings.deploy.apple_id)
             return Q.reject("No deploy informations are available in the current tarifa.json file.");
         return askPassword()
@@ -31,7 +30,7 @@ function listDevice(verbose) {
 }
 
 function listDeviceInProvisioningWithInfo(config, verbose) {
-    return tarifaFile.parseConfig(tarifaPath.current())
+    return tarifaFile.parse(process.cwd())
         .then(function (localSettings) {
             var localConf = localSettings.configurations.ios[config];
             if(!localConf) {
@@ -84,7 +83,7 @@ function list(config, verbose) {
 }
 
 function add(name, uuid, verbose) {
-    return tarifaFile.parseConfig(tarifaPath.current()).then(function(localSettings) {
+    return tarifaFile.parse(process.cwd()).then(function(localSettings) {
         var id = localSettings.deploy.apple_id,
             team = localSettings.deploy.apple_developer_team;
 
@@ -97,7 +96,7 @@ function add(name, uuid, verbose) {
 }
 
 function attach(uuid, config, verbose) {
-    return tarifaFile.parseConfig(tarifaPath.current())
+    return tarifaFile.parse(process.cwd())
         .then(function(localSettings) {
             var id = localSettings.deploy.apple_id,
                 team = localSettings.deploy.apple_developer_team,
@@ -134,7 +133,7 @@ function attach(uuid, config, verbose) {
 }
 
 function detach(uuid, config, verbose) {
-    return tarifaFile.parseConfig(tarifaPath.current())
+    return tarifaFile.parse(process.cwd())
         .then(function (localSettings) {
             var conf = localSettings.configurations.ios[config];
             if(!conf)
