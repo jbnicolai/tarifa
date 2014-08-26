@@ -2,7 +2,7 @@ var Q = require('q'),
     cordova = require('cordova'),
     argsHelper = require('../../lib/helper/args'),
     print = require('../../lib/helper/print'),
-    tarifaPath = require('../../lib/helper/path'),
+    pathHelper = require('../../lib/helper/path'),
     setMode = require('../../lib/helper/setReleaseMode'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
@@ -148,10 +148,7 @@ var buildƒ = function (conf){
 };
 
 var build = function (platform, config, verbose) {
-    var cwd = process.cwd();
-    var tarifaFilePath = path.join(cwd, 'tarifa.json');
-
-    return tarifaFile.parseConfig(tarifaPath.current(), platform, config).then(function (localSettings) {
+    return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
         return buildƒ({
             platform: platform,
             configuration: config,

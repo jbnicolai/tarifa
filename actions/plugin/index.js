@@ -3,7 +3,7 @@ var Q = require('q'),
     path = require('path'),
     argsHelper = require('../../lib/helper/args'),
     tarifaFile = require('../../lib/tarifa-file'),
-    tarifaPath = require('../../lib/helper/path'),
+    pathHelper = require('../../lib/helper/path'),
     print = require('../../lib/helper/print'),
     plugins = require('../../lib/cordova/plugins');
 
@@ -29,18 +29,15 @@ function removeFromTarifaFile(root) {
 }
 
 function list(verbose) {
-    return plugins.list(path.dirname(tarifaPath.current())).then(printPlugins);
+    return plugins.list(path.dirname(pathHelper.root())).then(printPlugins);
 }
 
 function plugin (action, arg, verbose) {
-
-    var rootFile = tarifaPath.current(),
-        root = path.dirname(rootFile);
-
-    return tarifaFile.parseConfig(rootFile)
+    var root = pathHelper.root();
+    return tarifaFile.parse(root)
         .then(function () {
             return plugins[action](root, arg)
-                .then(addToTarifaFile(rootFile))
+                .then(addToTarifaFile(root))
                 .then(log(action, verbose));
         });
 }

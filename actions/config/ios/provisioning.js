@@ -3,12 +3,12 @@ var Q = require('q'),
     spinner = require("char-spinner"),
     print = require('../../../lib/helper/print'),
     tarifaFile = require('../../../lib/tarifa-file'),
-    tarifaPath = require('../../../lib/helper/path'),
+    pathHelper = require('../../../lib/helper/path'),
     provisioningList = require('../../../lib/ios/nomad/provisioning/list'),
     askPassword = require('./ask_password');
 
 function list(verbose) {
-    return tarifaFile.parseConfig(tarifaPath.current())
+    return tarifaFile.parse(pathHelper.root())
         .then(function (localSettings) {
             return askPassword().then(function (password) {
                 spinner();

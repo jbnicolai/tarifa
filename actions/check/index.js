@@ -18,7 +18,7 @@ var tasks = {
 };
 
 var check = function (verbose) {
-    return tarifaFile.parseConfig(pathHelper.current()).then(function (localSettings) {
+    return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         return settings.platforms.reduce(function (promiseP, platform) {
             return tasks[platform].reduce(function (promiseT, task) {
                 return promiseT.then(task);

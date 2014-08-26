@@ -21,13 +21,10 @@ var uploadƒ = function (conf) {
 };
 
 var upload = function (platform, argv, verbose) {
-    var cwd = process.cwd();
-    var tarifaFilePath = path.join(cwd, 'tarifa.json');
-
     // for now we impose 'stage' env as deploy env... this can change
     var config = 'stage';
 
-    return tarifaFile.parseConfig(pathHelper.current(), platform, config).then(function (localSettings) {
+    return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
         if (!localSettings.configurations[platform][config].hockeyapp_id)
             return Q.reject('No hockeyapp_id key is available in stage for current platform');
 
@@ -72,10 +69,7 @@ var upload = function (platform, argv, verbose) {
 };
 
 var clean = function(nbToKeep, argv, verbose) {
-    var cwd = process.cwd();
-    var tarifaFilePath = path.join(cwd, 'tarifa.json');
-
-    return tarifaFile.parseConfig(pathHelper.current()).then(function (localSettings) {
+    return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         var appIds = collsHelper.findByKey(localSettings, 'hockeyapp_id');
         return hockeyapp.clean(appIds, localSettings, nbToKeep).then(function (total) {
             print.success('Successfully deleted ' + total + ' version(s)');
