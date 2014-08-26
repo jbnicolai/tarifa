@@ -4,6 +4,7 @@ var Q = require('q'),
     tarifaFile = require('../../lib/tarifa-file'),
     path = require('path'),
     settings = require('../../lib/settings'),
+    pathHelper = require('../../lib/helper/path'),
     print = require('../../lib/helper/print'),
     platformsLib = require('../../lib/cordova/platforms'),
     copyDefaultIcons = require('../../lib/cordova/icon').copyDefault,
@@ -33,20 +34,20 @@ function rmAssets(platform, verbose) {
 }
 
 function add(type, splash, verbose) {
-    return tarifaFile.addPlatform(process.cwd(), type)
+    return tarifaFile.addPlatform(pathHelper.root(), type)
         .then(function () { return platformsLib.add([type], verbose); })
         .then(function () { return addAssets(type, splash, verbose); });
 }
 
 function remove(type, verbose) {
-    return tarifaFile.removePlatform(process.cwd(), type)
+    return tarifaFile.removePlatform(pathHelper.root(), type)
         .then(function () { return platformsLib.remove([type], verbose); })
         .then(function () { return rmAssets(type, verbose); });
 }
 
 function platform (action, type, verbose) {
     var promises = [
-        tarifaFile.parse(process.cwd()),
+        tarifaFile.parse(pathHelper.root()),
         platformsLib.isAvailableOnHost(type)
     ];
 

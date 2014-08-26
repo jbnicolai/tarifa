@@ -1,6 +1,7 @@
 var Q = require('q'),
     spinner = require("char-spinner"),
     argsHelper = require('../../lib/helper/args'),
+    pathHelper = require('../../lib/helper/path'),
     print = require('../../lib/helper/print'),
     tarifaFile = require('../../lib/tarifa-file'),
     isAvailableOnHost = require('../../lib/cordova/platforms').isAvailableOnHost,
@@ -10,7 +11,7 @@ var Q = require('q'),
 
 var clean = function (platform, verbose) {
     spinner();
-    return tarifaFile.parse(process.cwd()).then(function (localSettings) {
+    return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         if(!isAvailableOnHost(platform))
             return Q.reject('platform not available in host!');
         if(platform && localSettings.platforms.indexOf(platform) < 0)

@@ -8,6 +8,7 @@ var Q = require('q'),
     print = require('../../lib/helper/print'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
+    pathHelper = require('../../lib/helper/path'),
     isAvailableOnHost = require('../../lib/cordova/platforms').isAvailableOnHost,
     buildAction = require('../build'),
     askDevice = require('./ask_device'),
@@ -35,7 +36,7 @@ var runƒ = function (conf) {
 var run = function (platform, config, verbose) {
     spinner();
     return Q.all([
-            tarifaFile.parse(process.cwd(), platform, config),
+            tarifaFile.parse(pathHelper.root(), platform, config),
             isAvailableOnHost(platform)
         ]).spread(function (localSettings) {
             return runƒ({
