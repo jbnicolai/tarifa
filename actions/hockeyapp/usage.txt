@@ -2,8 +2,19 @@ Usage: tarifa hockeyapp <task>
 
 Tasks:
 
-    version upload <platform>
+    version list <platform>
+        Fetch the list of hockeyapp versions of stage env for given platform.
+
+    version upload <platform> [options]
         Upload a version of stage env package to hockeyapp for given platform.
+        Options can be any of 'notes', 'notify', 'status', 'tags', 'teams', 'users'.
+        See http://support.hockeyapp.net/kb/api/api-versions#upload-version for details.
+
+    version update <platform> [options]
+        Modify last version of given platform. You can only modify metadatas, you
+        can't upload a new package.
+        Options can be any of 'notes', 'notify', 'status', 'tags', 'teams', 'users'.
+        See http://support.hockeyapp.net/kb/api/api-versions#update-version for details.
 
     version clean <keep>
         Clean all version for all apps found in tarifa.json; specify how many
