@@ -32,6 +32,14 @@ var Q = require('q'),
         require('./questions/deploy/keystore_alias')
     ],
 
+    isHockeyApp = [
+        require('./questions/hockeyapp')
+    ],
+
+    hockeyAppQuestions = [
+        require('./questions/hockeyapp/token')
+    ],
+
     tasks = [
         require('./tasks/tarifa'),
         require('./tasks/cordova'),
@@ -110,14 +118,22 @@ function create(verbose) {
         .then(function (resp) {
             if(resp.deploy) return askQuestions(deployQuestions, 'deploy')(resp);
             else return resp;
-        }).then(function (resp) {
+        })
+        .then(function (resp) {
+            return askQuestions(isHockeyApp, '')(resp);
+        })
+        .then(function (resp) {
+            if (resp.hockeyapp) return askQuestions(hockeyAppQuestions, 'hockeyapp')(resp);
+            else return resp;
+        })
+        .then(function (resp) {
             print();
             spinner();
             return tasks.reduce(function (val, task){
                 return Q.when(val, task);
             }, resp);
         });
-};
+}
 
 function action(argv) {
     var helpPath = path.join(__dirname, 'usage.txt');

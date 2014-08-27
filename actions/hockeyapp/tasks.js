@@ -28,10 +28,10 @@ var upload = function (platform, argv, verbose) {
         if (!localSettings.configurations[platform][config].hockeyapp_id)
             return Q.reject('No hockeyapp_id key is available in stage for current platform');
 
-        if (!localSettings.deploy || !localSettings.deploy.hockeyapp_apiurl
-        || !localSettings.deploy.hockeyapp_token)
-            return Q.reject('No deploy informations are available in the current tarifa.json' +
-                'file for the choosen provider (hockeyapp)');
+        if (!localSettings.hockeyapp || !localSettings.hockeyapp.api_url
+        || !localSettings.hockeyapp.token)
+            return Q.reject('No hockeyapp informations are available in the current tarifa.json' +
+                'file.');
 
         // check for hockeyapp options in conf
         var params = {};
