@@ -4,7 +4,7 @@ var Q = require('q'),
     print = require('../../../lib/helper/print'),
     settings = require('../../../lib/settings');
 
-module.exports = function (response) {
+function createGitIgnoreFiles(response) {
     var gitIgnoreBuilders = [
         {
             destdir: response.path,
@@ -27,4 +27,18 @@ module.exports = function (response) {
             print.success('created .gitignore files');
         return response;
     });
+};
+
+function createGitKeepFiles(response) {
+    var dest = path.join(response.path, settings.cordovaAppPath, 'platforms/android/assets/.gitkeep'),
+        content = '';
+    return fs.write(dest, content).then(function () {
+        if (response.options.verbose)
+            print.success('created .gitkeep files');
+        return response;
+    });
+};
+
+module.exports = function (response) {
+    return createGitIgnoreFiles(response).then(createGitKeepFiles);
 };
