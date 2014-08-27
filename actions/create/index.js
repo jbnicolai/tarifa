@@ -35,6 +35,7 @@ var Q = require('q'),
     tasks = [
         require('./tasks/tarifa'),
         require('./tasks/cordova'),
+        require('./tasks/git'),
         require('./tasks/platforms'),
         require('./tasks/plugins'),
         require('./tasks/assets'),

@@ -15,7 +15,8 @@ module.exports = function (response) {
         content += 'key.store=' + response.keystore_path + '\n';
         content += 'key.alias=' + response.keystore_alias;
         fs.writeFileSync(path.join(cordova_path, 'platforms', 'android', 'ant.properties'), content, 'utf-8');
-        print.success('ant.properties created');
+        if (response.options.verbose)
+            print.success('ant.properties created');
     }
 
     return Q.resolve(response);
