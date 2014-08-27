@@ -106,13 +106,21 @@ function printAndroidDevices (verbose) {
     }
 }
 
+function listAvailablePlatforms() {
+    var host = os.platform(), r = [];
+    for(var p in settings.os_platforms) {
+        if(settings.os_platforms[p].indexOf(host) > -1) r.push(p);
+    }
+    return r;
+}
+
 function info(verbose) {
     print("%s %s", chalk.green('node version:'), process.versions.node);
     print("%s %s", chalk.green('cordova version:'), pkg.dependencies.cordova);
 
     return check_tools(verbose).then(function (ok) {
         if(!ok) return Q.reject("not all needed tools are available, first install them!");
-
+        print("%s %s", chalk.green("available platforms on host:"), listAvailablePlatforms().join(', '));
         return devices.ios().then(printiOSDevices(verbose))
             .then(function () {
                 if(verbose) return devices.androidVerbose();
