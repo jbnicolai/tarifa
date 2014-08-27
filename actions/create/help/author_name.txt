@@ -1,0 +1,2 @@
+
+> Your name is only stored in the tarifa.json file of the project.

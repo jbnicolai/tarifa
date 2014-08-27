@@ -1,6 +1,5 @@
 
-> The choosen color must be a valid imagemagick color see
->
-> http://www.imagemagick.org/script/color.php
->
+> You may either skip this question - and tarifa will copy
+> default assets for you - or enter a valid imagemagick
+> color. See http://www.imagemagick.org/script/color.php
 > for more details.

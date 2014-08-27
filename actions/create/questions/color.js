@@ -6,8 +6,12 @@ var canGenerate = require('../../../lib/cordova/assets').canGenerate,
 module.exports = {
     type:'input',
     name:'color',
-    validate: validateColor,
-    filter: colorHelper.format,
+    validate: function (answer) {
+        return !answer.length || validateColor(answer);
+    },
+    filter: function (answer) {
+        return answer ? colorHelper.format(answer) : null;
+    },
     when: function (answers) {
         var done = this.async();
         canGenerate().then(function (ok) {

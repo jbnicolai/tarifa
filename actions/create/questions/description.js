@@ -4,6 +4,8 @@ var validator = require('../../../lib/helper/validator'),
 module.exports = {
     type:'input',
     name:'description',
-    validate: validateDescription,
+    validate: function (answer) {
+        return !answer.length || validateDescription(answer);
+    },
     message:'What\'s your project about?'
 };

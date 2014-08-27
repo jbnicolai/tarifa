@@ -8,6 +8,7 @@ var Q = require('q'),
     print = require('../../lib/helper/print'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
+    pathHelper = require('../../lib/helper/path'),
     isAvailableOnHost = require('../../lib/cordova/platforms').isAvailableOnHost,
     buildAction = require('../build'),
     askDevice = require('./ask_device'),
@@ -34,13 +35,9 @@ var runƒ = function (conf) {
 };
 
 var run = function (platform, config, verbose) {
-    var cwd = process.cwd();
-    var tarifaFilePath = path.join(cwd, 'tarifa.json');
-
     spinner();
-
     return Q.all([
-            tarifaFile.parseConfig(tarifaFilePath, platform, config),
+            tarifaFile.parse(pathHelper.root(), platform, config),
             isAvailableOnHost(platform)
         ]).spread(function (localSettings) {
             return runƒ({

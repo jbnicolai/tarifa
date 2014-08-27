@@ -5,5 +5,7 @@ module.exports = {
     type:'input',
     name:'author_email',
     message:'What\'s your email?',
-    validate: validateEmail
+    validate: function (answer) {
+        return !answer.length || validateEmail(answer);
+    }
 };

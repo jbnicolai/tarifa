@@ -11,8 +11,7 @@ var Q = require('q'),
 
 var clean = function (platform, verbose) {
     spinner();
-
-    return tarifaFile.parseConfig(pathHelper.current()).then(function (localSettings) {
+    return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         if(!isAvailableOnHost(platform))
             return Q.reject('platform not available in host!');
         if(platform && localSettings.platforms.indexOf(platform) < 0)

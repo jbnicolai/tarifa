@@ -5,6 +5,7 @@ var Q = require('q'),
     argsHelper = require('../../lib/helper/args'),
     print = require('../../lib/helper/print'),
     tarifaFile = require('../../lib/tarifa-file'),
+    pathHelper = require('../../lib/helper/path'),
     settings = require('../../lib/settings'),
     builder = require('../../lib/builder'),
     path = require('path'),
@@ -55,10 +56,7 @@ var prepareƒ = function (conf) {
 }
 
 var prepare = function (platform, config, verbose) {
-    var cwd = process.cwd();
-    var tarifaFilePath = path.join(cwd, 'tarifa.json');
-
-    return tarifaFile.parseConfig(tarifaFilePath, platform, config)
+    return tarifaFile.parse(pathHelper.root(), platform, config)
         .then(function (localSettings) {
             return prepareƒ({
                 localSettings: localSettings,
