@@ -17,6 +17,7 @@ var action = function (argv) {
         verbose = true;
 
     if(match(argv._, ['version', 'upload', '+'])) return tasks.upload(argv._[2], argv, verbose);
+    if(match(argv._, ['version', 'update', '+'])) return tasks.updateLast(argv._[2], argv, verbose);
     if(match(argv._, ['version', 'clean', '*'])) return tasks.clean(argv._[2], argv, verbose);
 
     return printHelp();
