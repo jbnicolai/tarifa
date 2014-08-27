@@ -2,6 +2,9 @@ Usage: tarifa hockeyapp <task>
 
 Tasks:
 
+    version list <platform>
+        Fetch the list of hockeyapp versions of stage env for given platform.
+
     version upload <platform> [options]
         Upload a version of stage env package to hockeyapp for given platform.
         Options can be any of 'notes', 'notify', 'status', 'tags', 'teams', 'users'.

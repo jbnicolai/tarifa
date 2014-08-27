@@ -106,13 +106,38 @@ var updateLast = function(platform, argv, verbose) {
             verbose: verbose
         };
 
-        return hockeyapp.listVersions(conf).then(function (list) {
+        return hockeyapp.listVersions(conf, false).then(function (list) {
             return hockeyapp.updateVersion(list.app_versions[0].id, conf);
         });
     });
 
 };
 
+var list = function(platform, verbose) {
+    var config = 'stage';
+
+    return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
+        if (!localSettings.configurations[platform][config].hockeyapp_id)
+            return Q.reject('No hockeyapp_id key is available in stage for current platform');
+
+        if (!localSettings.hockeyapp || !localSettings.hockeyapp.api_url ||
+        !localSettings.hockeyapp.token) {
+            return Q.reject('No hockeyapp informations are available in the current tarifa.json' +
+            'file.');
+        }
+
+        var conf = {
+            platform: platform,
+            configuration: config,
+            localSettings: localSettings,
+            envSettings: localSettings.configurations[platform][config]
+        };
+
+        return hockeyapp.listVersions(conf, true);
+    });
+};
+
+module.exports.list = list;
 module.exports.upload = upload;
 module.exports.clean = clean;
 module.exports.updateLast = updateLast;
