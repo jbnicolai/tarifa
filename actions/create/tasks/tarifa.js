@@ -1,6 +1,5 @@
 var Q = require('q'),
     fs = require('q-io/fs'),
-    exec = require('child_process').exec,
     path = require('path'),
     print = require('../../../lib/helper/print'),
     tarifaFile = require('../../../lib/tarifa-file'),
