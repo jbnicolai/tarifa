@@ -4,21 +4,10 @@ path = require('path'),
 tarifaFile = require('../../lib/tarifa-file'),
 pathHelper = require('../../lib/helper/path'),
 collsHelper = require('../../lib/helper/collections'),
-setMode = require('../../lib/helper/setReleaseMode'),
+getMode = require('../../lib/helper/getReleaseMode'),
 argsHelper = require('../../lib/helper/args'),
 hockeyapp = require('../../lib/hockeyapp/hockeyapp'),
 print = require('../../lib/helper/print');
-
-var uploadƒ = function (conf) {
-    conf.localSettings.mode = setMode(conf.platform, conf.configuration, conf.localSettings);
-    var productFileName = pathHelper.productFile(
-        conf.platform,
-        conf.envSettings.product_file_name,
-        conf.localSettings.mode
-    );
-    // TODO refactor to have providers
-    return hockeyapp.uploadVersion(productFileName, conf);
-};
 
 var upload = function (platform, config, argv, verbose) {
 
@@ -56,14 +45,19 @@ var upload = function (platform, config, argv, verbose) {
 
         params = collsHelper.mergeObject(params, opts);
 
-        return uploadƒ({
-            platform: platform,
-            configuration: config,
+        var conf = {
             localSettings: localSettings,
             envSettings: localSettings.configurations[platform][config],
             uploadParams: params,
             verbose: verbose
-        });
+        };
+        var productFileName = pathHelper.productFile(
+            platform,
+            conf.envSettings.product_file_name,
+            getMode(platform, config, localSettings)
+        );
+
+        return hockeyapp.uploadVersion(productFileName, conf);
     });
 };
 
@@ -94,8 +88,6 @@ var updateLast = function(platform, config, argv, verbose) {
         });
 
         var conf = {
-            platform: platform,
-            configuration: config,
             localSettings: localSettings,
             envSettings: localSettings.configurations[platform][config],
             uploadParams: opts,
@@ -124,8 +116,6 @@ var list = function(platform, config, verbose) {
         }
 
         var conf = {
-            platform: platform,
-            configuration: config,
             localSettings: localSettings,
             envSettings: localSettings.configurations[platform][config]
         };
