@@ -14,7 +14,7 @@ Your friendly mobile app development toolchain on top of Cordova
 #### win32
 * [Android SDK](http://developer.android.com/)
 * [ImageMagick](http://www.imagemagick.org/)
-* a Working Windows Phone development environment
+* a Working Windows Phone and windows 8 development environment
 
 #### Linux (not tested right now)
 * [Android SDK](http://developer.android.com/)
@@ -24,7 +24,8 @@ Your friendly mobile app development toolchain on top of Cordova
 
 * ios
 * android
-* windows phone
+* windows phone 8
+* windows 8
 
 ### Install
 

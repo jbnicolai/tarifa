@@ -1,6 +1,6 @@
 {
   "name": "tarifa",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "author": "Paul Panserrieu <paul@42loops.com>",
   "description": "Your friendly mobile app development toolchain on top of Cordova",
   "repository": {
@@ -21,6 +21,7 @@
   "bin": {
     "tarifa": "bin/cmd.js"
   },
+  "preferGlobal": "true",
   "license": "Apache version 2.0",
   "contributors": [
     {
