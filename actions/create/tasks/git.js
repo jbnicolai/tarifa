@@ -31,11 +31,17 @@ function createGitIgnoreFiles(response) {
 
 function createGitKeepFiles(response) {
     var dest = path.join(response.path, settings.cordovaAppPath, 'platforms/android/assets/.gitkeep'),
-        content = '';
-    return fs.write(dest, content).then(function () {
-        if (response.options.verbose)
-            print.success('created .gitkeep files');
-        return response;
+        dirname = path.dirname(dest),
+        content = '',
+        create = function () {
+            return fs.write(dest, content).then(function () {
+                if (response.options.verbose)
+                    print.success('created .gitkeep files');
+                return response;
+            });
+        };
+    return fs.isDirectory(dirname).then(function (exists) {
+        return exists ? create() : response;
     });
 };
 
