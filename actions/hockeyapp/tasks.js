@@ -12,7 +12,10 @@ print = require('../../lib/helper/print');
 var upload = function (platform, config, argv, verbose) {
 
     return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
-        if (!localSettings.configurations[platform][config].hockeyapp_id)
+        var envSettings = localSettings.configurations[platform][config];
+        var hockeyapp_id = envSettings.hockeyapp_id;
+
+        if (!hockeyapp_id)
             return Q.reject('No hockeyapp_id key is available in ' + config + 'for platform ' + platform);
 
         if (!localSettings.hockeyapp || !localSettings.hockeyapp.api_url ||
@@ -47,21 +50,23 @@ var upload = function (platform, config, argv, verbose) {
 
         var conf = {
             localSettings: localSettings,
-            envSettings: localSettings.configurations[platform][config],
+            hockeyapp_id: hockeyapp_id,
             uploadParams: params,
             verbose: verbose
         };
         var productFileName = pathHelper.productFile(
             platform,
-            conf.envSettings.product_file_name,
+            envSettings.product_file_name,
             getMode(platform, config, localSettings)
         );
 
-        return hockeyapp.uploadVersion(productFileName, conf);
+        return hockeyapp.uploadVersion(productFileName, conf).then(function () {
+          print.success('Uploaded new version successfully for ' + platform + ' ' + config + '.');
+        });
     });
 };
 
-var clean = function(nbToKeep, argv, verbose) {
+var clean = function (nbToKeep, argv, verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         var appIds = collsHelper.findByKey(localSettings, 'hockeyapp_id');
         return hockeyapp.clean(appIds, localSettings, nbToKeep).then(function (total) {
@@ -70,9 +75,12 @@ var clean = function(nbToKeep, argv, verbose) {
     });
 };
 
-var updateLast = function(platform, config, argv, verbose) {
+var updateLast = function (platform, config, argv, verbose) {
 
     return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
+        var envSettings = localSettings.configurations[platform][config];
+        var hockeyapp_id = envSettings.hockeyapp_id;
+
         if (!localSettings.configurations[platform][config].hockeyapp_id)
             return Q.reject('No hockeyapp_id key is available in ' + config + 'for platform ' + platform);
 
@@ -89,7 +97,7 @@ var updateLast = function(platform, config, argv, verbose) {
 
         var conf = {
             localSettings: localSettings,
-            envSettings: localSettings.configurations[platform][config],
+            hockeyapp_id: hockeyapp_id,
             uploadParams: opts,
             verbose: verbose
         };
@@ -100,12 +108,14 @@ var updateLast = function(platform, config, argv, verbose) {
             });
         });
     });
-
 };
 
 var list = function(platform, config, verbose) {
 
     return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
+        var envSettings = localSettings.configurations[platform][config];
+        var hockeyapp_id = envSettings.hockeyapp_id;
+
         if (!localSettings.configurations[platform][config].hockeyapp_id)
             return Q.reject('No hockeyapp_id key is available in ' + config + ' for platform ' + platform);
 
@@ -117,7 +127,7 @@ var list = function(platform, config, verbose) {
 
         var conf = {
             localSettings: localSettings,
-            envSettings: localSettings.configurations[platform][config]
+            hockeyapp_id: hockeyapp_id
         };
 
         return hockeyapp.listVersions(conf, true);
