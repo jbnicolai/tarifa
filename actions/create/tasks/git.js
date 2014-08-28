@@ -7,6 +7,7 @@ var Q = require('q'),
 function createGitIgnoreFiles(response) {
     var gitIgnoreBuilders = [
         {
+            src: path.join(__dirname, 'gitignore-root.txt'),
             destdir: response.path,
             content: settings.privateTarifaFileName
         },
