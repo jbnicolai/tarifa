@@ -20,13 +20,11 @@ var uploadƒ = function (conf) {
     return hockeyapp.uploadVersion(productFileName, conf);
 };
 
-var upload = function (platform, argv, verbose) {
-    // for now we impose 'stage' env as deploy env... this can change
-    var config = 'stage';
+var upload = function (platform, config, argv, verbose) {
 
     return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
         if (!localSettings.configurations[platform][config].hockeyapp_id)
-            return Q.reject('No hockeyapp_id key is available in stage for current platform');
+            return Q.reject('No hockeyapp_id key is available in ' + config + 'for platform ' + platform);
 
         if (!localSettings.hockeyapp || !localSettings.hockeyapp.api_url ||
         !localSettings.hockeyapp.token) {
@@ -78,13 +76,11 @@ var clean = function(nbToKeep, argv, verbose) {
     });
 };
 
-var updateLast = function(platform, argv, verbose) {
-    // for now we impose 'stage' env as deploy env... this can change
-    var config = 'stage';
+var updateLast = function(platform, config, argv, verbose) {
 
     return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
         if (!localSettings.configurations[platform][config].hockeyapp_id)
-            return Q.reject('No hockeyapp_id key is available in stage for current platform');
+            return Q.reject('No hockeyapp_id key is available in ' + config + 'for platform ' + platform);
 
         if (!localSettings.hockeyapp || !localSettings.hockeyapp.api_url ||
         !localSettings.hockeyapp.token) {
@@ -107,18 +103,19 @@ var updateLast = function(platform, argv, verbose) {
         };
 
         return hockeyapp.listVersions(conf, false).then(function (list) {
-            return hockeyapp.updateVersion(list.app_versions[0].id, conf);
+            return hockeyapp.updateVersion(list.app_versions[0].id, conf).then(function () {
+              print.success('Updated version successfully.');
+            });
         });
     });
 
 };
 
-var list = function(platform, verbose) {
-    var config = 'stage';
+var list = function(platform, config, verbose) {
 
     return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
         if (!localSettings.configurations[platform][config].hockeyapp_id)
-            return Q.reject('No hockeyapp_id key is available in stage for current platform');
+            return Q.reject('No hockeyapp_id key is available in ' + config + ' for platform ' + platform);
 
         if (!localSettings.hockeyapp || !localSettings.hockeyapp.api_url ||
         !localSettings.hockeyapp.token) {
