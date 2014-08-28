@@ -70,7 +70,7 @@ var clean = function (nbToKeep, argv, verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         var appIds = collsHelper.findByKey(localSettings, 'hockeyapp_id');
         return hockeyapp.clean(appIds, localSettings, nbToKeep).then(function (total) {
-            print.success('Successfully deleted ' + total + ' version(s)');
+            print.success('Successfully deleted ' + total + ' version(s). Notice: deletion is asynchronous and version may still appear in listings for a while.');
         });
     });
 };
