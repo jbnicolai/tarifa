@@ -9,7 +9,8 @@ var Q = require('q'),
     settings = require('../../../lib/settings');
 
 module.exports = function (response) {
-    if(response.plugins.length === 0 ) return Q.resolve(response);
+    var platforms = response.platforms.filter(function (platform) { return platform != 'web'; });
+    if (platforms.length === 0 || response.plugins.length === 0) return Q.resolve(response);
 
     return response.plugins.reduce(function (promise, plugin) {
         return promise.then(function () {
