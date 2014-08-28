@@ -17,11 +17,16 @@ function createGitIgnoreFiles(response) {
         }
     ];
     var promises = gitIgnoreBuilders.map(function (builder) {
-        var dest = path.join(builder.destdir, '.gitignore'),
-            p = Q.resolve();
-        if (builder.src) p = p.then(function () { return fs.copy(builder.src, dest); });
-        if (builder.content) p = p.then(function () { return fs.append(dest, builder.content); });
-        return p;
+        var create = function () {
+                var dest = path.join(builder.destdir, '.gitignore'),
+                    p = Q.resolve();
+                if (builder.src) p = p.then(function () { return fs.copy(builder.src, dest); });
+                if (builder.content) p = p.then(function () { return fs.append(dest, builder.content); });
+                return p;
+            };
+        return fs.isDirectory(builder.destdir).then(function (exists) {
+            return exists ? create() : Q.resolve();
+        });
     });
     return Q.all(promises).then(function () {
         if (response.options.verbose)
