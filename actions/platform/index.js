@@ -1,8 +1,10 @@
 var Q = require('q'),
     rimraf = require('rimraf'),
+    format = require('util').format,
     argsHelper = require('../../lib/helper/args'),
     tarifaFile = require('../../lib/tarifa-file'),
     path = require('path'),
+    chalk = require('chalk'),
     settings = require('../../lib/settings'),
     pathHelper = require('../../lib/helper/path'),
     print = require('../../lib/helper/print'),
@@ -46,12 +48,15 @@ function remove(type, verbose) {
 }
 
 function platform (action, type, verbose) {
+    if(type === 'web') return Q.reject(format("Can't %s web platform!", action));
+
     var promises = [
         tarifaFile.parse(pathHelper.root()),
         platformsLib.isAvailableOnHost(type)
     ];
 
-    return Q.all(promises).spread(function (localSettings) {
+    return Q.all(promises).spread(function (localSettings, available) {
+        if(!available) return Q.reject(format("Can't %s %s!, %s is not available on your host", action, type, type));
         var hasSplash = localSettings.plugins.indexOf("org.apache.cordova.splashscreen") > -1;
         if(action === 'add') return add(type, hasSplash, verbose);
         else return remove(type, verbose);
@@ -68,6 +73,7 @@ function action (argv) {
             verbose = true;
         }
         if(argv._[0] === 'list' && argsHelper.matchArgumentsCount(argv, [1])){
+            print(chalk.green('web'));
             return platformsLib.list(true);
         }
         if(actions.indexOf(argv._[0]) > -1
