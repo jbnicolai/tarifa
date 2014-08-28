@@ -4,29 +4,16 @@ path = require('path'),
 tarifaFile = require('../../lib/tarifa-file'),
 pathHelper = require('../../lib/helper/path'),
 collsHelper = require('../../lib/helper/collections'),
-setMode = require('../../lib/helper/setReleaseMode'),
+getMode = require('../../lib/helper/getReleaseMode'),
 argsHelper = require('../../lib/helper/args'),
 hockeyapp = require('../../lib/hockeyapp/hockeyapp'),
 print = require('../../lib/helper/print');
 
-var uploadƒ = function (conf) {
-    conf.localSettings.mode = setMode(conf.platform, conf.configuration, conf.localSettings);
-    var productFileName = pathHelper.productFile(
-        conf.platform,
-        conf.envSettings.product_file_name,
-        conf.localSettings.mode
-    );
-    // TODO refactor to have providers
-    return hockeyapp.uploadVersion(productFileName, conf);
-};
-
-var upload = function (platform, argv, verbose) {
-    // for now we impose 'stage' env as deploy env... this can change
-    var config = 'stage';
+var upload = function (platform, config, argv, verbose) {
 
     return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
         if (!localSettings.configurations[platform][config].hockeyapp_id)
-            return Q.reject('No hockeyapp_id key is available in stage for current platform');
+            return Q.reject('No hockeyapp_id key is available in ' + config + 'for platform ' + platform);
 
         if (!localSettings.hockeyapp || !localSettings.hockeyapp.api_url ||
         !localSettings.hockeyapp.token) {
@@ -58,14 +45,19 @@ var upload = function (platform, argv, verbose) {
 
         params = collsHelper.mergeObject(params, opts);
 
-        return uploadƒ({
-            platform: platform,
-            configuration: config,
+        var conf = {
             localSettings: localSettings,
             envSettings: localSettings.configurations[platform][config],
             uploadParams: params,
             verbose: verbose
-        });
+        };
+        var productFileName = pathHelper.productFile(
+            platform,
+            conf.envSettings.product_file_name,
+            getMode(platform, config, localSettings)
+        );
+
+        return hockeyapp.uploadVersion(productFileName, conf);
     });
 };
 
@@ -78,13 +70,11 @@ var clean = function(nbToKeep, argv, verbose) {
     });
 };
 
-var updateLast = function(platform, argv, verbose) {
-    // for now we impose 'stage' env as deploy env... this can change
-    var config = 'stage';
+var updateLast = function(platform, config, argv, verbose) {
 
     return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
         if (!localSettings.configurations[platform][config].hockeyapp_id)
-            return Q.reject('No hockeyapp_id key is available in stage for current platform');
+            return Q.reject('No hockeyapp_id key is available in ' + config + 'for platform ' + platform);
 
         if (!localSettings.hockeyapp || !localSettings.hockeyapp.api_url ||
         !localSettings.hockeyapp.token) {
@@ -98,8 +88,6 @@ var updateLast = function(platform, argv, verbose) {
         });
 
         var conf = {
-            platform: platform,
-            configuration: config,
             localSettings: localSettings,
             envSettings: localSettings.configurations[platform][config],
             uploadParams: opts,
@@ -107,18 +95,19 @@ var updateLast = function(platform, argv, verbose) {
         };
 
         return hockeyapp.listVersions(conf, false).then(function (list) {
-            return hockeyapp.updateVersion(list.app_versions[0].id, conf);
+            return hockeyapp.updateVersion(list.app_versions[0].id, conf).then(function () {
+              print.success('Updated version successfully.');
+            });
         });
     });
 
 };
 
-var list = function(platform, verbose) {
-    var config = 'stage';
+var list = function(platform, config, verbose) {
 
     return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
         if (!localSettings.configurations[platform][config].hockeyapp_id)
-            return Q.reject('No hockeyapp_id key is available in stage for current platform');
+            return Q.reject('No hockeyapp_id key is available in ' + config + ' for platform ' + platform);
 
         if (!localSettings.hockeyapp || !localSettings.hockeyapp.api_url ||
         !localSettings.hockeyapp.token) {
@@ -127,8 +116,6 @@ var list = function(platform, verbose) {
         }
 
         var conf = {
-            platform: platform,
-            configuration: config,
             localSettings: localSettings,
             envSettings: localSettings.configurations[platform][config]
         };

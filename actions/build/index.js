@@ -3,7 +3,7 @@ var Q = require('q'),
     argsHelper = require('../../lib/helper/args'),
     print = require('../../lib/helper/print'),
     pathHelper = require('../../lib/helper/path'),
-    setMode = require('../../lib/helper/setReleaseMode'),
+    getMode = require('../../lib/helper/getReleaseMode'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
     path = require('path'),
@@ -151,7 +151,7 @@ var runReleaseTasks = function (type) {
 };
 
 var buildƒ = function (conf){
-    conf.localSettings.mode = setMode(conf.platform, conf.configuration, conf.localSettings);
+    conf.localSettings.mode = getMode(conf.platform, conf.configuration, conf.localSettings);
 
     if(conf.verbose) print.success('start to build the www project');
 
