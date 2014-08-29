@@ -17,8 +17,8 @@ Tasks:
         See http://support.hockeyapp.net/kb/api/api-versions#update-version for details.
 
     version clean <keep>
-        Clean all version for all apps found in tarifa.json; specify how many
-        versions to keep (default to 3).
+        Clean all versions of all apps found in tarifa.json; specify the number
+        of versions to keep (default: 3).
 
 
 Options:
