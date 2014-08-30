@@ -11,7 +11,7 @@ module.exports = function (msg) {
     var guid = msg.localSettings.configurations.wp8[msg.configuration]['guid'];
     var author = msg.localSettings.author.name;
     var year = (new Date()).getFullYear();
-    var v = msg.localSettings.version + '.0';
+    var v =  (msg.localSettings.configurations.wp8[msg.configuration]['version'] || msg.localSettings.version) + '.0';
 
     var title = "AssemblyTitle(\"" + product_file_name + "\")";
     var company = "AssemblyCompany(\"" + author + "\")";
