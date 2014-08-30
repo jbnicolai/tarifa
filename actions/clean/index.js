@@ -1,4 +1,5 @@
 var Q = require('q'),
+    rimraf = require('rimraf'),
     spinner = require("char-spinner"),
     argsHelper = require('../../lib/helper/args'),
     pathHelper = require('../../lib/helper/path'),
@@ -6,8 +7,21 @@ var Q = require('q'),
     tarifaFile = require('../../lib/tarifa-file'),
     isAvailableOnHost = require('../../lib/cordova/platforms').isAvailableOnHost,
     cordovaClean = require('../../lib/cordova/clean'),
+    settings = require('../../lib/settings'),
     path = require('path'),
     fs = require('q-io/fs');
+
+var tryRemoveWWW = function (verbose) {
+    var defer = Q.defer();
+    rimraf(path.join(settings.cordovaAppPath, "www"), function (err) {
+        if(err) {
+            print.warning(err);
+            print.warning("not able to remove www folder in cordova app!");
+        }
+        defer.resolve();
+    });
+    return defer.promise;
+};
 
 var clean = function (platform, verbose) {
     spinner();
@@ -16,7 +30,9 @@ var clean = function (platform, verbose) {
             return Q.reject('platform not available in host!');
         if(platform && localSettings.platforms.indexOf(platform) < 0)
             return Q.reject('platform not available in project!');
-        return cordovaClean(platform ? [platform] : localSettings.platforms, verbose);
+        return tryRemoveWWW().then(function () {
+            return cordovaClean(platform ? [platform] : localSettings.platforms, verbose);
+        });
     });
 };
 
