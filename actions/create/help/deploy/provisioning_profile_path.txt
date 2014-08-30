@@ -1,0 +1,4 @@
+
+> The place where tarifa will download the ios mobile provisioning file, the file name extension
+> must be `.mobileprovision` in order to be clickable by default on macosx
+> The path can be absolute or relative to the in creation project
