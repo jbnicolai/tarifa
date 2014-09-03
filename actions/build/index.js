@@ -77,7 +77,8 @@ var tasks = {
             'shared/copy_icons',
             'shared/copy_splashscreens',
             'shared/set_cordova_id',
-            'android/change_template_activity'
+            'android/change_template_activity',
+            'android/ant-properties'
         ],
         'pre-cordova-compile' : [
             'android/product_file_name',

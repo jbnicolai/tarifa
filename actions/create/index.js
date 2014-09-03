@@ -47,7 +47,6 @@ var Q = require('q'),
         require('./tasks/git'),
         require('./tasks/plugins'),
         require('./tasks/assets'),
-        require('./tasks/ant-properties'),
         require('./tasks/fetch-provisioning-file')
     ];
 
