@@ -24,7 +24,6 @@ var Q = require('q'),
 
     deployQuestions = [
         require('./questions/deploy/apple_developer_identity'),
-        require('./questions/deploy/provisioning_profile_path'),
         require('./questions/deploy/apple_id'),
         require('./questions/deploy/has_apple_developer_team'),
         require('./questions/deploy/provisioning_profile_name'),
@@ -42,12 +41,13 @@ var Q = require('q'),
 
     tasks = [
         require('./tasks/tarifa'),
+        require('./tasks/fetch-provisioning-file'),
+        require('./tasks/tarifa-file'),
         require('./tasks/cordova'),
         require('./tasks/platforms'),
         require('./tasks/git'),
         require('./tasks/plugins'),
-        require('./tasks/assets'),
-        require('./tasks/fetch-provisioning-file')
+        require('./tasks/assets')
     ];
 
 function help(questionName, questionType, verbose) {

@@ -2,7 +2,6 @@ var Q = require('q'),
     fs = require('q-io/fs'),
     path = require('path'),
     print = require('../../../lib/helper/print'),
-    tarifaFile = require('../../../lib/tarifa-file'),
     settings = require('../../../lib/settings'),
     builder = require('../../../lib/builder');
 
@@ -46,6 +45,5 @@ module.exports = function (response) {
     return makeRootDirectory(response)
         .then(copyWWWProject)
         .then(initBuilder)
-        .then(tarifaFile.createFromResponse)
         .then(log);
 };

@@ -1,25 +1,28 @@
-var path = require('path'),
-    Q = require('q'),
+var Q = require('q'),
     path = require('path'),
     print = require('../../../lib/helper/print'),
     download = require('../../../lib/ios/nomad/provisioning/download'),
-    settings = require('../../../lib/settings');
+    install = require('../../../lib/ios/nomad/provisioning/install');
 
 module.exports = function (r) {
-    if(!r.provisioning_profile_path || !r.provisioning_profile_name) {
-        return Q.resolve(r);
-    }
+    if (!r.provisioning_profile_name) return Q.resolve(r);
 
+    var downloadDest = path.join(r.path, 'downloaded.mobileprovision');
     return download(
         r.apple_id,
         r.apple_developer_team,
         r.password,
         r.provisioning_profile_name,
-        path.resolve(r.path, r.provisioning_profile_path),
+        downloadDest,
         r.options.verbose
     ).then(function () {
-        if (r.options.verbose)
-            print.warning("You need to click on the provisioning file to add it to the iPhone Configuration Utility");
+        return install(
+            downloadDest,
+            true, // remove the downloaded.mobileprovision file after install
+            r.options.verbose
+        );
+    }).then(function (profilePath) {
+        r.provisioning_profile_path = profilePath;
         return r;
     });
 };
