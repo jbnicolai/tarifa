@@ -23,9 +23,10 @@ var Q = require('q'),
     ],
 
     deployQuestions = [
-        require('./questions/deploy/apple_developer_identity'),
         require('./questions/deploy/apple_id'),
+        require('./questions/deploy/apple_password'),
         require('./questions/deploy/has_apple_developer_team'),
+        require('./questions/deploy/apple_developer_identity'),
         require('./questions/deploy/provisioning_profile_name'),
         require('./questions/deploy/keystore_path'),
         require('./questions/deploy/keystore_alias')
