@@ -12,7 +12,7 @@ tarifa [![experimental](http://hughsk.github.io/stability-badges/dist/experiment
 | windows phone                              | ✗      | ✗     | ✔     |
 | windows8                                   | ✗      | ✗     | ✔     |
 
-* [nomad cli: cupertino](https://github.com/nomad/cupertino) (only fofr ios)
+* [nomad cli: cupertino](https://github.com/nomad/cupertino) (only for ios)
 * [ImageMagick](http://www.imagemagick.org/)
 
 ### Install
