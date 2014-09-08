@@ -1,31 +1,19 @@
 tarifa [![experimental](http://hughsk.github.io/stability-badges/dist/experimental.svg)](http://github.com/hughsk/stability-badges)
 ======
 
-Your friendly mobile app development toolchain on top of Cordova
+*Your friendly mobile app development toolchain on top of Cordova*
 
 ### Requirements
 
-#### Mac OS X
-* [Android SDK](http://developer.android.com/)
-* [iOS SDK](http://developer.apple.com/)
-* [nomad cli: cupertino](https://github.com/nomad/cupertino)
+| sdk/os                                     | macosx | linux | win32 |
+| -------------------------------------------|:------:| -----:| -----:|
+| [ios](http://developer.apple.com/)         | ✔      | ✗     | ✗     |
+| [android](http://developer.android.com/)   | ✔      | ✔     | ✔     |
+| windows phone                              | ✗      | ✗     | ✔     |
+| windows8                                   | ✗      | ✗     | ✔     |
+
+* [nomad cli: cupertino](https://github.com/nomad/cupertino) (only fofr ios)
 * [ImageMagick](http://www.imagemagick.org/)
-
-#### win32
-* [Android SDK](http://developer.android.com/)
-* [ImageMagick](http://www.imagemagick.org/)
-* a Working Windows Phone and windows 8 development environment
-
-#### Linux (not tested right now)
-* [Android SDK](http://developer.android.com/)
-* [ImageMagick](http://www.imagemagick.org/)
-
-### Current supported platforms
-
-* ios
-* android
-* windows phone 8
-* windows 8
 
 ### Install
 
