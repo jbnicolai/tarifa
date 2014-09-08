@@ -55,3 +55,11 @@ Options:
 ```
 git clone https://github.com/peutetre/tarifa.git && cd tarifa && npm link .
 ```
+
+## License
+
+tarifa is licensed under Apache version 2.0
+
+## Sponsors
+
+* [zengularity](http://zengularity.com)
