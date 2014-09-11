@@ -34,7 +34,7 @@ var actions = {
 }
 
 function list(verbose) {
-    return plugins.list(path.dirname(pathHelper.root())).then(printPlugins);
+    return plugins.list(pathHelper.root()).then(printPlugins);
 }
 
 function plugin (action, arg, verbose) {
