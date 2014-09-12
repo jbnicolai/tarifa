@@ -3,7 +3,9 @@ var Q = require('q'),
     fs = require('q-io/fs'),
     os = require('os'),
     path = require('path'),
+    format = require('util').format,
     exec = require('child_process').exec,
+    cordova_lazy_load = require('cordova/src/lazy_load'),
     argsHelper = require('../../lib/helper/args'),
     devices = require('../../lib/devices'),
     settings = require('../../lib/settings'),
@@ -31,38 +33,40 @@ function getToolVersion(name, tool, verbose) {
 }
 
 function check_tools(verbose) {
-    var rslts = [],
-        ok = true,
-        bins = settings.external;
+    return function () {
+        var rslts = [],
+            ok = true,
+            bins = settings.external;
 
-    for(var bin in bins) {
-        if(bins[bin]['print_version']
-            && bins[bin].os_platforms.indexOf(os.platform()) > -1) {
-            rslts.push(getToolVersion(
-                        bins[bin]['name'],
-                        bins[bin]['print_version'],
-                        verbose)
-                    );
-        }
-    }
-
-    return Q.allSettled(rslts).then(function (results) {
-        results.forEach(function (result) {
-            if (result.state === "fulfilled") {
-                print(
-                    "%s %s %s",
-                    chalk.green(result.value.name),
-                    chalk.green('version:'),
-                    result.value.version
-                );
-            } else {
-                ok = false;
-                print(chalk.cyan('%s not found!'), result.reason.split(' ')[0]);
-                if (verbose) print('\tReason: %s', chalk.cyan(result.reason));
+        for(var bin in bins) {
+            if(bins[bin]['print_version']
+                && bins[bin].os_platforms.indexOf(os.platform()) > -1) {
+                rslts.push(getToolVersion(
+                            bins[bin]['name'],
+                            bins[bin]['print_version'],
+                            verbose)
+                        );
             }
+        }
+
+        return Q.allSettled(rslts).then(function (results) {
+            results.forEach(function (result) {
+                if (result.state === "fulfilled") {
+                    print(
+                        "%s %s %s",
+                        chalk.green(result.value.name),
+                        chalk.green('version:'),
+                        result.value.version
+                    );
+                } else {
+                    ok = false;
+                    print(chalk.cyan('%s not found!'), result.reason.split(' ')[0]);
+                    if (verbose) print('\tReason: %s', chalk.cyan(result.reason));
+                }
+            });
+            return Q.resolve(ok);
         });
-        return Q.resolve(ok);
-    });
+    };
 }
 
 function printiOSDevices (verbose) {
@@ -114,13 +118,35 @@ function listAvailablePlatforms() {
     return r;
 }
 
+function check_cordova(platforms, verbose) {
+    var cordovaLibPaths = platforms.filter(function(p) { return p!== 'web'; }).map(function (platform) {
+            return cordova_lazy_load.cordova(platform).then(function (libPath) {
+                return {
+                    name: platform,
+                    path: libPath
+                };
+            });
+        });
+
+    return Q.all(cordovaLibPaths).then(function (libs) {
+        libs.forEach(function (lib) {
+            print("%s %s", chalk.green(format("cordova %s lib path:", lib.name)), lib.path);
+        });
+    }, function (err) {
+        print.error("Could not check cordova lib. Use --verbose for details");
+        if (verbose) print.trace(err);
+    });
+}
+
 function info(verbose) {
     print("%s %s", chalk.green('node version:'), process.versions.node);
     print("%s %s", chalk.green('cordova version:'), pkg.dependencies.cordova);
 
-    return check_tools(verbose).then(function (ok) {
+    var platforms = listAvailablePlatforms();
+
+    return check_cordova(platforms, verbose).then(check_tools(verbose)).then(function (ok) {
         if(!ok) return Q.reject("not all needed tools are available, first install them!");
-        print("%s %s", chalk.green("available platforms on host:"), listAvailablePlatforms().join(', '));
+        print("%s %s", chalk.green("available platforms on host:"), platforms.join(', '));
         return devices.ios().then(printiOSDevices(verbose))
             .then(function () {
                 if(verbose) return devices.androidVerbose();
