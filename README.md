@@ -6,7 +6,7 @@ tarifa [![experimental](http://hughsk.github.io/stability-badges/dist/experiment
 ### Requirements
 
 | sdk/os                                     | macosx | linux | win32 |
-| -------------------------------------------|:------:| -----:| -----:|
+| -------------------------------------------|:------:|:-----:|:-----:|
 | [ios](http://developer.apple.com/)         | ✔      | ✗     | ✗     |
 | [android](http://developer.android.com/)   | ✔      | ✔     | ✔     |
 | windows phone                              | ✗      | ✗     | ✔     |
