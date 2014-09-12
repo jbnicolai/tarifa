@@ -1,3 +1,5 @@
 
 > Platforms can be added or removed also after creating the project. You can
-> only create platforms which are supported by your host os.
+> only create platforms which are supported by your host os. Available platforms
+> are disabled when requirements are not met.
+> Execute `tarifa info -V` to get more informations about disabled platforms.

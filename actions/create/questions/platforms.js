@@ -1,17 +1,16 @@
-var host = require('os').platform(),
-    settings = require('../../../lib/settings');
+var Q = require('q'),
+    host = require('os').platform(),
+    platforms = require('../../../lib/cordova/platforms');
 
-function availablePlatforms() {
-    return settings.platforms.filter(function (p) {
-        return p!=='web' && settings.os_platforms[p].indexOf(host) > -1;
+var question = function (response, verbose) {
+    return platforms.installedPlatforms().then(function (choices) {
+        return {
+            type : 'checkbox',
+            name : 'platforms',
+            choices : choices,
+            message : 'What are the supported platforms of your project (web is added by default)?'
+        };
     });
-}
-
-module.exports = {
-    type : 'checkbox',
-    name : 'platforms',
-    choices : availablePlatforms().map(function (setting) {
-        return { name : setting, value : setting };
-    }),
-    message : 'What are the supported platforms of your project (web is added by default)?'
 };
+
+module.exports = question;
