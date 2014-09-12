@@ -60,5 +60,9 @@
   "optionalDependencies": {
     "ios-deploy": "^1.0.8",
     "cordova-deploy-windows-phone": "3.5.0-2"
+  },
+  "scripts": {
+    "postinstall":"tarifa info",
+    "postupdate":"tarifa info"
   }
 }
