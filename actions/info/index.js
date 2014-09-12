@@ -6,6 +6,7 @@ var Q = require('q'),
     format = require('util').format,
     exec = require('child_process').exec,
     cordova_lazy_load = require('cordova/src/lazy_load'),
+    cordova_check = require('../../lib/cordova/check'),
     argsHelper = require('../../lib/helper/args'),
     devices = require('../../lib/devices'),
     settings = require('../../lib/settings'),
@@ -138,24 +139,37 @@ function check_cordova(platforms, verbose) {
     });
 }
 
+function check_requirements(platforms, verbose) {
+    return function () {
+        var checks = platforms.filter(function(p) { return p!== 'web'; }).map(cordova_check);
+        return Q.all(checks).then(function () { }, function (err) {
+            print.error("Failed check os requirements. Use --verbose for details");
+            if (verbose) print.trace(err);
+        });
+    }
+}
+
 function info(verbose) {
     print("%s %s", chalk.green('node version:'), process.versions.node);
     print("%s %s", chalk.green('cordova version:'), pkg.dependencies.cordova);
 
     var platforms = listAvailablePlatforms();
 
-    return check_cordova(platforms, verbose).then(check_tools(verbose)).then(function (ok) {
-        if(!ok) return Q.reject("not all needed tools are available, first install them!");
-        print("%s %s", chalk.green("available platforms on host:"), platforms.join(', '));
-        return devices.ios().then(printiOSDevices(verbose))
-            .then(function () {
-                if(verbose) return devices.androidVerbose();
-                else return devices.android();
-            })
-            .then(printAndroidDevices(verbose))
-            .then(devices.wp8)
-            .then(printWPDevices(verbose));
-    });
+    return check_cordova(platforms, verbose)
+        .then(check_requirements(platforms, verbose))
+        .then(check_tools(verbose))
+        .then(function (ok) {
+            if(!ok) return Q.reject("not all needed tools are available, first install them!");
+            print("%s %s", chalk.green("available platforms on host:"), platforms.join(', '));
+            return devices.ios().then(printiOSDevices(verbose))
+                .then(function () {
+                    if(verbose) return devices.androidVerbose();
+                    else return devices.android();
+                })
+                .then(printAndroidDevices(verbose))
+                .then(devices.wp8)
+                .then(printWPDevices(verbose));
+        });
 }
 
 module.exports = function (argv) {
