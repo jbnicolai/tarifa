@@ -20,16 +20,21 @@ function log(action, verbose) {
     }
 }
 
-function addToTarifaFile(root) {
-    return function (val) { return tarifaFile.addPlugin(root, val); }
-}
-
-function removeFromTarifaFile(root) {
-    return function (val) { return tarifaFile.removePlugin(root, val); }
+var actions = {
+    'add': {
+        updateTarifaFile: function (root) {
+            return function (val) { tarifaFile.addPlugin(root, val) };
+        }
+    },
+    'remove': {
+        updateTarifaFile: function (root) {
+            return function (val) { tarifaFile.removePlugin(root, val) };
+        }
+    }
 }
 
 function list(verbose) {
-    return plugins.list(path.dirname(pathHelper.root())).then(printPlugins);
+    return plugins.list(pathHelper.root()).then(printPlugins);
 }
 
 function plugin (action, arg, verbose) {
@@ -37,14 +42,13 @@ function plugin (action, arg, verbose) {
     return tarifaFile.parse(root)
         .then(function () {
             return plugins[action](root, arg)
-                .then(addToTarifaFile(root))
+                .then(actions[action].updateTarifaFile(root))
                 .then(log(action, verbose));
         });
 }
 
 function action (argv) {
     var verbose = false,
-        actions = ['add', 'remove'],
         helpPath = path.join(__dirname, 'usage.txt');
 
     if(argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
@@ -54,7 +58,7 @@ function action (argv) {
         if(argv._[0] === 'list' && argsHelper.matchArgumentsCount(argv, [1])){
             return list(verbose);
         }
-        if(actions.indexOf(argv._[0]) > -1
+        if(Object.keys(actions).indexOf(argv._[0]) > -1
             && argsHelper.matchArgumentsCount(argv, [2])) {
             return plugin(argv._[0], argv._[1], verbose);
         }
