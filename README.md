@@ -15,6 +15,10 @@ tarifa [![experimental](http://hughsk.github.io/stability-badges/dist/experiment
 * [nomad cli: cupertino](https://github.com/nomad/cupertino) (only for ios)
 * [ImageMagick](http://www.imagemagick.org/)
 
+### Documentation
+
+Documentation can be read on [tarifa-book](https://www.gitbook.io/content/book/42loops/tarifa/index.html)
+
 ### Install
 
 ```
