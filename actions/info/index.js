@@ -6,7 +6,7 @@ var Q = require('q'),
     format = require('util').format,
     exec = require('child_process').exec,
     cordova_lazy_load = require('cordova/src/lazy_load'),
-    cordova_check = require('../../lib/cordova/check'),
+    installed_platforms = require('../../lib/cordova/platforms').installedPlatforms,
     argsHelper = require('../../lib/helper/args'),
     devices = require('../../lib/devices'),
     settings = require('../../lib/settings'),
@@ -139,12 +139,17 @@ function check_cordova(platforms, verbose) {
     });
 }
 
-function check_requirements(platforms, verbose) {
+function check_requirements(verbose) {
     return function () {
-        var checks = platforms.filter(function(p) { return p!== 'web'; }).map(cordova_check);
-        return Q.all(checks).then(function () { }, function (err) {
-            print.error("Failed check os requirements. Use --verbose for details");
-            if (verbose) print.trace(err);
+        return installed_platforms(verbose).then(function (platforms) {
+            var installed = platforms.filter(function(platform) { return !platform.disabled; })
+                .map(function(platform) { return platform.name; });
+            if (installed.length)
+                print("%s %s", chalk.green("installed platforms on host:"), installed.join(', '));
+            var disabled = platforms.filter(function(platform) { return platform.disabled; })
+                .map(function(platform) { return platform.name; });
+            if (disabled.length)
+                print("%s %s", chalk.green("disabled platforms on host:"), disabled.join(', '));
         });
     }
 }
@@ -160,7 +165,6 @@ function info(verbose) {
         .then(check_tools(verbose))
         .then(function (ok) {
             if(!ok) return Q.reject("not all needed tools are available, first install them!");
-            print("%s %s", chalk.green("available platforms on host:"), platforms.join(', '));
             return devices.ios().then(printiOSDevices(verbose))
                 .then(function () {
                     if(verbose) return devices.androidVerbose();
