@@ -62,7 +62,7 @@
     "cordova-deploy-windows-phone": "3.5.0-2"
   },
   "scripts": {
-    "postinstall":"tarifa info",
-    "postupdate":"tarifa info"
+    "postinstall":"node ./bin/cmd.js info",
+    "postupdate":"node ./bin/cmd.js info"
   }
 }
