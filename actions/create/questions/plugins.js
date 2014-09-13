@@ -1,9 +1,10 @@
 var fs = require('fs'),
-    path = require('path');
+    path = require('path'),
+    plugins = require('../../../lib/cordova/plugins');
 
 module.exports = {
     type:'checkbox',
     name:'plugins',
-    choices:JSON.parse(fs.readFileSync(path.join(__dirname, '../../../lib/plugins.json'))),
+    choices: plugins.listAvailable(),
     message:'Which plugins do you want to install right now?'
 };

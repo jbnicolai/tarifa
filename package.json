@@ -37,6 +37,7 @@
     "chalk": "0.5.1",
     "char-spinner": "^1.0.1",
     "color": "^0.7.1",
+    "configstore": "^0.3.1",
     "cordova": "3.4.1-0.1.0",
     "figures": "^1.1.0",
     "findit": "^2.0.0",
@@ -49,19 +50,19 @@
     "plist": "^1.0.1",
     "q": "^1.0.1",
     "q-io": "^1.11.3",
+    "restler": "3.2.2",
     "rimraf": "^2.2.8",
     "tmp": "0.0.23",
     "uuid": "^1.4.1",
     "valid-java-identifier": "0.0.1",
-    "xcode": "^0.6.7",
-    "restler": "3.2.2"
+    "xcode": "^0.6.7"
   },
   "optionalDependencies": {
     "ios-deploy": "^1.0.8",
     "cordova-deploy-windows-phone": "3.5.0-2"
   },
   "scripts": {
-    "postinstall":"node ./bin/cmd.js info",
-    "postupdate":"node ./bin/cmd.js info"
+    "postinstall": "node ./bin/cmd.js info",
+    "postupdate": "node ./bin/cmd.js info"
   }
 }

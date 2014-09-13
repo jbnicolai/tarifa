@@ -1,73 +1,55 @@
 [{
     "name":"Battery Status",
-    "value":"org.apache.cordova.battery-status",
-    "uri":"org.apache.cordova.battery-status"
+    "value":"org.apache.cordova.battery-status"
 },{
     "name":"Camera",
-    "value":"org.apache.cordova.camera",
-    "uri":"org.apache.cordova.camera"
+    "value":"org.apache.cordova.camera"
 },{
     "name":"Console",
-    "value":"org.apache.cordova.console",
-    "uri":"org.apache.cordova.console"
+    "value":"org.apache.cordova.console"
 },{
     "name":"Contacts",
-    "value":"org.apache.cordova.contacts",
-    "uri":"org.apache.cordova.contacts"
+    "value":"org.apache.cordova.contacts"
 },{
     "name":"Device",
-    "value":"org.apache.cordova.device",
-    "uri":"org.apache.cordova.device"
+    "value":"org.apache.cordova.device"
 },{
     "name":"Device Motion",
-    "value":"org.apache.cordova.device-motion",
-    "uri":"org.apache.cordova.device-motion"
+    "value":"org.apache.cordova.device-motion"
 },{
     "name":"Device Orientation",
-    "value":"org.apache.cordova.device-orientation",
-    "uri":"org.apache.cordova.device-orientation"
+    "value":"org.apache.cordova.device-orientation"
 },{
     "name":"Dialogs",
-    "value":"org.apache.cordova.dialogs",
-    "uri":"org.apache.cordova.dialogs"
+    "value":"org.apache.cordova.dialogs"
 },{
     "name":"File",
-    "value":"org.apache.cordova.file",
-    "uri":"org.apache.cordova.file"
+    "value":"org.apache.cordova.file"
 },{
     "name":"File Transfer",
-    "value":"org.apache.cordova.file-transfer",
-    "uri":"org.apache.cordova.file-transfer"
+    "value":"org.apache.cordova.file-transfer"
 },{
     "name":"Geolocation",
-    "value":"org.apache.cordova.geolocation",
-    "uri":"org.apache.cordova.geolocation"
+    "value":"org.apache.cordova.geolocation"
 },{
     "name":"Globalization",
-    "value":"org.apache.cordova.globalization",
-    "uri":"org.apache.cordova.globalization"
+    "value":"org.apache.cordova.globalization"
 },{
     "name":"In App Browser",
-    "value":"org.apache.cordova.inappbrowser",
-    "uri":"org.apache.cordova.inappbrowser"
+    "value":"org.apache.cordova.inappbrowser"
 },{
     "name":"Media",
-    "value":"org.apache.cordova.media",
-    "uri":"org.apache.cordova.media"
+    "value":"org.apache.cordova.media"
 },{
     "name":"Media Capture",
-    "value":"org.apache.cordova.media-capture",
-    "uri":"org.apache.cordova.media-capture"
+    "value":"org.apache.cordova.media-capture"
 },{
     "name":"Network Information",
-    "value":"org.apache.cordova.network-information",
-    "uri":"org.apache.cordova.network-information"
+    "value":"org.apache.cordova.network-information"
 },{
     "name":"Splashscreen",
-    "value":"org.apache.cordova.splashscreen",
-    "uri":"org.apache.cordova.splashscreen"
+    "value":"org.apache.cordova.splashscreen"
 },{
     "name":"Vibration",
-    "value":"org.apache.cordova.vibration",
-    "uri":"org.apache.cordova.vibration"
+    "value":"org.apache.cordova.vibration"
 }]

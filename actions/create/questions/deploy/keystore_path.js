@@ -1,6 +1,8 @@
 var path = require('path'),
     fs = require('fs'),
-    ks = require('../../../../lib/android/keystore');
+    ks = require('../../../../lib/android/keystore'),
+    Configstore = require('configstore'),
+    conf = new Configstore('tarifa');
 
 module.exports = {
     dependency: 'android',
@@ -14,5 +16,6 @@ module.exports = {
             done(reason);
         });
     },
-    message:'What is the keystore path?'
+    message:'What is the keystore path?',
+    default:conf.get('keystore_path')
 };

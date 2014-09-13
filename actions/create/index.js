@@ -18,6 +18,7 @@ var Q = require('q'),
         require('./questions/author_href'),
         require('./questions/platforms'),
         require('./questions/plugins'),
+        require('./questions/www'),
         require('./questions/color'),
         require('./questions/deploy')
     ],

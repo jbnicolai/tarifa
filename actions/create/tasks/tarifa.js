@@ -15,7 +15,7 @@ function copyWWWProject(response) {
         .makeDirectory(path.join(response.path, settings.webAppPath))
         // copy template project to web app folder
         .then(function () {
-            var src = path.join(__dirname, '../../../template/project'),
+            var src = response.www,
                 dest = path.join(response.path, settings.webAppPath);
             return fs.copyTree(src, dest);
         })

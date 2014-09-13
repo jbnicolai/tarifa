@@ -1,5 +1,7 @@
 var validator = require('../../../lib/helper/validator'),
-    validateEmail = validator.toInquirerValidateƒ(validator.isEmail);
+    validateEmail = validator.toInquirerValidateƒ(validator.isEmail),
+    Configstore = require('configstore'),
+    conf = new Configstore('tarifa');
 
 module.exports = {
     type:'input',
@@ -7,5 +9,6 @@ module.exports = {
     message:'What\'s your email?',
     validate: function (answer) {
         return !answer.length || validateEmail(answer);
-    }
+    },
+    default:conf.get('author_email')
 };
