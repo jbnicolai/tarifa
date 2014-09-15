@@ -15,7 +15,8 @@ var tasks = {
         'pre-cordova-prepare-release': [],
         'pre-cordova-prepare' : [],
         'pre-cordova-compile' : [],
-        'post-cordova-compile' : []
+        'post-cordova-compile' : [],
+        'undo':[]
     },
     windows8: {
         'pre-cordova-prepare-release': [],
@@ -30,8 +31,10 @@ var tasks = {
             'windows8/change_appxmanifest'
         ],
         'post-cordova-compile' : [
-            'shared/reset_cordova_id',
             'windows8/rename_app_file.js'
+        ],
+        'undo':[
+            'shared/reset_cordova_id'
         ]
     },
     wp8: {
@@ -49,8 +52,10 @@ var tasks = {
             'wp8/change_csproj'
         ],
         'post-cordova-compile' : [
-            'shared/reset_cordova_id',
             'wp8/run_xap_sign_tool'
+        ],
+        'undo':[
+            'shared/reset_cordova_id'
         ]
     },
     ios: {
@@ -66,7 +71,9 @@ var tasks = {
             'ios/set_code_sign_identity'
         ],
         'post-cordova-compile' : [
-            'ios/run_xcrun',
+            'ios/run_xcrun'
+        ],
+        'undo':[
             'ios/undo_set_code_sign_identity'
         ]
     },
@@ -84,7 +91,8 @@ var tasks = {
             'android/product_file_name',
             'android/app_label'
         ],
-        'post-cordova-compile' : [
+        'post-cordova-compile' : [ ],
+        'undo':[
             'shared/reset_cordova_id'
         ]
     }
@@ -162,7 +170,13 @@ var buildƒ = function (conf){
         .then(prepare)
         .then(runTasks('pre-cordova-compile'))
         .then(compile)
-        .then(runTasks('post-cordova-compile'));
+        .then(runTasks('post-cordova-compile'))
+        .then(runTasks('undo'), function (err) {
+            if(conf.verbose) print.error('build action chain failed, start undo tasks...');
+            return runTasks('undo')(conf).then(function () {
+                return Q.reject(err);
+            });
+        });
 };
 
 var build = function (platform, config, verbose) {
