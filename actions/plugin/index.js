@@ -23,12 +23,12 @@ function log(action, verbose) {
 var actions = {
     'add': {
         updateTarifaFile: function (root) {
-            return function (val) { tarifaFile.addPlugin(root, val) };
+            return function (val) { return tarifaFile.addPlugin(root, val) };
         }
     },
     'remove': {
         updateTarifaFile: function (root) {
-            return function (val) { tarifaFile.removePlugin(root, val) };
+            return function (val) { return tarifaFile.removePlugin(root, val) };
         }
     }
 }
