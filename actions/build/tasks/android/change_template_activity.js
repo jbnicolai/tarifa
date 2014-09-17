@@ -11,34 +11,53 @@ var Q = require('q'),
 module.exports = function (msg) {
     var defer = Q.defer();
     var cwd = process.cwd();
-    var conf = msg.localSettings.configurations.android;
-    var name = conf[msg.configuration]['product_name'] || conf['default']['product_name'] || conf['name'];
+    var androidConfs = msg.localSettings.configurations.android;
+    var name = androidConfs[msg.configuration]['product_name'] || androidConfs['default']['product_name'] || androidConfs['name'];
     var id = msg.localSettings.configurations.android[msg.configuration]['id'] || msg.localSettings.id;
     var srcPath = path.join(cwd, settings.cordovaAppPath, '/platforms/android/src/');
     var finder = find(path.join(cwd, settings.cordovaAppPath, '/platforms/android/src/'));
     var javaActivityTmpl = fs.readFileSync(path.join(__dirname, 'activity.java.tmpl'), 'utf-8');
     var androidManifestXmlPath = path.join(cwd, settings.cordovaAppPath, 'platforms/android/AndroidManifest.xml');
 
-    // the top level package can not be used for anythings else as the main activity
-    var file = path.join(srcPath, id.split('.')[0]);
     var asbPath = path.join(srcPath, id.replace(/\./g, '/'));
-    rimraf(file, function (err) {
-        if(err) defer.reject("unable to remove file " + file);
-        mkdirp(asbPath, function (err) {
-            if (err) {
-                defer.reject("unable to create package " + asbPath);
-            }
-            else {
-                var inferedName = inferJavaClassNameFromProductName(name);
-                var activity = javaActivityTmpl.replace(/\$PACKAGE_NAME/, id).replace(/\$APP_NAME/, inferedName);
-                fs.writeFileSync(path.join(asbPath, inferedName + '.java'), activity);
-                var androidManifestXml = libxmljs.parseXml(fs.readFileSync(androidManifestXmlPath));
-                androidManifestXml.root().attr('package', id);
-                androidManifestXml.get('/manifest/application/activity').attr('android:name', inferedName);
-                fs.writeFileSync(androidManifestXmlPath, androidManifestXml.root());
-                defer.resolve(msg);
-            }
-        });
+    var activityFiles = Object.keys(androidConfs).filter(function (e) {
+        return e !== msg.configuration;
+    }).map(function (e) {
+        var conf = androidConfs[e];
+        return path.join(
+            srcPath,
+            conf.id.replace(/\./g, '/'),
+            inferJavaClassNameFromProductName(conf.product_name) + '.java'
+        );
+    });
+    activityFiles.push(path.join(
+      srcPath,
+      msg.localSettings.id.replace(/\./g, '/'),
+      inferJavaClassNameFromProductName(msg.localSettings.name) + '.java'
+    ));
+
+    // we'll only try to delete files that tarifa knows; ie: package names found
+    // in tarifa.json
+    // then we delete dir only if empty
+    activityFiles.forEach(function (f) {
+        rimraf.sync(f);
+        fs.rmdir(path.dirname(f), function () { });
+    });
+
+    mkdirp(asbPath, function (err) {
+        if (err) {
+            defer.reject("unable to create package " + asbPath);
+        }
+        else {
+            var inferedName = inferJavaClassNameFromProductName(name);
+            var activity = javaActivityTmpl.replace(/\$PACKAGE_NAME/, id).replace(/\$APP_NAME/, inferedName);
+            fs.writeFileSync(path.join(asbPath, inferedName + '.java'), activity);
+            var androidManifestXml = libxmljs.parseXml(fs.readFileSync(androidManifestXmlPath));
+            androidManifestXml.root().attr('package', id);
+            androidManifestXml.get('/manifest/application/activity').attr('android:name', inferedName);
+            fs.writeFileSync(androidManifestXmlPath, androidManifestXml.root());
+            defer.resolve(msg);
+        }
     });
     return defer.promise;
 };
