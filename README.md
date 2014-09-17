@@ -1,13 +1,12 @@
 tarifa [![experimental](http://hughsk.github.io/stability-badges/dist/experimental.svg)](http://github.com/hughsk/stability-badges)
 ======
 
+*Your friendly mobile app development toolchain on top of Cordova*
+
 <a href="http://tarifa.tools">
     <img src="./template/assets/logo.png"
-         style="padding:20px;"
          align="left" alt="tarifa logo" />
 </a>
-
-*Your friendly mobile app development toolchain on top of Cordova*
 
 tarifa is a CLI on top of [cordova](http://cordova.apache.org/).
 It aims at simplifying the cordova workflow and adding features to complete the cordova toolchain such as:
