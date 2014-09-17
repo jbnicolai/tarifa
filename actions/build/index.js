@@ -93,7 +93,9 @@ var tasks = {
         ],
         'post-cordova-compile' : [ ],
         'undo':[
-            'shared/reset_cordova_id'
+            'shared/reset_cordova_id',
+            'shared/reset_config_xml',
+            'android/reset_template_activity'
         ]
     }
 };
