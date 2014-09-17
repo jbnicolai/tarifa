@@ -30,8 +30,13 @@ module.exports = function (msg) {
             inferJavaClassNameFromProductName(conf.product_name) + '.java'
         );
     });
+    activityFiles.push(path.join(
+      srcPath,
+      msg.localSettings.id.replace(/\./g, '/'),
+      inferJavaClassNameFromProductName(msg.localSettings.name) + '.java'
+    ));
 
-    // we'll only try to delete files that tarifa knows: ie, package names found
+    // we'll only try to delete files that tarifa knows; ie: package names found
     // in tarifa.json
     // then we delete dir only if empty
     activityFiles.forEach(function (f) {
