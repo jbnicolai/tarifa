@@ -8,6 +8,15 @@ tarifa [![experimental](http://hughsk.github.io/stability-badges/dist/experiment
 
 *Your friendly mobile app development toolchain on top of Cordova*
 
+tarifa is a CLI on top of [cordova](http://cordova.apache.org/).
+It aims at simplifying the cordova workflow and adding features to complete the cordova toolchain such as:
+
+* **multiple configurations**: simply produce multiple unique apps on a given platform within a single project.
+* **integration of any www build process**: integrate any www build process in the cordova workflow.
+* **interactive project bootstrap**: no need to remember every required information when creating a project, tarifa
+asks questions and validates user input.
+* **deployment to hockeyapp from the terminal**: no need to launch a browser to upload a binary file to hockeyapp, tarifa handles it.
+
 ### Requirements
 
 | sdk/os                                     | macosx | linux | win32 |
