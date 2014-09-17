@@ -3,6 +3,7 @@ var Q = require('q'),
     rimraf = require('rimraf'),
     mkdirp = require('mkdirp'),
     path = require('path'),
+    print = require('../../../../lib/helper/print'),
     fs = require('fs'),
     settings = require('../../../../lib/settings'),
     inferJavaClassNameFromProductName = require('../../../../lib/android/infer-classname'),
@@ -40,6 +41,8 @@ module.exports = function (msg) {
             androidManifestXml.get('/manifest/application/activity').attr('android:name', inferedName);
             fs.writeFileSync(androidManifestXmlPath, androidManifestXml.root());
             defer.resolve(msg);
+            if(msg.verbose)
+                print.success('reset android cordova activity');
         }
     });
     return defer.promise;
