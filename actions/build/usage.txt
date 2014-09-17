@@ -5,8 +5,9 @@ configuration 'default' will be used.
 
 Options:
 
-    --help, -h     Show this message
-    --verbose, -V  Be more verbose on everything
+    --help, -h              Show this message
+    --verbose, -V           Be more verbose on everything
+    --keep-file-changes     Keep all modifications made by tarifa in your files
 
 Examples:
 
