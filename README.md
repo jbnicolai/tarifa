@@ -2,8 +2,7 @@ tarifa [![experimental](http://hughsk.github.io/stability-badges/dist/experiment
 ======
 
 <a href="http://tarifa.tools">
-    <img src="./template/assets/logo.png"
-         align="center" alt="tarifa logo" />
+    <img src="./template/assets/logo.png" width="100px" align="center" alt="tarifa logo" />
 </a>
 
 *Your friendly mobile app development toolchain on top of Cordova*
