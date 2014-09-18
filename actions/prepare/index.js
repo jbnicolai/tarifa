@@ -22,7 +22,7 @@ var method = {
         return defer.promise;
     },
     link : function (cordovaWWW, projectWWW) {
-        return fs.symbolicLink(cordovaWWW, projectWWW, 'directory');
+        return fs.symbolicCopy(projectWWW, cordovaWWW, 'directory');
     }
 };
 
