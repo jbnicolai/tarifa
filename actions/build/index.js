@@ -95,7 +95,10 @@ var tasks = {
         'undo':[
             'shared/reset_cordova_id',
             'shared/reset_config_xml',
-            'android/reset_template_activity'
+            'android/reset_template_activity',
+            'android/reset_app_label',
+            'android/reset_product_file_name',
+            'android/reset_config_xml'
         ]
     }
 };
