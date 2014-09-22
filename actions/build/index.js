@@ -93,7 +93,12 @@ var tasks = {
         ],
         'post-cordova-compile' : [ ],
         'undo':[
-            'shared/reset_cordova_id'
+            'shared/reset_cordova_id',
+            'shared/reset_config_xml',
+            'android/reset_template_activity',
+            'android/reset_app_label',
+            'android/reset_product_file_name',
+            'android/reset_config_xml'
         ]
     }
 };
@@ -171,7 +176,10 @@ var buildƒ = function (conf){
         .then(runTasks('pre-cordova-compile'))
         .then(compile)
         .then(runTasks('post-cordova-compile'))
-        .then(runTasks('undo'), function (err) {
+        .then(function () {
+            if (conf.keepFileChanges) return Q.resolve(conf);
+            else return runTasks('undo')(conf);
+        }, function (err) {
             if(conf.verbose) print.error('build action chain failed, start undo tasks...');
             return runTasks('undo')(conf).then(function () {
                 return Q.reject(err);
@@ -179,12 +187,13 @@ var buildƒ = function (conf){
         });
 };
 
-var build = function (platform, config, verbose) {
+var build = function (platform, config, keepFileChanges, verbose) {
     return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
         return buildƒ({
             platform: platform,
             configuration: config,
             localSettings: localSettings,
+            keepFileChanges: keepFileChanges,
             verbose: verbose
         });
     });
@@ -192,14 +201,18 @@ var build = function (platform, config, verbose) {
 
 var action = function (argv) {
     var verbose = false,
+        keepFileChanges = false,
         helpPath = path.join(__dirname, 'usage.txt');
 
     if(argsHelper.matchArgumentsCount(argv, [1,2])
-            && argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
+            && argsHelper.checkValidOptions(argv, ['V', 'verbose', 'keep-file-changes'])) {
         if(argsHelper.matchOption(argv, 'V', 'verbose')) {
             verbose = true;
         }
-        return build(argv._[0], argv._[1] || 'default', verbose);
+        if(argsHelper.matchOption(argv, null, 'keep-file-changes')) {
+            keepFileChanges = true;
+        }
+        return build(argv._[0], argv._[1] || 'default', keepFileChanges, verbose);
     }
 
     return fs.read(helpPath).then(print);
