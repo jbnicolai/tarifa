@@ -33,7 +33,7 @@ function mapSettings(settings, platform, configurationName) {
     return result;
 }
 
-module.exports = function build(platform, settings, configurationName) {
+module.exports.build = function build(platform, settings, configurationName) {
     var b = browserify();
     var defer = Q.defer();
     var output = path.join(__dirname, '../www/main.js');
