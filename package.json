@@ -63,6 +63,11 @@
   },
   "scripts": {
     "postinstall": "node ./bin/cmd.js info",
-    "postupdate": "node ./bin/cmd.js info"
+    "postupdate": "node ./bin/cmd.js info",
+    "test": "mocha test test/xml test/xml/android test/xml/windows8 test/xml/wp8"
+  },
+  "devDependencies": {
+    "mocha": "^1.21.4",
+    "should": "^4.0.4"
   }
 }
