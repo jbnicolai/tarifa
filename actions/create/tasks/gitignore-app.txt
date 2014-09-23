@@ -17,7 +17,7 @@ target
 platforms/android/bin/
 platforms/android/gen/
 platforms/android/res/drawable*
-platforms/android/assets/*
+platforms/android/assets/www
 platforms/android/ant-gen/
 platforms/android/ant-build/
 platforms/android/www/
