@@ -27,8 +27,8 @@ var action = function (argv) {
         if(match(argv._, ['provisioning', 'list'])) return provisioning.list(verbose);
 
         if(match(argv._, ['icons', 'generate', '+', '*'])) return assets.generateIcons(argv._[2], argv._[3], verbose);
-        if(match(argv._, ['icons', 'file', '+', '*'])) return assets.generateIconsFromFile(argv._[2], argv._[3], verbose);
-        if(match(argv._, ['splashscreens', 'generate', '+', '*'])) return assets.generateSplashscreens(argv._[2], argv._[3], verbose);
+        if(match(argv._, ['icons', 'file', '+', '*'])) return assets.generateIconsFromFile(path.resolve(argv._[2]), argv._[3], verbose);
+        if(match(argv._, ['splashscreens', '+', '*'])) return assets.generateSplashscreens(argv._[1], argv._[2], verbose);
         // TODO: we must improve this command in order to make it public
         // it must take into account the different splashscreen ratios
         // if(match(argv._, ['splashscreens', 'file', '+', '*'])) return assets.generateSplashscreensFromFile(argv._[2], argv._[3], verbose);
