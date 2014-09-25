@@ -6,7 +6,7 @@ var should = require('should'),
     stringXml = require('../../../lib/xml/android/string.xml');
 
 describe('[android] setting app_name in android/res/values/strings.xml', function() {
-    it('find app_name in a strings.xml', function () {
+    it('find app_name', function () {
         var file = path.join(__dirname, '../../fixtures/strings.xml');
         return stringXml.getAppName(file).then(function (app_name) {
             app_name.should.equal('demo prod');
@@ -20,7 +20,7 @@ describe('[android] setting app_name in android/res/values/strings.xml', functio
         });
     });
 
-    it('change app_name in strings.xml', function () {
+    it('change app_name', function () {
         var xml = fs.readFileSync(path.join(__dirname, '../../fixtures/strings.xml'), 'utf-8'),
             defer = Q.defer();
 

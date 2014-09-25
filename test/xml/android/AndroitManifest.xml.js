@@ -1,7 +1,34 @@
-var should = require('should');
+var should = require('should'),
+    path = require('path'),
+    fs = require('fs'),
+    Q = require('q'),
+    tmp = require('tmp'),
+    AndroidManifestXml = require('../../../lib/xml/android/AndroidManifest.xml');
 
-describe('replacing stuff in AndroidManifest.xml', function(){
-    describe('be able to read the versionCode attriute', function(){
-        it('todo');
+describe('[android] replacing stuff in AndroidManifest.xml', function(){
+    it('find android:versionCode', function () {
+        var file = path.join(__dirname, '../../fixtures/AndroidManifest.xml');
+        return AndroidManifestXml.getVersionCode(file).then(function (code) {
+            code.should.equal('2');
+        });
+    });
+
+    it('change versionCode', function () {
+        var xml = fs.readFileSync(path.join(__dirname, '../../fixtures/AndroidManifest.xml'), 'utf-8'),
+            defer = Q.defer();
+
+        tmp.file(function (err, p, fd) {
+            if (err) throw err;
+            fs.writeFileSync(p, xml);
+            return AndroidManifestXml.setVersionCode(p, '5').then(function () {
+                return AndroidManifestXml.getVersionCode(p).then(function (code) {
+                    code.should.equal('5');
+                    tmp.setGracefulCleanup();
+                    defer.resolve();
+                }).done();
+            });
+        });
+
+        return defer.promise;
     });
 });

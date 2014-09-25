@@ -7,14 +7,14 @@ var should = require('should'),
 
 describe('[android] setting name attribute in android/build.xml', function() {
 
-    it('find name in a build.xml', function () {
+    it('find name', function () {
         var file = path.join(__dirname, '../../fixtures/build.xml');
         return BuildXml.getName(file).then(function (name) {
             name.should.equal('Hello');
         });
     });
 
-    it('change name in build.xml', function () {
+    it('change name', function () {
         var xml = fs.readFileSync(path.join(__dirname, '../../fixtures/build.xml'), 'utf-8'),
             defer = Q.defer();
 
