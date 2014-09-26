@@ -26,7 +26,11 @@ module.exports = function (msg) {
         androidId.replace(/\./g, '/'),
         inferJavaClassNameFromProductName(androidName) + '.java'
     );
+
     rimraf.sync(currentActivityFile);
+
+    var emptyFolder = fs.readdirSync(path.dirname(currentActivityFile)).length === 0;
+    if(emptyFolder) fs.rmdirSync(path.dirname(currentActivityFile));
 
     mkdirp(asbPath, function (err) {
         if (err) {
@@ -36,7 +40,7 @@ module.exports = function (msg) {
             var inferedName = inferJavaClassNameFromProductName(msg.localSettings.name);
             var activity = javaActivityTmpl.replace(/\$PACKAGE_NAME/, msg.localSettings.id).replace(/\$APP_NAME/, inferedName);
             fs.writeFileSync(path.join(asbPath, inferedName + '.java'), activity);
-            AndroidManifestBuilder.setActivityName(androidManifestXmlPath, inferedName);
+            AndroidManifestBuilder.setActivityInfo(androidManifestXmlPath, inferedName, msg.localSettings.id);
             defer.resolve(msg);
             if(msg.verbose)
                 print.success('reset android cordova activity');

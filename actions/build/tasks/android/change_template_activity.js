@@ -15,7 +15,6 @@ module.exports = function (msg) {
     var name = androidConfs[msg.configuration]['product_name'] || androidConfs['default']['product_name'] || androidConfs['name'];
     var id = androidConfs[msg.configuration]['id'] || msg.localSettings.id;
     var srcPath = path.join(cwd, settings.cordovaAppPath, '/platforms/android/src/');
-    var finder = find(path.join(cwd, settings.cordovaAppPath, '/platforms/android/src/'));
     var javaActivityTmpl = fs.readFileSync(path.join(__dirname, 'activity.java.tmpl'), 'utf-8');
     var androidManifestXmlPath = path.join(cwd, settings.cordovaAppPath, 'platforms/android/AndroidManifest.xml');
 
@@ -52,7 +51,7 @@ module.exports = function (msg) {
             var inferedName = inferJavaClassNameFromProductName(name);
             var activity = javaActivityTmpl.replace(/\$PACKAGE_NAME/, id).replace(/\$APP_NAME/, inferedName);
             fs.writeFileSync(path.join(asbPath, inferedName + '.java'), activity);
-            AndroidManifestBuilder.setActivityName(androidManifestXmlPath, inferedName);
+            AndroidManifestBuilder.setActivityInfo(androidManifestXmlPath, inferedName, id);
             defer.resolve(msg);
         }
     });
