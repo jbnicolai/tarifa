@@ -1,6 +1,6 @@
 Usage: tarifa clean <platform>
 
-Clean the given platform
+Clean the given platform or all available platforms on os if any given.
 
 Options:
 
