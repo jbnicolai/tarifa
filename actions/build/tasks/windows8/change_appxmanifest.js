@@ -1,5 +1,6 @@
 var Q = require('q'),
     path = require('path'),
+    print = require('../../../../lib/helper/print'),
     AppxmanifestBuilder = require('../../../../lib/xml/windows8/package.appxmanifest'),
     settings = require('../../../../lib/settings');
 
