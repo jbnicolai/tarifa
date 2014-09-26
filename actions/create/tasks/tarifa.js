@@ -3,6 +3,7 @@ var Q = require('q'),
     path = require('path'),
     print = require('../../../lib/helper/print'),
     settings = require('../../../lib/settings'),
+    pkg = require('../../../package.json'),
     builder = require('../../../lib/builder');
 
 function makeRootDirectory(response) {
@@ -41,9 +42,19 @@ function log(response) {
     return Q.resolve(response);
 };
 
+function createDotTarifaFile(response) {
+    var o = {
+        current: pkg.version,
+        created: pkg.version
+    };
+    return fs.write(path.join(response.path, '.tarifa.json'), JSON.stringify(o, null, 2))
+        .then(function () { return response; });
+}
+
 module.exports = function (response) {
     return makeRootDirectory(response)
         .then(copyWWWProject)
         .then(initBuilder)
+        .then(createDotTarifaFile)
         .then(log);
 };
