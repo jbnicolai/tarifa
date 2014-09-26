@@ -10,7 +10,7 @@ module.exports = function (msg) {
     var name = msg.localSettings.name;
     var plistFileName = name + '-Info.plist';
     var plistPath = path.join(process.cwd(), settings.cordovaAppPath, 'platforms', 'ios', name, plistFileName);
-    var plistObj = plist.parseFileSync(plistPath);
+    var plistObj = plist.parse(fs.readFileSync(plistPath, 'utf-8'));
 
     plistObj.CFBundleIdentifier = id;
     fs.writeFileSync(plistPath, plist.build(plistObj).toString());
