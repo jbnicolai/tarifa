@@ -23,18 +23,17 @@ var tasks = {
         'pre-cordova-prepare' : [
             'shared/populate_config_xml',
             'shared/copy_icons',
-            'shared/copy_splashscreens',
-            'shared/set_cordova_id'
+            'shared/copy_splashscreens'
         ],
         'pre-cordova-compile' : [
             'windows8/patch_cordova_deploy',
             'windows8/change_appxmanifest'
         ],
         'post-cordova-compile' : [
-            'windows8/rename_app_file.js'
+            'windows8/rename_app_file'
         ],
         'undo':[
-            'shared/reset_cordova_id'
+            'shared/reset_config_xml'
         ]
     },
     wp8: {
@@ -44,7 +43,6 @@ var tasks = {
             'shared/populate_config_xml',
             'shared/copy_icons',
             'shared/copy_splashscreens',
-            'shared/set_cordova_id',
             'wp8/change_assembly_info'
         ],
         'pre-cordova-compile' : [
@@ -55,7 +53,7 @@ var tasks = {
             'wp8/run_xap_sign_tool'
         ],
         'undo':[
-            'shared/reset_cordova_id'
+            'shared/reset_config_xml'
         ]
     },
     ios: {
@@ -74,7 +72,8 @@ var tasks = {
             'ios/run_xcrun'
         ],
         'undo':[
-            'ios/undo_set_code_sign_identity'
+            'ios/undo_set_code_sign_identity',
+            'shared/reset_config_xml'
         ]
     },
     android: {
@@ -83,7 +82,6 @@ var tasks = {
             'shared/populate_config_xml',
             'shared/copy_icons',
             'shared/copy_splashscreens',
-            'shared/set_cordova_id',
             'android/change_template_activity',
             'android/ant-properties'
         ],
@@ -93,12 +91,10 @@ var tasks = {
         ],
         'post-cordova-compile' : [ ],
         'undo':[
-            'shared/reset_cordova_id',
             'shared/reset_config_xml',
             'android/reset_template_activity',
             'android/reset_app_label',
-            'android/reset_product_file_name',
-            'android/reset_config_xml'
+            'android/reset_product_file_name'
         ]
     }
 };

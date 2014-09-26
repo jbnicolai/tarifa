@@ -1,20 +1,15 @@
 var Q = require('q'),
-    libxmljs = require('libxmljs'),
     path = require('path'),
-    fs = require('fs'),
     print = require('../../../../lib/helper/print'),
-    settings = require('../../../../lib/settings');
+    builder = require('../../../../lib/xml/android/AndroidManifest.xml');
 
 module.exports = function (msg) {
     var version_code = msg.localSettings.configurations.android[msg.configuration]['version_code'];
-    if(version_code) {
-        var android_manifest_path = path.join(process.cwd(), settings.cordovaAppPath, 'platforms', 'android', 'AndroidManifest.xml');
+    if(!version_code) return Q.resolve(msg);
 
-        var doc = libxmljs.parseXml(fs.readFileSync(android_manifest_path));
-        fs.writeFileSync(android_manifest_path, doc.root().attr('android:versionCode', version_code));
+    return builder.setVersionCode(version_code).then(function () {
         if(msg.verbose)
             print.success('change android versionCode to %s', version_code);
-    }
-
-    return Q.resolve(msg);
+        return msg;
+    });
 };

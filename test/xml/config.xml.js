@@ -17,12 +17,11 @@ describe('[shared] read/write cordova\'s config.xml', function() {
             result.author_email.should.equal('paul@42loops.com');
             result.author_href.should.equal('http://42loops.com');
             result.description.should.equal('toto');
-            result.preference[0].name.should.equal('DisallowOverscroll');
-            result.preference[0].value.should.equal('true');
-            result.preference[1].name.should.equal('EnableViewportScale');
-            result.preference[1].value.should.equal('false');
-            result.preference[2].name.should.equal('KeyboardDisplayRequiresUserAction');
-            result.preference[2].value.should.equal('false');
+
+            result.preference.DisallowOverscroll.should.equal('true');
+            result.preference.KeyboardDisplayRequiresUserAction.should.equal('false');
+            result.preference.KeyboardDisplayRequiresUserAction.should.equal('false');
+            result.preference.EnableViewportScale.should.equal('false');
         });
     });
 
@@ -53,12 +52,14 @@ describe('[shared] read/write cordova\'s config.xml', function() {
         tmp.file(function (err, p, fd) {
             if (err) throw err;
             fs.writeFileSync(p, xml);
-            var pref = [
-                { name: 'DisallowOverscroll', value: 'false' },
-                { name: 'KeyboardDisplayRequiresUserAction', value: 'false' },
-                { name: 'newpreference', value:'what you want...'},
-                { name: 'newpreference2', value:'what you want...2'}
-            ];
+
+            var pref = {
+                DisallowOverscroll: false,
+                KeyboardDisplayRequiresUserAction:false,
+                'newpreference':'what you want...',
+                'newpreference2':'what you want...2'
+            };
+
             return ConfigXml.set(
                 p,
                 'tools.tarifa.oops',
@@ -79,14 +80,10 @@ describe('[shared] read/write cordova\'s config.xml', function() {
                     result.description.should.equal('this is a test');
                     result.access[0].should.equal('tarifa.tools');
                     result.access[1].should.equal('zengularity.com');
-                    result.preference[0].name.should.equal('DisallowOverscroll');
-                    result.preference[0].value.should.equal('false');
-                    result.preference[1].name.should.equal('KeyboardDisplayRequiresUserAction');
-                    result.preference[1].value.should.equal('false');
-                    result.preference[2].name.should.equal('newpreference');
-                    result.preference[2].value.should.equal('what you want...');
-                    result.preference[3].name.should.equal('newpreference2');
-                    result.preference[3].value.should.equal('what you want...2');
+                    result.preference.DisallowOverscroll.should.equal('false');
+                    result.preference.KeyboardDisplayRequiresUserAction.should.equal('false');
+                    result.preference.newpreference.should.equal('what you want...');
+                    result.preference.newpreference2.should.equal('what you want...2');
                     tmp.setGracefulCleanup();
                     defer.resolve();
                 }).done();
