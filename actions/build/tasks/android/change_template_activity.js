@@ -37,10 +37,8 @@ module.exports = function (msg) {
 
     // we'll only try to delete files that tarifa knows; ie: package names found
     // in tarifa.json
-    // then we delete dir only if empty
     activityFiles.forEach(function (f) {
         rimraf.sync(f);
-        fs.rmdir(path.dirname(f), function () { });
     });
 
     mkdirp(asbPath, function (err) {
