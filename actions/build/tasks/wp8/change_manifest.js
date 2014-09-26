@@ -1,5 +1,6 @@
 var Q = require('q'),
     path = require('path'),
+    print = require('../../../../lib/helper/print'),
     WMAppManifestBuilder = require('../../../../lib/xml/wp8/WMAppManifest.xml'),
     settings = require('../../../../lib/settings');
 

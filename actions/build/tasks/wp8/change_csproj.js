@@ -16,7 +16,7 @@ module.exports = function (msg) {
             return rslt;
         }, null);
         var csproj_path = path.join(wp8_path, csproj_filename);
-        return CsprojBuilder.set(csproj_path, value);
+        return CsprojBuilder.setProductFilename(csproj_path, value);
     }).then(function () {
         if(msg.verbose)
             print.success('change generated XapFilename to %s', product_file_name);
