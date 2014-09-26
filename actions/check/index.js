@@ -7,6 +7,7 @@ var Q = require('q'),
     tarifaFile = require('../../lib/tarifa-file'),
     builder = require('../../lib/builder'),
     installedPlatforms = require('../../lib/cordova/platforms').installedPlatforms,
+    isAvailableOnHost = require('../../lib/cordova/platforms').isAvailableOnHost,
     path = require('path'),
     fs = require('q-io/fs');
 
@@ -20,23 +21,38 @@ var tasks = {
     windows8: []
 };
 
+function getUserTasks (availablePlatforms, localSettings) {
+    var usertasks = {};
+    availablePlatforms.forEach(function (p) {
+        usertasks[p] = localSettings.check && localSettings.check[p]
+            ? [require(path.resolve(localSettings.check[p]))] : [];
+    });
+    return usertasks;
+}
+
 var check = function (verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         return installedPlatforms().then(function (platforms) {
             var platformNames = platforms.filter(function (p) {
                 return !p.disabled;
             }).map(function (p) { return p.name; });
-
+            platformNames.push('web');
+            var userTasks = getUserTasks(platformNames.filter(isAvailableOnHost), localSettings);
             return localSettings.platforms.reduce(function (promiseP, platform) {
                 if(platform !== 'web' && platformNames.indexOf(platform) < 0) {
                     if(settings.os_platforms[platform].indexOf(os.platform()) > -1)
                         print.error("platform %s is not installed on os, skipping checks...", platform);
                     return promiseP;
                 }
-                if (verbose) print.success("start to check %s", platform);
+                if (verbose) print.success("start checking %s platform", platform);
                 return tasks[platform].reduce(function (promiseT, task) {
                     return promiseT.then(task);
-                }, promiseP);
+                }, promiseP).then(function (msg) {
+                    if (verbose) print.success("start user check %s", platform);
+                    return userTasks[platform].reduce(function (promiseUT, usertask) {
+                        return promiseUT.then(usertask);
+                    }, Q(msg));
+                });
             }, Q.resolve({
                 settings: localSettings,
                 verbose: verbose

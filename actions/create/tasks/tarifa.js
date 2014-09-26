@@ -1,13 +1,16 @@
 var Q = require('q'),
     fs = require('q-io/fs'),
     path = require('path'),
+    format = require('util').format,
     print = require('../../../lib/helper/print'),
     settings = require('../../../lib/settings'),
     pkg = require('../../../package.json'),
     builder = require('../../../lib/builder');
 
 function makeRootDirectory(response) {
-    return fs.makeDirectory(response.path).then(function () { return response });
+    return fs.makeDirectory(response.path)
+        .then(function () { return fs.makeDirectory(path.join(response.path, 'bin')) })
+        .then(function () { return response });
 };
 
 function copyWWWProject(response) {
@@ -51,10 +54,20 @@ function createDotTarifaFile(response) {
         .then(function () { return response; });
 }
 
+function createUserCheckScripts(response) {
+    var content = "module.exports = function (msg) {\n    return msg;\n}",
+        write = function (platform) {
+            return fs.write(path.join(response.path, 'bin', format('check_%s.js', platform)), content);
+        };
+    return Q.all(response.platforms.map(write).concat([write('web')]))
+        .then(function () { return response; });
+}
+
 module.exports = function (response) {
     return makeRootDirectory(response)
         .then(copyWWWProject)
         .then(initBuilder)
         .then(createDotTarifaFile)
+        .then(createUserCheckScripts)
         .then(log);
 };
