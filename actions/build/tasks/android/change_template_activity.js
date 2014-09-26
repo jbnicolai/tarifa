@@ -6,7 +6,7 @@ var Q = require('q'),
     fs = require('fs'),
     settings = require('../../../../lib/settings'),
     inferJavaClassNameFromProductName = require('../../../../lib/android/infer-classname'),
-    libxmljs = require('libxmljs');
+    AndroidManifestBuilder = require('../../../../lib/xml/android/AndroidManifest.xml');
 
 module.exports = function (msg) {
     var defer = Q.defer();
@@ -15,7 +15,6 @@ module.exports = function (msg) {
     var name = androidConfs[msg.configuration]['product_name'] || androidConfs['default']['product_name'] || androidConfs['name'];
     var id = androidConfs[msg.configuration]['id'] || msg.localSettings.id;
     var srcPath = path.join(cwd, settings.cordovaAppPath, '/platforms/android/src/');
-    var finder = find(path.join(cwd, settings.cordovaAppPath, '/platforms/android/src/'));
     var javaActivityTmpl = fs.readFileSync(path.join(__dirname, 'activity.java.tmpl'), 'utf-8');
     var androidManifestXmlPath = path.join(cwd, settings.cordovaAppPath, 'platforms/android/AndroidManifest.xml');
 
@@ -38,10 +37,8 @@ module.exports = function (msg) {
 
     // we'll only try to delete files that tarifa knows; ie: package names found
     // in tarifa.json
-    // then we delete dir only if empty
     activityFiles.forEach(function (f) {
         rimraf.sync(f);
-        fs.rmdir(path.dirname(f), function () { });
     });
 
     mkdirp(asbPath, function (err) {
@@ -52,10 +49,7 @@ module.exports = function (msg) {
             var inferedName = inferJavaClassNameFromProductName(name);
             var activity = javaActivityTmpl.replace(/\$PACKAGE_NAME/, id).replace(/\$APP_NAME/, inferedName);
             fs.writeFileSync(path.join(asbPath, inferedName + '.java'), activity);
-            var androidManifestXml = libxmljs.parseXml(fs.readFileSync(androidManifestXmlPath));
-            androidManifestXml.root().attr('package', id);
-            androidManifestXml.get('/manifest/application/activity').attr('android:name', inferedName);
-            fs.writeFileSync(androidManifestXmlPath, androidManifestXml.root());
+            AndroidManifestBuilder.setActivityInfo(androidManifestXmlPath, inferedName, id);
             defer.resolve(msg);
         }
     });

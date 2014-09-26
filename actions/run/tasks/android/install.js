@@ -16,7 +16,7 @@ module.exports = function (conf) {
             apk_filename
         ),
         options = {
-            timeout : 10000,
+            timeout : 100000,
             maxBuffer: 1024 * 400
         };
 

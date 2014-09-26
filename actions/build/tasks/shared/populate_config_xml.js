@@ -2,17 +2,20 @@ var Q = require('q'),
     path = require('path'),
     settings = require('../../../../lib/settings'),
     print = require('../../../../lib/helper/print'),
-    config = require('../../../../lib/cordova/config').config;
+    ConfigBuilder = require('../../../../lib/xml/config.xml');
 
 module.exports = function (msg) {
-    var author = msg.localSettings.author;
-    var description = msg.localSettings.description;
-    var version = msg.localSettings.configurations[msg.platform][msg.configuration]['version'] || msg.localSettings.version;
-    var preferences = msg.localSettings.cordova.preferences;
-    var accessOrigin = msg.localSettings.cordova.accessOrigin;
-    var config_xml_path = path.join(process.cwd(), settings.cordovaAppPath, 'config.xml');
+    var id = msg.localSettings.configurations[msg.platform][msg.configuration]['id'];
+        author = msg.localSettings.author.name,
+        author_email = msg.localSettings.author.email,
+        author_href = msg.localSettings.author.href,
+        description = msg.localSettings.description,
+        version = msg.localSettings.configurations[msg.platform][msg.configuration]['version'] || msg.localSettings.version,
+        preferences = msg.localSettings.cordova.preferences,
+        accessOrigin = msg.localSettings.cordova.accessOrigin,
+        config_xml_path = path.join(process.cwd(), settings.cordovaAppPath, 'config.xml');
 
-    return config(config_xml_path, version, author, description, preferences, accessOrigin).then(function () {
+    return ConfigBuilder.set(config_xml_path, id, version, author, author_email, author_href, description, preferences, accessOrigin).then(function () {
         if(msg.verbose)
             print.success('populated config.xml');
         return msg;

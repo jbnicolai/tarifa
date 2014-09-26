@@ -26,12 +26,13 @@ var tryRemoveWWW = function (verbose) {
 var clean = function (platform, verbose) {
     spinner();
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
-        if(!isAvailableOnHost(platform))
+        if(platform && !isAvailableOnHost(platform))
             return Q.reject('platform not available in host!');
         if(platform && localSettings.platforms.indexOf(platform) < 0)
             return Q.reject('platform not available in project!');
         return tryRemoveWWW().then(function () {
-            return cordovaClean(platform ? [platform] : localSettings.platforms, verbose);
+            var availablePlatforms = localSettings.platforms.filter(isAvailableOnHost);
+            return cordovaClean(platform ? [platform] : availablePlatforms, verbose);
         });
     });
 };
@@ -40,7 +41,7 @@ var action = function (argv) {
     var verbose = false,
         helpPath = path.join(__dirname, 'usage.txt');
 
-    if(argsHelper.matchArgumentsCount(argv, [1])
+    if(argsHelper.matchArgumentsCount(argv, [0, 1])
             && argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
         if(argsHelper.matchOption(argv, 'V', 'verbose')) {
             verbose = true;

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" id="tools.tarifa.fixture" version="0.0.0">
+  <name>Ooops</name>
+  <description>toto</description>
+  <author email="paul@42loops.com" href="http://42loops.com">paul</author>
+  <content src="index.html"/>
+  <access origin="*"/>
+  <preference name="DisallowOverscroll" value="true"/>
+  <preference name="EnableViewportScale" value="false"/>
+  <preference name="KeyboardDisplayRequiresUserAction" value="false"/>
+</widget>

@@ -42,7 +42,6 @@
     "figures": "^1.1.0",
     "findit": "^2.0.0",
     "inquirer": "0.5.1",
-    "libxmljs": "^0.11.0",
     "minimist": "0.1.0",
     "mkdirp": "^0.5.0",
     "ncp": "^0.5.1",
@@ -55,7 +54,8 @@
     "tmp": "0.0.23",
     "uuid": "^1.4.1",
     "valid-java-identifier": "0.0.1",
-    "xcode": "^0.6.7"
+    "xcode": "^0.6.7",
+    "xml2js": "^0.4.4"
   },
   "optionalDependencies": {
     "ios-deploy": "^1.0.8",
@@ -63,6 +63,11 @@
   },
   "scripts": {
     "postinstall": "node ./bin/cmd.js info",
-    "postupdate": "node ./bin/cmd.js info"
+    "postupdate": "node ./bin/cmd.js info",
+    "test": "mocha test/xml test/xml/android test/xml/windows8 test/xml/wp8"
+  },
+  "devDependencies": {
+    "mocha": "^1.21.4",
+    "should": "^4.0.4"
   }
 }

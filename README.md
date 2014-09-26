@@ -73,6 +73,14 @@ Options:
 git clone https://github.com/peutetre/tarifa.git && cd tarifa && npm link .
 ```
 
+### Tests
+
+Only testing xml files changes
+
+```
+npm test
+```
+
 ## License
 
 tarifa is licensed under Apache version 2.0

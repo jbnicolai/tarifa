@@ -1,29 +1,20 @@
 var Q = require('q'),
     path = require('path'),
-    fs = require('q-io/fs'),
+    print = require('../../../../lib/helper/print'),
+    AppxmanifestBuilder = require('../../../../lib/xml/windows8/package.appxmanifest'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
-    var cwd = process.cwd();
-    var conf = msg.localSettings.configurations.windows8;
-    var manifestPath = path.join(cwd, settings.cordovaAppPath, 'platforms', 'windows8', 'package.appxmanifest');
-    var name = conf[msg.configuration]['product_name'];
-    var package_id = conf[msg.configuration]['package_id'] || conf[msg.configuration]['id'];
-    var publisher = conf[msg.configuration]['publisher'] || "CN=$username$";
+    var cwd = process.cwd(),
+        conf = msg.localSettings.configurations.windows8,
+        manifestPath = path.join(cwd, settings.cordovaAppPath, 'platforms', 'windows8', 'package.appxmanifest'),
+        name = conf[msg.configuration]['product_name'],
+        package_id = conf[msg.configuration]['package_id'] || conf[msg.configuration]['id'],
+        publisher = conf[msg.configuration]['publisher'] || "CN=$username$";
 
-    var publisherAttr = "Publisher=\"" + publisher + "\""; 
-    var displayName = "<DisplayName>" + name + "</DisplayName>";
-    var identity = "Identity Name=\"" + package_id + "\"";
-    var displayName2 = "DisplayName=\"" + name + "\"";
-    var description = "Description=\"" + msg.localSettings.description + "\"";
-
-    return fs.read(manifestPath).then(function (manifestContent) {
-        var content = manifestContent.replace(/<DisplayName>.*<\/DisplayName>/, displayName)
-            .replace(/Publisher=\"([^\"]*)\"/, publisherAttr)
-            .replace(/Identity Name=\"([^\"]*)\"/, identity)
-            .replace(/DisplayName=\"([^\"]*)\"/, displayName2)
-            .replace(/Description=\"([^\"]*)\"/, description);
-
-        return fs.write(manifestPath, content);
-    }).then(function () { return msg; });
+    return AppxmanifestBuilder.set(manifestPath, package_id, name, publisher, msg.localSettings.description).then(function () {
+        if(msg.verbose)
+            print.success('change .appxmanifest file');
+        return msg;
+    });
 };

@@ -7,7 +7,7 @@ var Q = require('q'),
     fs = require('fs'),
     settings = require('../../../../lib/settings'),
     inferJavaClassNameFromProductName = require('../../../../lib/android/infer-classname'),
-    libxmljs = require('libxmljs');
+    AndroidManifestBuilder = require('../../../../lib/xml/android/AndroidManifest.xml');
 
 module.exports = function (msg) {
     var defer = Q.defer();
@@ -26,7 +26,11 @@ module.exports = function (msg) {
         androidId.replace(/\./g, '/'),
         inferJavaClassNameFromProductName(androidName) + '.java'
     );
+
     rimraf.sync(currentActivityFile);
+
+    var emptyFolder = fs.readdirSync(path.dirname(currentActivityFile)).length === 0;
+    if(emptyFolder) fs.rmdirSync(path.dirname(currentActivityFile));
 
     mkdirp(asbPath, function (err) {
         if (err) {
@@ -36,10 +40,7 @@ module.exports = function (msg) {
             var inferedName = inferJavaClassNameFromProductName(msg.localSettings.name);
             var activity = javaActivityTmpl.replace(/\$PACKAGE_NAME/, msg.localSettings.id).replace(/\$APP_NAME/, inferedName);
             fs.writeFileSync(path.join(asbPath, inferedName + '.java'), activity);
-            var androidManifestXml = libxmljs.parseXml(fs.readFileSync(androidManifestXmlPath));
-            androidManifestXml.root().attr('package', msg.localSettings.id);
-            androidManifestXml.get('/manifest/application/activity').attr('android:name', inferedName);
-            fs.writeFileSync(androidManifestXmlPath, androidManifestXml.root());
+            AndroidManifestBuilder.setActivityInfo(androidManifestXmlPath, inferedName, msg.localSettings.id);
             defer.resolve(msg);
             if(msg.verbose)
                 print.success('reset android cordova activity');

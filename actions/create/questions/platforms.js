@@ -8,7 +8,7 @@ var question = function (response, verbose) {
             type : 'checkbox',
             name : 'platforms',
             choices : choices,
-            message : 'What are the supported platforms of your project (web is added by default)?'
+            message : 'Choose platforms (web is added by default)?'
         };
     });
 };
