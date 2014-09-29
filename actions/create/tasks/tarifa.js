@@ -9,7 +9,6 @@ var Q = require('q'),
 
 function makeRootDirectory(response) {
     return fs.makeDirectory(response.path)
-        .then(function () { return fs.makeDirectory(path.join(response.path, 'bin')) })
         .then(function () { return response });
 };
 
@@ -57,7 +56,7 @@ function createDotTarifaFile(response) {
 function createUserCheckScripts(response) {
     var content = "module.exports = function (msg) {\n    return msg;\n}",
         write = function (platform) {
-            return fs.write(path.join(response.path, 'bin', format('check_%s.js', platform)), content);
+            return fs.write(path.join(response.path, 'project/bin', format('check_%s.js', platform)), content);
         };
     return Q.all(response.platforms.map(write).concat([write('web')]))
         .then(function () { return response; });
