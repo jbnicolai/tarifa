@@ -2,28 +2,130 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>tarifa</title>
+        <title>hello tarifa</title>
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
-        <meta name = "viewport" content = "width = device-width, height=device-height, initial-scale = 1, user-scalable = no, minimal-ui">
+        <meta name="viewport" content="width = device-width, height=device-height, initial-scale = 1, user-scalable = no, minimal-ui">
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui" media="(device-height: 568px)">
-        <link rel="stylesheet" href="fonts/Aller_Rg/aller_rg.css">
     </head>
     <style type="text/css">
+
+        @font-face {
+            font-family: 'latoregular';
+            src: url('fonts/Lato/lato-regular.eot');
+            src: url('fonts/Lato/lato-regular.eot?#iefix') format('embedded-opentype'),
+                 url('fonts/Lato/lato-regular.woff2') format('woff2'),
+                 url('fonts/Lato/lato-regular.woff') format('woff'),
+                 url('fonts/Lato/lato-regular.ttf') format('truetype'),
+                 url('fonts/Lato/lato-regular.svg#latoregular') format('svg');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'alex_brushregular';
+            src: url('fonts/AlexBrush/alexbrush-regular.eot');
+            src: url('fonts/AlexBrush/alexbrush-regular.eot?#iefix') format('embedded-opentype'),
+                 url('fonts/AlexBrush/alexbrush-regular.woff2') format('woff2'),
+                 url('fonts/AlexBrush/alexbrush-regular.woff') format('woff'),
+                 url('fonts/AlexBrush/alexbrush-regular.ttf') format('truetype'),
+                 url('fonts/AlexBrush/alexbrush-regular.svg#alex_brushregular') format('svg');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        html {
+            height: 100%;
+            width:100%;
+            margin:0;
+            padding:0;
+        }
         body {
             background: rgb(72, 126, 194);
             font-family: AllerRegular, sans-serif;
             font-size: 30px;
-            color: rgb(226, 226, 226);
+            color: white;
+            height: 100%;
+            width:100%;
+            margin:0;
+            padding:0;
+            background: #487EC2;
+            background-image: -o-linear-gradient(-134deg, #514A9D 0%, #24C6DC 100%);
+            background-image: -moz-linear-gradient(-134deg, #514A9D 0%, #24C6DC 100%);
+            background-image: -ms-linear-gradient(-134deg, #514A9D 0%, #24C6DC 100%);
+            background-image: linear-gradient(-44deg, #514A9D 0%, #24C6DC 100%);
+            background-repeat: no-repeat;
+            font-family: 'latoregular', sans-serif;
         }
         p {
-            margin:10% 0 0 0;
+            padding: 50px 10px 10px 10px;
+            margin:0;
             text-align:center;
-            text-shadow: 1px 1px 1px rgb(41, 86, 143);
+            font-size:40px;
+        }
+        p.info{
+            display:none;
+            opacity:0;
+            padding: 10px 20px;
+            font-size: 22px;
+            padding: 10px 20px 0 20px;
+        }
+        span {
+            font-family: 'alex_brushregular', cursive;
+        }
+        .circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 200px;
+            margin: auto;
+            border: 20px solid rgb(255, 255, 255);
+            background-color: rgb(64, 133, 180);
+        }
+        .circle.inside {
+            border:none;
+            width:150px;
+            height:150px;
+            border-radius: 150px;
+            background: white;
+            -webkit-transform: translate3d(0,25px,0);
+            -ms-transform: translate3d(0,25px,0);
+            -moz-transform: translate3d(0,25px,0);
+            transform: translate3d(0,25px,0);
+        }
+        .circle.little {
+            border:none;
+            width: 75px;
+            height: 75px;
+            border-radius: 75px;
+            -webkit-transform: translate3d(35px,86px,0);
+            -ms-transform: translate3d(35px,86px,0);
+            -moz-transform: translate3d(35px,86px,0);
+            transform: translate3d(35px,86px,0);
+        }
+        .circle.main {
+            -webkit-transform: rotateZ(280deg);
+            -ms-transform: rotateZ(280deg);
+            -moz-transform: rotateZ(280deg);
+            transform: rotateZ(280deg);
+        }
+        dt {
+            float: left;
+            font-weight: bold;
+        }
+        dd {
+            text-align: right;
+            border-bottom: 1px solid rgb(255, 255, 255);
+            -webkit-margin-start: 0;
         }
     </style>
     <body>
-        <p>Welcome to tarifa!</p>
+        <p>Hello <span>tarifa</span></p>
+        <div class="main circle">
+            <div class="inside circle">
+                <div class="little circle"></div>
+            </div>
+        </div>
+        <p class="info"></p>
         <!-- @if PLATFORM != 'web' -->
         <script src="cordova.js"></script>
         <!-- @endif -->
