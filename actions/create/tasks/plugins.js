@@ -10,7 +10,6 @@ var Q = require('q'),
 
 module.exports = function (response) {
     var platforms = response.platforms.filter(function (platform) { return platform != 'web'; });
-    if (platforms.length === 0 || response.plugins.length === 0) return Q.resolve(response);
 
     return response.plugins.reduce(function (promise, plugin) {
         return promise.then(function () {

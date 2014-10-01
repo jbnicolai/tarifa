@@ -1,55 +1,73 @@
 [{
     "name":"Battery Status",
-    "value":"org.apache.cordova.battery-status"
+    "value":"org.apache.cordova.battery-status",
+    "default": false
 },{
     "name":"Camera",
-    "value":"org.apache.cordova.camera"
+    "value":"org.apache.cordova.camera",
+    "default": false
 },{
     "name":"Console",
-    "value":"org.apache.cordova.console"
+    "value":"org.apache.cordova.console",
+    "default": false
 },{
     "name":"Contacts",
-    "value":"org.apache.cordova.contacts"
+    "value":"org.apache.cordova.contacts",
+    "default": false
 },{
     "name":"Device",
-    "value":"org.apache.cordova.device"
+    "value":"org.apache.cordova.device",
+    "default": false
 },{
     "name":"Device Motion",
-    "value":"org.apache.cordova.device-motion"
+    "value":"org.apache.cordova.device-motion",
+    "default": false
 },{
     "name":"Device Orientation",
-    "value":"org.apache.cordova.device-orientation"
+    "value":"org.apache.cordova.device-orientation",
+    "default": false
 },{
     "name":"Dialogs",
-    "value":"org.apache.cordova.dialogs"
+    "value":"org.apache.cordova.dialogs",
+    "default": false
 },{
     "name":"File",
-    "value":"org.apache.cordova.file"
+    "value":"org.apache.cordova.file",
+    "default": false
 },{
     "name":"File Transfer",
-    "value":"org.apache.cordova.file-transfer"
+    "value":"org.apache.cordova.file-transfer",
+    "default": false
 },{
     "name":"Geolocation",
-    "value":"org.apache.cordova.geolocation"
+    "value":"org.apache.cordova.geolocation",
+    "default": false
 },{
     "name":"Globalization",
-    "value":"org.apache.cordova.globalization"
+    "value":"org.apache.cordova.globalization",
+    "default": false
 },{
     "name":"In App Browser",
-    "value":"org.apache.cordova.inappbrowser"
+    "value":"org.apache.cordova.inappbrowser",
+    "default": false
 },{
     "name":"Media",
-    "value":"org.apache.cordova.media"
+    "value":"org.apache.cordova.media",
+    "default": false
 },{
     "name":"Media Capture",
-    "value":"org.apache.cordova.media-capture"
+    "value":"org.apache.cordova.media-capture",
+    "default": false
 },{
     "name":"Network Information",
-    "value":"org.apache.cordova.network-information"
+    "value":"org.apache.cordova.network-information",
+    "default": false
 },{
     "name":"Splashscreen",
-    "value":"org.apache.cordova.splashscreen"
+    "value":"org.apache.cordova.splashscreen",
+    "default": true
 },{
     "name":"Vibration",
-    "value":"org.apache.cordova.vibration"
+    "value":"org.apache.cordova.vibration",
+    "default": false
 }]

@@ -15,19 +15,17 @@ var Q = require('q'),
 
 function log(msg, verbose) { return function () { if(verbose) print.success(msg); }; }
 
-function generateAssets(color, root, platforms, withSplash, verbose) {
+function generateAssets(color, root, platforms, verbose) {
     return generateDefaultIcons(color, root, platforms, 'default', verbose)
         .then(function () {
-            if(withSplash) return generateDefaultSplashscreens(color, root, platforms, 'default', verbose);
-            else return Q.resolve();
+            return generateDefaultSplashscreens(color, root, platforms, 'default', verbose);
         });
 }
 
-function copyDefaultAssets(root, platforms, withSplash, verbose) {
+function copyDefaultAssets(root, platforms, verbose) {
     return copyDefaultIcons(root, platforms, verbose)
         .then(function () {
-            if(withSplash) return copyDefaultSplashscreens(root, platforms, verbose);
-            else return Q.resolve();
+            return copyDefaultSplashscreens(root, platforms, verbose);
         });
 }
 
@@ -35,14 +33,13 @@ module.exports = function (response) {
     var platforms = response.platforms.filter(function (platform) {
             return platform !== 'web';
         }),
-        withSplash = response.plugins.indexOf('org.apache.cordova.splashscreen') > -1,
         root = response.path,
         verbose = response.options.verbose;
 
-    return Q.all(createFolders(root, platforms, 'default', withSplash))
+    return Q.all(createFolders(root, platforms, 'default', true))
         .then(log('assets folder created', verbose))
         .then(function () {
-            if(response.color) return generateAssets(response.color, root, platforms, withSplash, verbose);
-            else return copyDefaultAssets(root, platforms, withSplash, verbose);
+            if(response.color) return generateAssets(response.color, root, platforms, verbose);
+            else return copyDefaultAssets(root, platforms, verbose);
         }).then(function () { return response; });
 };
