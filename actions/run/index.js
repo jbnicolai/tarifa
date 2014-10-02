@@ -1,6 +1,6 @@
 var Q = require('q'),
     spinner = require("char-spinner"),
-    cordova = require('cordova'),
+    cordova = require('cordova-lib/src/cordova/cordova'),
     exec = require('child_process').exec,
     path = require('path'),
     fs = require('q-io/fs'),

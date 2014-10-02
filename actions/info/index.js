@@ -5,7 +5,7 @@ var Q = require('q'),
     path = require('path'),
     format = require('util').format,
     exec = require('child_process').exec,
-    cordova_lazy_load = require('cordova/src/lazy_load'),
+    cordova_lazy_load = require('cordova-lib/src/cordova/lazy_load'),
     installed_platforms = require('../../lib/cordova/platforms').installedPlatforms,
     argsHelper = require('../../lib/helper/args'),
     devices = require('../../lib/devices'),
@@ -156,7 +156,7 @@ function check_requirements(verbose) {
 
 function info(verbose) {
     print("%s %s", chalk.green('node version:'), process.versions.node);
-    print("%s %s", chalk.green('cordova version:'), pkg.dependencies.cordova);
+    print("%s %s", chalk.green('cordova-lib version:'), pkg.dependencies['cordova-lib']);
 
     var platforms = listAvailablePlatforms();
 

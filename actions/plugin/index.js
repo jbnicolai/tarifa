@@ -1,6 +1,7 @@
 var Q = require('q'),
     fs = require('q-io/fs'),
     path = require('path'),
+    format = require('util').format,
     argsHelper = require('../../lib/helper/args'),
     tarifaFile = require('../../lib/tarifa-file'),
     pathHelper = require('../../lib/helper/path'),
@@ -14,7 +15,7 @@ function printPlugins(items) {
 function log(action, verbose) {
     return function (val) {
         if(verbose) {
-            if(val) print("plugin %sed: %s", action, val);
+            if(val) print("%s plugin: %s", action, val);
             else print("no plugin added!");
         }
     }
@@ -23,12 +24,19 @@ function log(action, verbose) {
 var actions = {
     'add': {
         updateTarifaFile: function (root) {
-            return function (val) { return tarifaFile.addPlugin(root, val) };
+            return function (val) {
+                if(val)
+                    return tarifaFile.addPlugin(root, val);
+                else
+                    return Q.reject("Plugin is already installed!");
+            };
         }
     },
     'remove': {
         updateTarifaFile: function (root) {
-            return function (val) { return tarifaFile.removePlugin(root, val) };
+            return function (val) {
+                return tarifaFile.removePlugin(root, val);
+            };
         }
     }
 }
@@ -37,10 +45,17 @@ function list(verbose) {
     return plugins.list(pathHelper.root()).then(printPlugins);
 }
 
-function plugin (action, arg, verbose) {
-    var root = pathHelper.root();
+function plugin(action, arg, verbose) {
+    return raw_plugin(pathHelper.root(), action, arg, verbose);
+}
+
+function raw_plugin (root, action, arg, verbose) {
     return tarifaFile.parse(root)
-        .then(function () {
+        .then(function (settings) {
+            if(action == 'remove' && settings.plugins.indexOf(arg) < 0)
+                return Q.reject(format("Can't remove uninstalled plugin %s", arg));
+            if(action == 'add' && settings.plugins.indexOf(arg) > -1)
+                return Q.reject(format("Can't installed already installed plugin %s", arg));
             return plugins[action](root, arg)
                 .then(actions[action].updateTarifaFile(root))
                 .then(log(action, verbose));
@@ -68,4 +83,5 @@ function action (argv) {
 }
 
 action.plugin = plugin;
+action.raw_plugin = raw_plugin;
 module.exports = action;

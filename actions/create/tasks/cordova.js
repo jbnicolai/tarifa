@@ -3,7 +3,7 @@
  */
 
 var path = require('path'),
-    cordova = require('cordova'),
+    cordova = require('cordova-lib/src/cordova/cordova'),
     Q = require('q'),
     print = require('../../../lib/helper/print'),
     settings = require('../../../lib/settings'),

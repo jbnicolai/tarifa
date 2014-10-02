@@ -1,5 +1,5 @@
 var Q = require('q'),
-    cordova = require('cordova'),
+    cordova = require('cordova-lib/src/cordova/cordova'),
     argsHelper = require('../../lib/helper/args'),
     print = require('../../lib/helper/print'),
     pathHelper = require('../../lib/helper/path'),
@@ -9,6 +9,9 @@ var Q = require('q'),
     path = require('path'),
     fs = require('q-io/fs'),
     prepareAction = require('../prepare');
+
+// set android build to gradle!!!
+process.env['ANDROID_BUILD'] = 'gradle';
 
 var tasks = {
     web: {
@@ -86,15 +89,15 @@ var tasks = {
             'android/ant-properties'
         ],
         'pre-cordova-compile' : [
-            'android/product_file_name',
+            //'android/product_file_name',
             'android/app_label'
         ],
         'post-cordova-compile' : [ ],
         'undo':[
             'shared/reset_config_xml',
-            'android/reset_template_activity',
-            'android/reset_app_label',
-            'android/reset_product_file_name'
+            //'android/reset_template_activity',
+            'android/reset_app_label'//,
+            //'android/reset_product_file_name'
         ]
     }
 };

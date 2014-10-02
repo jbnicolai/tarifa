@@ -2,7 +2,7 @@ var Q = require('q'),
     spinner = require("char-spinner"),
     inquirer = require('inquirer'),
     chalk = require('chalk'),
-    cordova = require('cordova'),
+    cordova = require('cordova-lib/src/cordova/cordova'),
     fs = require('q-io/fs'),
     path = require('path'),
     argsHelper = require('../../lib/helper/args'),
@@ -43,14 +43,16 @@ var Q = require('q'),
 
     tasks = [
         require('./tasks/tarifa'),
-        require('./tasks/fetch-provisioning-file'),
-        require('./tasks/tarifa-file'),
         require('./tasks/cordova'),
         require('./tasks/platforms'),
+        require('./tasks/fetch-provisioning-file'),
+        require('./tasks/tarifa-file'),
         require('./tasks/git'),
-        require('./tasks/plugins'),
-        require('./tasks/assets')
+        require('./tasks/assets'),
+        require('./tasks/plugins')
     ];
+
+process.env['npm_config_registry']="http://registry.cordova.io/";
 
 function help(questionName, questionType, verbose) {
     if(!verbose) return Q.resolve();
