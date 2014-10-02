@@ -5,26 +5,35 @@
 var Q = require('q'),
     path = require('path'),
     plugins = require('../../../lib/cordova/plugins'),
+    pluginList = require('../../../lib/plugins.json'),
     print = require('../../../lib/helper/print'),
     tarifaFile = require('../../../lib/tarifa-file');
 
-function add_cordova_plugin (root, id) {
-    return plugins.add(root, id).then(function () {
-        return tarifaFile.addPlugin(root, id);
+function add_cordova_plugin (root, name, uri) {
+    return plugins.add(root, uri).then(function () {
+        return tarifaFile.addPlugin(root, name, uri);
     });
 }
 
 module.exports = function (response) {
+
     var platforms = response.platforms.filter(function (platform) { return platform != 'web'; });
 
-    // adding org.apache.cordova.splashscreen as a default plugin..
-    response.plugins.push('org.apache.cordova.splashscreen@0.3.3');
+    // merge mandatory + user selected plugins
+    response.plugins = pluginList.filter(function (p) { return p['default']; })
+        .map(function (p) { return { uri: p.uri, value: p.value}; })
+        .concat(response.plugins.map(function (plugin) {
+            return pluginList.reduce(function (r, p) {
+                if(p.value === plugin) { r.uri = p.uri; r.value = p.value; }
+                return r;
+            }, {});
+        }));
 
     return response.plugins.reduce(function (promise, plugin) {
         return promise.then(function () {
-            return add_cordova_plugin(path.resolve(process.cwd(), response.path), plugin).then(function () {
+            return add_cordova_plugin(path.resolve(process.cwd(), response.path), plugin.value, plugin.uri).then(function () {
                 if (response.options.verbose)
-                    print.success('cordova plugin %s added', plugin);
+                    print.success('cordova plugin %s added', plugin.value);
                 return Q.resolve(response);
             });
         });

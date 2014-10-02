@@ -48,11 +48,9 @@ var Q = require('q'),
         require('./tasks/fetch-provisioning-file'),
         require('./tasks/tarifa-file'),
         require('./tasks/git'),
-        require('./tasks/assets'),
-        require('./tasks/plugins')
+        require('./tasks/plugins'),
+        require('./tasks/assets')
     ];
-
-process.env['npm_config_registry']="http://registry.cordova.io/";
 
 function help(questionName, questionType, verbose) {
     if(!verbose) return Q.resolve();
