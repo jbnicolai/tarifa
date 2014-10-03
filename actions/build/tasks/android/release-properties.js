@@ -3,7 +3,8 @@ var Q = require('q'),
     fs = require('q-io/fs'),
     print = require('../../../../lib/helper/print'),
     settings = require('../../../../lib/settings'),
-    antProperties = require('../../../../lib/android/ant-properties');
+    askPassword = require('./ask_password'),
+    releaseProperties = require('../../../../lib/android/release-properties');
 
 module.exports = function (msg) {
     var root = process.cwd(),
@@ -12,13 +13,13 @@ module.exports = function (msg) {
         keystore_alias = localConf['keystore_alias'];
 
     if(keystore_path && keystore_alias) {
-        return antProperties.create(root, keystore_path, keystore_alias)
-            .then(function () {
-                if(msg.verbose)
-                    print.success('ant.properties created');
-                return msg;
-            });
-    } else {
-        return antProperties.remove(root).then(function () { return msg; });
+        return askPassword().then(function (password) {
+            return releaseProperties.create(root, keystore_path, keystore_alias, password)
+                .then(function () {
+                    if(msg.verbose) print.success('release.properties created');
+                    return msg;
+                });
+        });
     }
+    return msg;
 };

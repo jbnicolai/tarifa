@@ -2,18 +2,18 @@ var Q = require('q'),
     format = require('util').format,
     exec = require('child_process').exec,
     print = require('../../../../lib/helper/print'),
+    pathHelper = require('../../../../lib/helper/path'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (conf) {
     var defer = Q.defer(),
-        mode = conf.localSettings.mode ? '-release.apk' : '-debug.apk',
-        product_name = conf.localSettings.configurations['android'][conf.configuration].product_file_name,
-        apk_filename = product_name + mode,
+        product_file_name = conf.localSettings.configurations['android'][conf.configuration].product_file_name,
+        apk_filename_path = pathHelper.productFile('android', product_file_name),
         cmd = format(
-            "%s -s %s install -rl app/platforms/android/ant-build/%s",
+            "%s -s %s install -rl %s",
             settings.external.adb.name,
             conf.device.value,
-            apk_filename
+            apk_filename_path
         ),
         options = {
             timeout : 100000,
@@ -21,7 +21,7 @@ module.exports = function (conf) {
         };
 
     if(conf.verbose)
-        print.success('trying to install android app: %s', apk_filename);
+        print.success('trying to install android app: %s', product_file_name);
 
     exec(cmd, options, function (err, stdout, stderr) {
         if(conf.verbose && !! err && stdout) print('adb output %s', stdout);

@@ -80,24 +80,28 @@ var tasks = {
         ]
     },
     android: {
-        'pre-cordova-prepare-release': ['android/bump_version_code'],
+        'pre-cordova-prepare-release': [
+            'android/bump_version_code'
+        ],
         'pre-cordova-prepare' : [
+            'android/clean_output_dir',
             'shared/populate_config_xml',
             'shared/copy_icons',
             'shared/copy_splashscreens',
             'android/change_template_activity',
-            'android/ant-properties'
+            'android/release-properties'
         ],
         'pre-cordova-compile' : [
-            //'android/product_file_name',
             'android/app_label'
         ],
-        'post-cordova-compile' : [ ],
+        'post-cordova-compile' : [
+            'android/copy_apk'
+        ],
         'undo':[
             'shared/reset_config_xml',
             'android/reset_template_activity',
-            'android/reset_app_label'//,
-            //'android/reset_product_file_name'
+            'android/reset_app_label',
+            'android/reset_release_properties'
         ]
     }
 };
