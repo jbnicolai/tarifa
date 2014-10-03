@@ -13,5 +13,8 @@ module.exports = function (msg) {
     }).then(function () {
         if(msg.verbose) print.success('clean apk output folder %s', out_dir);
         return msg;
+    }, function (err) {
+        if (err.code === 'ENOENT') return msg;
+        else return Q.reject(err);
     });
 };
