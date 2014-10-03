@@ -8,7 +8,7 @@ module.exports = function (conf) {
     var product_name = conf.localSettings.configurations['ios'][conf.configuration].product_name;
     var app_path = path.join('app/platforms/ios/build/device', product_name.replace(/ /g, '\\ ') + '.app');
     var bin = path.join(__dirname, '..', '..', '..', '..', 'node_modules', 'ios-deploy', 'ios-deploy');
-    var cmd = bin + ' -r -I -i ' + conf.device.value + ' -b ' + app_path + ' --verbose';
+    var cmd = bin + ' -L -i ' + conf.device.value + ' -b ' + app_path + ' --verbose';
     var options = {
         // don't kill the ios-deploy process
         timeout : 0,
