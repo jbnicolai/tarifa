@@ -14,14 +14,11 @@ var Q = require('q'),
     copyDefaultSplash = require('../../lib/cordova/splashscreen').copyDefault,
     fs = require('q-io/fs');
 
-function addAssets(platform, splash, verbose) {
+function addAssets(platform, verbose) {
     var cwd = process.cwd();
-    return Q.all(createDefaultAssetsFolders(cwd, [platform], 'default', splash))
+    return Q.all(createDefaultAssetsFolders(cwd, [platform], 'default'))
         .then(function () { return copyDefaultIcons(cwd, [platform], verbose); })
-        .then(function () {
-            if(splash) return copyDefaultSplash(cwd, [platform], verbose);
-            else return Q.resolve();
-        });
+        .then(function () { return copyDefaultSplash(cwd, [platform], verbose); });
 }
 
 function rmAssets(platform, verbose) {
@@ -35,10 +32,10 @@ function rmAssets(platform, verbose) {
     return defer.promise;
 }
 
-function add(type, splash, verbose) {
+function add(type, verbose) {
     return tarifaFile.addPlatform(pathHelper.root(), type)
         .then(function () { return platformsLib.add([type], verbose); })
-        .then(function () { return addAssets(type, splash, verbose); });
+        .then(function () { return addAssets(type, verbose); });
 }
 
 function remove(type, verbose) {
@@ -57,8 +54,7 @@ function platform (action, type, verbose) {
 
     return Q.all(promises).spread(function (localSettings, available) {
         if(!available) return Q.reject(format("Can't %s %s!, %s is not available on your host", action, type, type));
-        var hasSplash = localSettings.plugins.indexOf("org.apache.cordova.splashscreen") > -1;
-        if(action === 'add') return add(type, hasSplash, verbose);
+        if(action === 'add') return add(type, verbose);
         else return remove(type, verbose);
     });
 }
