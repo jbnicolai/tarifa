@@ -21,24 +21,6 @@ var tasks = {
         'post-cordova-compile' : [],
         'undo':[]
     },
-    windows8: {
-        'pre-cordova-prepare-release': [],
-        'pre-cordova-prepare' : [
-            'shared/populate_config_xml',
-            'shared/copy_icons',
-            'shared/copy_splashscreens'
-        ],
-        'pre-cordova-compile' : [
-            'windows8/patch_cordova_deploy',
-            'windows8/change_appxmanifest'
-        ],
-        'post-cordova-compile' : [
-            'windows8/rename_app_file'
-        ],
-        'undo':[
-            'shared/reset_config_xml'
-        ]
-    },
     wp8: {
         'pre-cordova-prepare-release': [],
         'pre-cordova-prepare' : [

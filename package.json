@@ -2,7 +2,7 @@
   "name": "tarifa",
   "version": "0.2.0",
   "author": "Paul Panserrieu <paul@42loops.com>",
-  "description": "Your friendly mobile app development toolchain on top of Cordova",
+  "description": "Your friendly mobile app development toolchain based on cordova",
   "repository": {
     "type": "git",
     "url": "https://github.com/peutetre/tarifa.git"
@@ -32,7 +32,7 @@
       "name": "Baptiste Morelle"
     }
   ],
-  "homepage": "https://github.com/peutetre/tarifa",
+  "homepage": "http://tarifa.tools",
   "dependencies": {
     "chalk": "^0.5.1",
     "char-spinner": "^1.0.1",
@@ -65,7 +65,7 @@
   "scripts": {
     "postinstall": "node ./bin/cmd.js info",
     "postupdate": "node ./bin/cmd.js info",
-    "test": "mocha test/xml test/xml/android test/xml/windows8 test/xml/wp8"
+    "test": "mocha test/xml test/xml/android test/xml/wp8"
   },
   "devDependencies": {
     "mocha": "^1.21.4",

@@ -17,8 +17,7 @@ var tasks = {
     ],
     ios : [],
     wp8 : [],
-    web : [],
-    windows8: []
+    web : []
 };
 
 function getUserTasks (availablePlatforms, localSettings) {

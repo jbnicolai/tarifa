@@ -23,7 +23,6 @@ asks questions and validates user input.
 | [ios](http://developer.apple.com/)         | ✔      | ✗     | ✗     |
 | [android](http://developer.android.com/)   | ✔      | ✔     | ✔     |
 | windows phone                              | ✗      | ✗     | ✔     |
-| windows8                                   | ✗      | ✗     | ✔     |
 
 * [nomad cli: cupertino](https://github.com/nomad/cupertino) (only for ios)
 * [ImageMagick](http://www.imagemagick.org/)
@@ -75,7 +74,7 @@ git clone https://github.com/peutetre/tarifa.git && cd tarifa && npm link .
 
 ### Tests
 
-Only testing xml files changes
+Quite minimalist right now: only testing needed xml files changes
 
 ```
 npm test

@@ -20,8 +20,7 @@ var Q = require('q'),
         ],
         ios : [ './tasks/ios/install' ],
         wp8: [ './tasks/wp8/install' ],
-        web: [ './tasks/web/open' ],
-        windows8: [ './tasks/windows8/open' ]
+        web: [ './tasks/web/open' ]
     };
 
 var runƒ = function (conf) {
