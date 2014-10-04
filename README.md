@@ -22,7 +22,7 @@ asks questions and validates user input.
 | -------------------------------------------|:------:|:-----:|:-----:|
 | [ios](http://developer.apple.com/)         | ✔      | ✗     | ✗     |
 | [android](http://developer.android.com/)   | ✔      | ✔     | ✔     |
-| windows phone                              | ✗      | ✗     | ✔     |
+| [windows phone](http://msdn.microsoft.com/en-us/library/windows/apps/ff630878(v=vs.105).aspx) | ✗      | ✗     | ✔     |
 
 * [nomad cli: cupertino](https://github.com/nomad/cupertino) (only for ios)
 * [ImageMagick](http://www.imagemagick.org/)
