@@ -31,6 +31,8 @@ var availableActions = [
         { name : 'build', action : build },
         { name : 'run', action : run },
         { name : 'clean', action : clean },
+        // clean alias
+        { name : 'cls', action : clean },
         { name : 'check', action : check },
         { name : 'hockeyapp', action: hockeyapp }
     ],
