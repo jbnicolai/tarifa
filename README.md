@@ -69,7 +69,7 @@ Options:
 ### Install for developement
 
 ```
-git clone https://github.com/TarifaMobileApps/tarifa.git && cd tarifa && npm link .
+git clone https://github.com/TarifaTools/tarifa.git && cd tarifa && npm link .
 ```
 
 ### Tests

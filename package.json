@@ -5,9 +5,9 @@
   "description": "Your friendly toolchain for mobile app development based on Cordova",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TarifaMobileApps/tarifa.git"
+    "url": "https://github.com/TarifaTools/tarifa.git"
   },
-  "bugs": "https://github.com/TarifaMobileApps/tarifa/issues",
+  "bugs": "https://github.com/TarifaTools/tarifa/issues",
   "keywords": [
     "cordova",
     "toolchain",
