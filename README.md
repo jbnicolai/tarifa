@@ -5,15 +5,15 @@ tarifa [![experimental](http://hughsk.github.io/stability-badges/dist/experiment
     <img src="./template/assets/logo.png" width="100px" align="center" alt="tarifa logo" />
 </a>
 
-*Your friendly mobile app development toolchain based on Cordova*
+*Your friendly toolchain for mobile app development based on Apache Cordova*
 
-tarifa is a CLI on top of [cordova](http://cordova.apache.org/).
-It aims at simplifying the cordova workflow and adding features to complete the cordova toolchain such as:
+tarifa is a CLI based on [Apache Cordova](http://cordova.apache.org/).
+It aims at simplifying the Apache Cordova workflow and adding features to complete cordova toolchain such as:
 
-* **multiple configurations**: simply produce multiple unique apps on a given platform within a single project.
-* **integration of any www build process**: integrate any www build process in the cordova workflow.
-* **interactive project bootstrap**: no need to remember every required information when creating a project, tarifa
-asks questions and validates user input.
+* **multiple configurations**: produce multiple unique apps easily on a given platform within a single project.
+* **integration of any front-end build system**: integrate your build process in the cordova workflow.
+* **interactive project bootstrap**: no need to remember every required information while creating a project, tarifa will guide you
+with adequate questions and save the answers in the project files.
 * **deployment to hockeyapp from the terminal**: no need to launch a browser to upload a binary file to hockeyapp, tarifa handles it.
 
 ### Requirements
@@ -37,8 +37,8 @@ Documentation can be read on [tarifa-book](https://www.gitbook.io/content/book/4
 npm install tarifa -g
 ```
 
-Some optional dependencies should failed depending on your os
-(like, cordova-deploy-windows-phone fails to install on linux or mac os x).
+Some optional dependencies could fail depending on your os
+(such as cordova-deploy-windows-phone fails to install on linux or macosx).
 
 ### Usage
 
@@ -53,7 +53,7 @@ Commands:
     plugin         Add, remove or list cordova plugins in your project
     build          Build the project for a given platform and configuration
     run            Run the project for a given platform and configuration on your device
-    info           Get some informations about your environment and your devices
+    info           Get some information about your environment and your devices
     config         Configure the current project
     check          Check the current project after cloning
     clean          Clean the given platform
@@ -69,7 +69,7 @@ Options:
 ### Install for developement
 
 ```
-git clone https://github.com/peutetre/tarifa.git && cd tarifa && npm link .
+git clone https://github.com/TarifaMobileApps/tarifa.git && cd tarifa && npm link .
 ```
 
 ### Tests

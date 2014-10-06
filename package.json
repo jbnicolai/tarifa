@@ -2,11 +2,12 @@
   "name": "tarifa",
   "version": "0.2.0",
   "author": "Paul Panserrieu <paul@42loops.com>",
-  "description": "Your friendly mobile app development toolchain based on cordova",
+  "description": "Your friendly toolchain for mobile app development based on Cordova",
   "repository": {
     "type": "git",
-    "url": "https://github.com/peutetre/tarifa.git"
+    "url": "https://github.com/TarifaMobileApps/tarifa.git"
   },
+  "bugs": "https://github.com/TarifaMobileApps/tarifa/issues",
   "keywords": [
     "cordova",
     "toolchain",

@@ -17,7 +17,7 @@ module.exports = function (msg) {
 
     return ConfigBuilder.set(config_xml_path, id, version, author, author_email, author_href, description, preferences, accessOrigin).then(function () {
         if(msg.verbose)
-            print.success('populated config.xml');
+            print.success('modifying config.xml');
         return msg;
     });
 };
