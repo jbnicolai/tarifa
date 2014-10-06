@@ -1,2 +1,2 @@
 
-> The location to create the new tarifa project, it must be a not existing path.
+> The location to create the new tarifa project, it must be a nonexistent path.

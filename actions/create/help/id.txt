@@ -3,4 +3,4 @@
 > for the namespace of the app on windows phone and for the java package on android.
 > You need to choose a generic package name, this one is the default one.
 >
-> You will be able to overwrite it with configurations
+> You will be able to overwrite it with configurations.

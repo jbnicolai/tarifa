@@ -1,4 +1,0 @@
-
-> The place where tarifa will download the ios mobile provisioning file, the file name extension
-> must be `.mobileprovision` or Xcode won't open it
-> The path can either be absolute or relative to the project being created
