@@ -1,3 +1,7 @@
+## 0.2.2 10/07/2014
+
+- remove check for `ant` in `tarifa info`
+
 ## 0.2.1 10/06/2014
 
 - fix tarifa plugin add/remove of plugins with dependencies
