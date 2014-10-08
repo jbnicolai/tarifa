@@ -1,4 +1,4 @@
-## 0.2.3 10/07/2014
+## 0.2.3 10/08/2014
 
 - [android] remove versionCode handling, since 3.5.0, cordova generates it from the version.
 
