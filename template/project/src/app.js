@@ -5,10 +5,11 @@ var qstart = require('qstart'),
     Zanimo = require('zanimo');
 
 qstart.then(function () {
-    var p = window.document.querySelector('p.info'),
-        logo = window.document.querySelector('.main.circle');
+    var p = document.querySelector('p.info'),
+        logo = document.querySelector('.main.circle'),
+        hide = navigator.splashscreen ? navigator.splashscreen.hide : function () {};
 
-    return Q.delay(500).then(navigator.splashscreen.hide).then(function () {
+    return Q.delay(500).then(hide).then(function () {
         return Q.delay(logo, 500).then(Zanimo.f('transform', 'rotateZ(0deg)', 300, 'ease-in-out'));
     }).then(function () {
         p.innerHTML = format(
