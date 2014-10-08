@@ -63,9 +63,7 @@ var tasks = {
         ]
     },
     android: {
-        'pre-cordova-prepare-release': [
-            'android/bump_version_code'
-        ],
+        'pre-cordova-prepare-release': [ ],
         'pre-cordova-prepare' : [
             'android/clean_output_dir',
             'shared/populate_config_xml',

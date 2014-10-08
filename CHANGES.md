@@ -1,3 +1,7 @@
+## 0.2.3 10/07/2014
+
+- [android] remove versionCode handling, since 3.5.0, cordova generates it from the version.
+
 ## 0.2.2 10/07/2014
 
 - remove check for `ant` in `tarifa info`
