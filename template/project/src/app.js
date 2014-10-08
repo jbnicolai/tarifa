@@ -1,5 +1,5 @@
 var qstart = require('qstart'),
-    Q = require('Q'),
+    Q = require('q'),
     format = require('util').format,
     settings = require('settings'),
     Zanimo = require('zanimo');
