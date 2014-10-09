@@ -1,3 +1,7 @@
+## 0.2.5 10/09/2014¬
+
+- remove postinstall scripts
+
 ## 0.2.4 10/08/2014
 
 - fix default template project for web platform.

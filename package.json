@@ -1,6 +1,6 @@
 {
   "name": "tarifa",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "author": "Paul Panserrieu <paul@42loops.com>",
   "description": "Your friendly toolchain for mobile app development based on Cordova",
   "repository": {
@@ -64,8 +64,6 @@
     "cordova-deploy-windows-phone": "3.5.0-2"
   },
   "scripts": {
-    "postinstall": "node ./bin/cmd.js info",
-    "postupdate": "node ./bin/cmd.js info",
     "test": "mocha test/xml test/xml/android test/xml/wp8"
   },
   "devDependencies": {
