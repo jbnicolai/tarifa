@@ -40,7 +40,7 @@ module.exports.build = function build(platform, settings, configurationName) {
 
     if(fs.existsSync(output)) fs.unlinkSync(output);
 
-    var ws = fs.createWriteStream(path.join(__dirname, '../www/main.js'));
+    var ws = fs.createWriteStream(path.join(__dirname, '..', '..', settings.project_output, 'main.js'));
 
     tmp.file({ prefix: 'settings-', postfix: '.json' },function (err, tmpFilePath) {
         if (err) defer.reject(err);
@@ -54,7 +54,7 @@ module.exports.build = function build(platform, settings, configurationName) {
         ws.on('finish', function() {
             tmp.setGracefulCleanup();
             var htmlSrc = path.join(__dirname, '../html/index.html');
-            var htmlDest = path.join(__dirname, '../www/index.html');
+            var htmlDest = path.join(__dirname, '..', '..', settings.project_output, 'index.html');
             preprocess.preprocessFileSync(htmlSrc, htmlDest, {
                 PLATFORM : platform
             });
