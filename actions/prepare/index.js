@@ -49,9 +49,6 @@ var prepareƒ = function (conf) {
             defer.resolve(conf);
         }
         return defer.promise;
-    }).fail(function (error) {
-        print.warning('Try to run tarifa check when your environment is properly configured.');
-        throw error;
     });
 }
 
