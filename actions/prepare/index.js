@@ -29,7 +29,7 @@ var method = {
 var prepareƒ = function (conf) {
     var cwd = process.cwd(),
         cordovaWWW = path.join(cwd, settings.cordovaAppPath, 'www'),
-        projectWWW = path.join(cwd, settings.project_output),
+        projectWWW = path.join(cwd, conf.localSettings.project_output),
         link_method = settings.www_link_method[os.platform()];
 
     if(conf.verbose) print.success('prepare, launch www project build');
@@ -50,7 +50,7 @@ var prepareƒ = function (conf) {
         }
         return defer.promise;
     });
-}
+};
 
 var prepare = function (platform, config, verbose) {
     return tarifaFile.parse(pathHelper.root(), platform, config)
