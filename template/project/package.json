@@ -9,8 +9,8 @@
     "zanimo": "^1.1.2"
   },
   "devDependencies": {
-    "browserify": "^4.1.9",
-    "tmp": "0.0.23",
+    "browserify": "^6.0.3",
+    "tmp": "0.0.24",
     "preprocess": "^2.0.0"
   }
 }
