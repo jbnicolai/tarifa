@@ -46,6 +46,7 @@ module.exports.build = function build(platform, settings, configurationName) {
         if (err) defer.reject(err);
         fs.writeFileSync(tmpFilePath, JSON.stringify(mapSettings(settings, platform, configurationName), null, 2));
         b.add(path.join(__dirname, '../src/app.js'))
+            .on('error', function (err) { defer.reject(err); })
             .require(tmpFilePath, { expose : 'settings' })
             .bundle()
             .pipe(ws);
