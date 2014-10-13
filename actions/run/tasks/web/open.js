@@ -6,6 +6,6 @@ var Q = require('q'),
 
 module.exports = function (conf) {
     if(conf.verbose) print.success('trying to open in browser');
-    opener(path.join(settings.project_output, 'index.html'));
+    opener(path.join(conf.localSettings.project_output, 'index.html'));
     return Q.resolve(conf);
 };
