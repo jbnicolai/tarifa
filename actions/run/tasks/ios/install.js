@@ -3,12 +3,12 @@ var Q = require('q'),
     exec = require('child_process').exec,
     path = require('path');
 
-module.exports = function (conf) {
+var install = function (conf, device) {
     var defer = Q.defer();
     var product_name = conf.localSettings.configurations['ios'][conf.configuration].product_name;
     var app_path = path.join('app/platforms/ios/build/device', product_name.replace(/ /g, '\\ ') + '.app');
     var bin = path.join(__dirname, '..', '..', '..', '..', 'node_modules', 'ios-deploy', 'ios-deploy');
-    var cmd = bin + ' -L -i ' + conf.device.value + ' -b ' + app_path + ' --verbose';
+    var cmd = bin + ' -L -i ' + device + ' -b ' + app_path + ' --verbose';
     var options = {
         // don't kill the ios-deploy process
         timeout : 0,
@@ -16,7 +16,7 @@ module.exports = function (conf) {
     };
 
     if(conf.verbose)
-        print.success('start ios app install to device: %s', conf.device.value);
+        print.success('start ios app install %s to device %s', product_name, device);
 
     var child = exec(cmd, options, function (err, stdout, stderr) {
         if(err) {
@@ -33,4 +33,14 @@ module.exports = function (conf) {
     if (conf.verbose) child.stdout.pipe(process.stdout);
 
     return defer.promise;
+};
+
+module.exports = function (conf) {
+    if(conf.device) {
+        return install(conf, conf.device.value);
+    } else {
+        return conf.devices.reduce(function (promise, device) {
+            return promise.then(function (c) { return install(c, device); });
+        }, Q.resolve(conf));
+    }
 };

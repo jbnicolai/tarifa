@@ -5,14 +5,14 @@ var Q = require('q'),
     pathHelper = require('../../../../lib/helper/path'),
     settings = require('../../../../lib/settings');
 
-module.exports = function (conf) {
+var install = function (conf, device) {
     var defer = Q.defer(),
         product_file_name = conf.localSettings.configurations['android'][conf.configuration].product_file_name,
         apk_filename_path = pathHelper.productFile('android', product_file_name),
         cmd = format(
             "%s -s %s install -rl %s",
             settings.external.adb.name,
-            conf.device.value,
+            device,
             apk_filename_path
         ),
         options = {
@@ -21,7 +21,7 @@ module.exports = function (conf) {
         };
 
     if(conf.verbose)
-        print.success('trying to install android app: %s', product_file_name);
+        print.success('trying to install android app: %s on %s', product_file_name, device);
 
     exec(cmd, options, function (err, stdout, stderr) {
         if(conf.verbose && !! err && stdout) print('adb output %s', stdout);
@@ -38,4 +38,14 @@ module.exports = function (conf) {
     });
 
     return defer.promise;
+}
+
+module.exports = function (conf) {
+    if(conf.device) {
+        return install(conf, conf.device.value);
+    } else {
+        return conf.devices.reduce(function (promise, device) {
+            return promise.then(function (c) { return install(c, device); });
+        }, Q.resolve(conf));
+    }
 };

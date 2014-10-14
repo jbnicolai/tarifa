@@ -11,7 +11,7 @@ module.exports = function (conf) {
     var defer = Q.defer();
     devices[conf.platform]().then(function (items) {
         if (items.length === 0)
-            return defer.reject("Error: no devices available!");
+            return defer.reject("No device available!");
 
         if (items.length === 1) {
             conf.device = {
@@ -24,14 +24,19 @@ module.exports = function (conf) {
         var question = {
             type:'list',
             name:'device',
-            choices:items,
+            choices:['all'].concat(items),
             message:'Which device do you want to use?'
         };
+
         inquirer.prompt([question], function (response) {
-            conf.device = {
-                value: response.device,
-                index : items.indexOf(response.device)
-            };
+            if(response.device !== 'all') {
+                conf.device = {
+                    value: response.device,
+                    index : items.indexOf(response.device)
+                };
+            } else {
+                conf.devices = items;
+            }
             defer.resolve(conf);
         });
     });

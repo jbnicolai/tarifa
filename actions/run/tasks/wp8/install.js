@@ -5,17 +5,17 @@ var Q = require('q'),
     settings = require('../../../../lib/settings'),
     path = require('path');
 
-module.exports = function (conf) {
+var install = function (conf, deviceIndex) {
     var defer = Q.defer(),
         app_path = path.join('app','platforms','wp8'),
-        cmd = format("%s %s -d:%d", settings.external.cordovadeploy.name, app_path,  conf.device.index),
+        cmd = format("%s %s -d:%d", settings.external.cordovadeploy.name, app_path,  deviceIndex),
         options = {
             timeout : 0,
             maxBuffer: 1024 * 400
         };
 
     if(conf.verbose)
-        print.success('start wp app install and run to device: %s', conf.device.index);
+        print.success('start wp app install and run to device index %s', deviceIndex);
 
     var child = exec(cmd, options, function (err, stdout, stderr) {
         if(err) {
@@ -32,4 +32,14 @@ module.exports = function (conf) {
     if (conf.verbose) child.stdout.pipe(process.stdout);
 
     return defer.promise;
+};
+
+module.exports = function (conf) {
+    if(conf.device) {
+        return install(conf, conf.device.index);
+    } else {
+        return conf.devices.reduce(function (promise, device, idx) {
+            return promise.then(function (c) { return install(c, idx); });
+        }, Q.resolve(conf));
+    }
 };
