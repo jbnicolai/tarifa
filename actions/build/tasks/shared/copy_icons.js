@@ -6,7 +6,7 @@ var Q = require('q'),
 module.exports = function (msg) {
     if(msg.platform === 'web') return Q.resolve(msg);
     return copyIcons(msg.platform, msg.configuration)
-    .then(function (bluk) {
+    .then(function () {
         if(msg.verbose)
             print.success('copied icons for platform %s', msg.platform);
         return msg;
