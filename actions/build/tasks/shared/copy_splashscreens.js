@@ -10,5 +10,8 @@ module.exports = function (msg) {
             if(msg.verbose)
                 print.success('copied splash screens for platform %s', msg.platform);
             return msg;
+        }, function(err) {
+           if(msg.verbose) print.error('Failed to copy splash screens: ' + err);
+           return Q.reject(err);
         });
 };

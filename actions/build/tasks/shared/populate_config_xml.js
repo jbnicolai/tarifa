@@ -19,5 +19,8 @@ module.exports = function (msg) {
         if(msg.verbose)
             print.success('modifying config.xml');
         return msg;
+    }, function(err) {
+        if(msg.verbose) print.error('Error when trying to modify config.xml: ' + err);
+        return Q.reject(err);
     });
 };
