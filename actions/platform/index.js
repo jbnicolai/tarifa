@@ -69,8 +69,10 @@ function action (argv) {
             verbose = true;
         }
         if(argv._[0] === 'list' && argsHelper.matchArgumentsCount(argv, [1])){
-            print(chalk.green('web'));
-            return platformsLib.list(true);
+            return tarifaFile.parse(pathHelper.root()).then(function () {
+                print(chalk.green('web'));
+                return platformsLib.list(true);
+            });
         }
         if(actions.indexOf(argv._[0]) > -1
             && argsHelper.matchArgumentsCount(argv, [2])) {
