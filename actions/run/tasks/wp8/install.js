@@ -13,7 +13,6 @@ var install = function (conf, deviceIndex) {
             timeout : 0,
             maxBuffer: 1024 * 400
         };
-
     if(conf.verbose)
         print.success('start wp app install and run to device index %s', deviceIndex);
 
@@ -25,6 +24,12 @@ var install = function (conf, deviceIndex) {
             }
             defer.reject('CordovaDeploy.exe ' + err);
             return;
+        }
+        if (conf.verbose) {
+            var er = stderr.toString().trim();
+            if(er) print.warning("CordovaDeploy.exe failed with %s", er);
+            if(er === 'Error :: 0x89740006')
+                print.warning("Too many developer apps installed!");
         }
         defer.resolve(conf);
     });
