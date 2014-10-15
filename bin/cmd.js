@@ -77,7 +77,7 @@ function main(args) {
         require(actionName)(args)
             .done(actionSuccess, actionError(action));
     } else {
-        printHelp(util.format(args._.length && "Tarifa does not know command '%s'\n", args._.join(' ')));
+        printHelp(args._.length && util.format("Tarifa does not know command '%s'\n", args._.join(' ')));
     }
 }
 
