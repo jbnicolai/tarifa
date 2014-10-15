@@ -6,9 +6,12 @@ var Q = require('q'),
 module.exports = function (msg) {
     if(msg.platform === 'web') return Q.resolve(msg);
     return copyIcons(msg.platform, msg.configuration)
-        .then(function () {
-            if(msg.verbose)
-                print.success('copied icons for platform %s', msg.platform);
-            return msg;
-        });
+    .then(function () {
+        if(msg.verbose)
+            print.success('copied icons for platform %s', msg.platform);
+        return msg;
+    }, function(err) {
+        if(msg.verbose) print.error('Failed to copy icons: ' + err);
+        return Q.reject(err);
+    });
 };

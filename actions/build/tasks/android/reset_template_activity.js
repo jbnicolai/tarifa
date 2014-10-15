@@ -29,8 +29,10 @@ module.exports = function (msg) {
 
     rimraf.sync(currentActivityFile);
 
-    var emptyFolder = fs.readdirSync(path.dirname(currentActivityFile)).length === 0;
-    if(emptyFolder) fs.rmdirSync(path.dirname(currentActivityFile));
+    if(fs.existsSync(path.dirname(currentActivityFile))) {
+        var emptyFolder = fs.readdirSync(path.dirname(currentActivityFile)).length === 0;
+        if(emptyFolder) fs.rmdirSync(path.dirname(currentActivityFile));
+    }
 
     mkdirp(asbPath, function (err) {
         if (err) {
