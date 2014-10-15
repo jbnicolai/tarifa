@@ -3,38 +3,28 @@
 var chalk = require('chalk'),
     fs = require('q-io/fs'),
     path = require('path'),
+    util = require('util'),
     argv = require('minimist')(process.argv.slice(2)),
     pkg = require('../package.json'),
     print = require('../lib/helper/print'),
-    argsHelper = require('../lib/helper/args'),
-    create = require('../actions/create'),
-    platform = require('../actions/platform'),
-    plugin = require('../actions/plugin'),
-    prepare = require('../actions/prepare'),
-    build = require('../actions/build'),
-    run = require('../actions/run'),
-    config = require('../actions/config'),
-    info = require('../actions/info'),
-    check = require('../actions/check'),
-    hockeyapp = require('../actions/hockeyapp'),
-    clean = require('../actions/clean');
+    argsHelper = require('../lib/helper/args');
 
 var t0 = (new Date()).getTime();
 
 var availableActions = [
-        { name : 'create', action : create },
-        { name : 'platform', action: platform },
-        { name : 'plugin', action: plugin },
-        { name : 'prepare', action : prepare },
-        { name : 'info', action : info },
-        { name : 'config', action : config },
-        { name : 'build', action : build },
-        { name : 'run', action : run },
-        { name : 'clean', action : clean },
+        { name : 'create', action : '../actions/create' },
+        { name : 'platform', action: '../actions/platform' },
+        { name : 'plugin', action: '../actions/plugin' },
+        { name : 'prepare', action : '../actions/prepare' },
+        { name : 'info', action : '../actions/info' },
+        { name : 'config', action : '../actions/config' },
+        { name : 'build', action : '../actions/build' },
+        { name : 'run', action : '../actions/run' },
+        { name : 'clean', action : '../actions/clean' },
         // clean alias
-        { name : 'cls', action : clean },
-        { name : 'check', action : check },
-        { name : 'hockeyapp', action: hockeyapp }
+        { name : 'cls', action : '../actions/clean' },
+        { name : 'check', action : '../actions/check' },
+        { name : 'hockeyapp', action: '../actions/hockeyapp' }
     ],
     singleOptions = [
         { small: 'v', name : 'version', action : printVersion },
@@ -79,12 +69,15 @@ function main(args) {
     }
 
     if(matchAction(args)) {
-        var action = args._.shift(0);
-        availableActions
-            .filter(function (a) { return a.name == action; })[0].action(args)
+        var action = args._.shift(0),
+            actionName = availableActions.filter(function (a) {
+                return a.name == action;
+            })[0].action;
+
+        require(actionName)(args)
             .done(actionSuccess, actionError(action));
     } else {
-        printHelp(args.length && "Tarifa does not know " + args._.join(' ') + '\n');
+        printHelp(util.format(args._.length && "Tarifa does not know command '%s'\n", args._.join(' ')));
     }
 }
 
