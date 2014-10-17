@@ -2,6 +2,7 @@ var Q = require('q'),
     path = require('path'),
     settings = require('../../../../lib/settings'),
     print = require('../../../../lib/helper/print'),
+    mergeObject = require('../../../../lib/helper/collections').mergeObject;
     ConfigBuilder = require('../../../../lib/xml/config.xml');
 
 module.exports = function (msg) {
@@ -13,8 +14,11 @@ module.exports = function (msg) {
         description = msg.localSettings.description,
         version = conf.version || msg.localSettings.version,
         preferences = msg.localSettings.cordova.preferences,
-        accessOrigin = conf.cordova_accessOrigin || msg.localSettings.cordova.accessOrigin,
+        accessOrigin = (conf.cordova && conf.cordova.accessOrigin) || msg.localSettings.cordova.accessOrigin,
         config_xml_path = path.join(process.cwd(), settings.cordovaAppPath, 'config.xml');
+
+    if (conf.cordova && conf.cordova.preferences)
+        preferences = mergeObject(preferences, conf.cordova.preferences);
 
     return ConfigBuilder.set(config_xml_path, id, version, author, author_email, author_href, description, preferences, accessOrigin).then(function () {
         if(msg.verbose)
