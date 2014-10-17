@@ -24,6 +24,9 @@ platforms/android/www/
 platforms/android/CordovaLib/bin/
 platforms/android/CordovaLib/ant-gen/
 platforms/android/CordovaLib/ant-build/
+#gradle build folders
+platforms/android/build/
+platforms/android/CordovaLib/build/
 
 # generated files
 bin/
