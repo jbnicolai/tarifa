@@ -11,7 +11,7 @@ var Q = require('q'),
     prepareAction = require('../prepare');
 
 // set android build to gradle!!!
-process.env['ANDROID_BUILD'] = 'gradle';
+process.env.ANDROID_BUILD = 'gradle';
 
 var tasks = {
     web: {
@@ -80,6 +80,7 @@ var tasks = {
         ],
         'undo':[
             'shared/reset_config_xml',
+            'android/reset_config_xml',
             'android/reset_template_activity',
             'android/reset_app_label',
             'android/reset_release_properties'
