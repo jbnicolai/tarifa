@@ -5,7 +5,7 @@ var Q = require('q'),
     ConfigBuilder = require('../../../../lib/xml/config.xml');
 
 module.exports = function (msg) {
-    var id = msg.localSettings.id;
+    var id = msg.localSettings.id,
         author = msg.localSettings.author.name,
         author_email = msg.localSettings.author.email,
         author_href = msg.localSettings.author.href,
