@@ -6,7 +6,7 @@ var Q = require('q'),
 
 module.exports = function (msg) {
     var manifestPath = path.join(process.cwd(), settings.cordovaAppPath, 'platforms', 'android'),
-        cmd = "android update project -p " + manifestPath + " --subprojects",
+        cmd = "android -s update project -p " + manifestPath + " -s",
         options = {
             timeout : 0,
             maxBuffer: 1024 * 400
