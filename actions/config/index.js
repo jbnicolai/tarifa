@@ -2,11 +2,8 @@ var Q = require('q'),
     fs = require('q-io/fs'),
     path = require('path'),
     argsHelper = require('../../lib/helper/args'),
-    devices = require('./ios/devices'),
-    assets = require('./assets'),
     print = require('../../lib/helper/print'),
-    match = require('../../lib/helper/args').matchCmd,
-    provisioning = require('./ios/provisioning');
+    match = require('../../lib/helper/args').matchCmd;
 
 function printHelp() {
     return fs.read(path.join(__dirname, 'usage.txt')).then(print);
@@ -19,19 +16,16 @@ var action = function (argv) {
         if(argsHelper.matchOption(argv, 'V', 'verbose'))
             verbose = true;
 
-        if(match(argv._, ['ios', 'devices', 'list', '*'])) return devices.list(argv._[3], verbose);
-        if(match(argv._, ['ios', 'devices', 'add', '+', '+'])) return devices.add(argv._[3], argv._[4], verbose);
-        if(match(argv._, ['ios', 'devices', 'attach', '+', '+'])) return devices.attach(argv._[3], argv._[4], verbose);
-        if(match(argv._, ['ios', 'devices', 'detach', '+', '+'])) return devices.detach(argv._[3], argv._[4], verbose);
+        if(match(argv._, ['ios', 'devices', 'list', '*'])) return require('./ios/devices').list(argv._[3], verbose);
+        if(match(argv._, ['ios', 'devices', 'add', '+', '+'])) return require('./ios/devices').add(argv._[3], argv._[4], verbose);
+        if(match(argv._, ['ios', 'devices', 'attach', '+', '+'])) return require('./ios/devices').attach(argv._[3], argv._[4], verbose);
+        if(match(argv._, ['ios', 'devices', 'detach', '+', '+'])) return require('./ios/devices').detach(argv._[3], argv._[4], verbose);
 
-        if(match(argv._, ['provisioning', 'list'])) return provisioning.list(verbose);
+        if(match(argv._, ['provisioning', 'list'])) return require('./ios/provisioning').list(verbose);
 
-        if(match(argv._, ['icons', 'generate', '+', '*'])) return assets.generateIcons(argv._[2], argv._[3], verbose);
-        if(match(argv._, ['icons', 'file', '+', '*'])) return assets.generateIconsFromFile(path.resolve(argv._[2]), argv._[3], verbose);
-        if(match(argv._, ['splashscreens', '+', '*'])) return assets.generateSplashscreens(argv._[1], argv._[2], verbose);
-        // TODO: we must improve this command in order to make it public
-        // it must take into account the different splashscreen ratios
-        // if(match(argv._, ['splashscreens', 'file', '+', '*'])) return assets.generateSplashscreensFromFile(argv._[2], argv._[3], verbose);
+        if(match(argv._, ['icons', 'generate', '+', '*'])) return require('./assets').generateIcons(argv._[2], argv._[3], verbose);
+        if(match(argv._, ['icons', 'file', '+', '*'])) return require('./assets').generateIconsFromFile(path.resolve(argv._[2]), argv._[3], verbose);
+        if(match(argv._, ['splashscreens', '+', '*'])) return require('./assets').generateSplashscreens(argv._[1], argv._[2], verbose);
 
         return printHelp();
     }
