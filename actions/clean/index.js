@@ -11,6 +11,13 @@ var Q = require('q'),
     path = require('path'),
     fs = require('q-io/fs');
 
+var tasks = {
+    android : [ './tasks/android/clean_gradle_build' ],
+    ios : [ ],
+    wp8 : [ ],
+    web : [ ]
+};
+
 var tryRemoveWWW = function (verbose) {
     var defer = Q.defer();
     rimraf(path.join(settings.cordovaAppPath, "www"), function (err) {
@@ -23,6 +30,21 @@ var tryRemoveWWW = function (verbose) {
     return defer.promise;
 };
 
+var runTasks = function (platforms, localSettings, verbose) {
+    return function () {
+        return platforms.reduce(function (promise, platform) {
+            return promise.then(function (msg) {
+                return tasks[platform].reduce(function (p, task) {
+                    return p.then(require(task));
+                }, Q(msg));
+            });
+        }, Q({
+            settings: localSettings,
+            verbose : verbose
+        }));
+    };
+};
+
 var clean = function (platform, verbose) {
     spinner();
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
@@ -31,8 +53,10 @@ var clean = function (platform, verbose) {
         if(platform && localSettings.platforms.indexOf(platform) < 0)
             return Q.reject('platform not available in project!');
         return tryRemoveWWW().then(function () {
-            var availablePlatforms = localSettings.platforms.filter(isAvailableOnHost);
-            return cordovaClean(platform ? [platform] : availablePlatforms, verbose);
+            var availablePlatforms = localSettings.platforms.filter(isAvailableOnHost),
+               platforms = platform ? [platform] : availablePlatforms;
+            return cordovaClean(platforms, verbose)
+                .then(runTasks(platforms, localSettings, verbose));
         });
     });
 };
