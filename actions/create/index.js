@@ -113,6 +113,12 @@ function askQuestions(questions, type) {
     };
 }
 
+function launchTasks(resp) {
+    return tasks.reduce(function (val, task){
+        return Q.when(val, task);
+    }, resp);
+}
+
 function create(verbose) {
     if(verbose) print.banner();
     return askQuestions(mainQuestions, '')({ options : { verbose : verbose } })
@@ -130,9 +136,7 @@ function create(verbose) {
         .then(function (resp) {
             print();
             spinner();
-            return tasks.reduce(function (val, task){
-                return Q.when(val, task);
-            }, resp);
+            return launchTasks(resp);
         });
 }
 
@@ -147,5 +151,5 @@ function action(argv) {
     return fs.read(helpPath).then(print);
 }
 
-action.create = create;
+action.launchTasks = launchTasks;
 module.exports = action;
