@@ -84,5 +84,5 @@ function action (argv) {
 }
 
 action.platform = platform;
-
+action.list = platformsLib.list;
 module.exports = action;

@@ -11,7 +11,8 @@ var should = require('should'),
     pluginAction = require('../../actions/plugin'),
     checkAction = require('../../actions/check'),
     configAction = require('../../actions/config'),
-    runAction = require('../../actions/run');
+    runAction = require('../../actions/run'),
+    platformAction = require('../../actions/platform');
 
 describe('testing tarifa cli on darwin', function() {
 
@@ -192,6 +193,47 @@ describe('testing tarifa cli on darwin', function() {
                 return runAction.run('ios', 'default', false);
             });
         });
+    });
+
+    describe('tarifa platform', function () {
+        it('tarifa platform list', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function () {
+                return platformAction.list().then(function (rslt) {
+                    rslt.indexOf('ios').should.be.above(-1);
+                    rslt.indexOf('android').should.be.above(-1);
+                });
+            });
+        });
+
+        it('tarifa platform remove ios', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return platformAction.platform('remove', 'ios', false);
+            });
+        });
+
+        it('tarifa platform remove android', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return platformAction.platform('remove', 'android', false);
+            });
+        });
+
+        it('tarifa platform add android', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return platformAction.platform('add', 'android', false);
+            });
+        });
+
+        it('try to re call tarifa platform add android', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return platformAction.platform('add', 'android', false).should.be.rejected;
+            });
+        });
+
     });
 
     after('clean temp folder', cleanHelper(projectDefer, tmp, cwd));
