@@ -114,6 +114,18 @@ describe('testing tarifa cli on darwin', function() {
                 return pluginAction.plugin('remove', 'test.test.test');
             });
         });
+
+        it('tarifa plugin add https://github.com/apache/cordova-plugin-vibration.git#r0.3.11', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return pluginAction.plugin('add', 'https://github.com/apache/cordova-plugin-vibration.git#r0.3.11', false).then(function () {
+                    return pluginAction.list(false).then(function (rslt) {
+                        rslt.indexOf("org.apache.cordova.vibration").should.equal(1);
+                    });
+                });
+            });
+        });
+
     });
 
     after('clean temp folder', cleanHelper(projectDefer, tmp, cwd));
