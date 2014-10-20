@@ -61,6 +61,16 @@ xcuserdata
 *.moved-aside
 
 #=============#
+#    WP8      #
+#=============#
+
+platforms/wp8/obj/
+platforms/wp8/www/
+platforms/wp8/Bin/
+*.csproj.user
+*.suo
+
+#=============#
 #     OSX     #
 #=============#
 
