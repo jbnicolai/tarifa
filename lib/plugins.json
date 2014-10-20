@@ -6,7 +6,7 @@
 },{
     "name":"camera",
     "value":"org.apache.cordova.camera",
-    "uri":"https://github.com/apache/cordova-plugin-camera.git#r0.3.2",
+    "uri":"https://github.com/apache/cordova-plugin-camera.git#r0.3.3",
     "default": false
 },{
     "name":"console",
@@ -16,7 +16,7 @@
 },{
     "name":"contacts",
     "value":"org.apache.cordova.contacts",
-    "uri":"https://github.com/apache/cordova-plugin-contacts.git#r0.2.13",
+    "uri":"https://github.com/apache/cordova-plugin-contacts.git#r0.2.14",
     "default": false
 },{
     "name":"device",
@@ -46,7 +46,7 @@
 },{
     "name":"file transfer",
     "value":"org.apache.cordova.file-transfer",
-    "uri":"https://github.com/apache/cordova-plugin-file-transfer.git#r0.4.6",
+    "uri":"https://github.com/apache/cordova-plugin-file-transfer.git#r0.4.7",
     "default": false
 },{
     "name":"geolocation",
@@ -56,32 +56,32 @@
 },{
     "name":"globalization",
     "value":"org.apache.cordova.globalization",
-    "uri":"https://github.com/apache/cordova-plugin-globalization.git#r0.3.1",
+    "uri":"https://github.com/apache/cordova-plugin-globalization.git#r0.3.2",
     "default": false
 },{
     "name":"inappbrowser",
     "value":"org.apache.cordova.inappbrowser",
-    "uri":"https://github.com/apache/cordova-plugin-inappbrowser.git#r0.5.2",
+    "uri":"https://github.com/apache/cordova-plugin-inappbrowser.git#r0.5.3",
     "default": false
 },{
     "name":"media",
     "value":"org.apache.cordova.media",
-    "uri":"https://github.com/apache/cordova-plugin-media.git#r0.2.13",
+    "uri":"https://github.com/apache/cordova-plugin-media.git#r0.2.14",
     "default": false
 },{
     "name":"media capture",
     "value":"org.apache.cordova.media-capture",
-    "uri":"https://github.com/apache/cordova-plugin-media-capture.git#r0.3.3",
+    "uri":"https://github.com/apache/cordova-plugin-media-capture.git#r0.3.4",
     "default": false
 },{
     "name":"network information",
     "value":"org.apache.cordova.network-information",
-    "uri":"https://github.com/apache/cordova-plugin-network-information.git#r0.2.12",
+    "uri":"https://github.com/apache/cordova-plugin-network-information.git#r0.2.13",
     "default": false
 },{
     "name":"splashscreen",
     "value":"org.apache.cordova.splashscreen",
-    "uri":"https://github.com/apache/cordova-plugin-splashscreen.git#r0.3.3",
+    "uri":"https://github.com/apache/cordova-plugin-splashscreen.git#r0.3.4",
     "default": true
 },{
     "name":"vibration",
