@@ -38,8 +38,8 @@ var actions = {
     }
 }
 
-function list(verbose) {
-    return plugins.list(pathHelper.root()).then(printPlugins);
+function list() {
+    return plugins.list(pathHelper.root());
 }
 
 function plugin(action, arg, verbose) {
@@ -54,6 +54,12 @@ function raw_plugin (root, action, arg, verbose) {
             if(action == 'add' && Object.keys(settings.plugins).indexOf(arg) > -1)
                 return Q.reject(format("Can't installed already installed plugin %s", arg));
             return plugins[action](root, arg)
+                .then(function (val) {
+                    if (!val || !val.val || !val.uri) {
+                        return Q.reject("no plugin changed!");
+                    }
+                    return val;
+                })
                 .then(actions[action].updateTarifaFile(root))
                 .then(log(action, verbose));
         });
@@ -68,7 +74,7 @@ function action (argv) {
             verbose = true;
         }
         if(argv._[0] === 'list' && argsHelper.matchArgumentsCount(argv, [1])){
-            return list(verbose);
+            return list().then(printPlugins);
         }
         if(Object.keys(actions).indexOf(argv._[0]) > -1
             && argsHelper.matchArgumentsCount(argv, [2])) {
@@ -80,4 +86,5 @@ function action (argv) {
 }
 
 action.plugin = plugin;
+action.list = list;
 module.exports = action;

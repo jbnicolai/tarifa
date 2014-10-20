@@ -18,18 +18,6 @@ var tasks = {
     web : [ ]
 };
 
-var tryRemoveWWW = function (verbose) {
-    var defer = Q.defer();
-    rimraf(path.join(settings.cordovaAppPath, "www"), function (err) {
-        if(err) {
-            print.warning(err);
-            print.warning("not able to remove www folder in cordova app!");
-        }
-        defer.resolve();
-    });
-    return defer.promise;
-};
-
 var runTasks = function (platforms, localSettings, verbose) {
     return function () {
         return platforms.reduce(function (promise, platform) {
@@ -52,12 +40,10 @@ var clean = function (platform, verbose) {
             return Q.reject('platform not available in host!');
         if(platform && localSettings.platforms.indexOf(platform) < 0)
             return Q.reject('platform not available in project!');
-        return tryRemoveWWW().then(function () {
-            var availablePlatforms = localSettings.platforms.filter(isAvailableOnHost),
-               platforms = platform ? [platform] : availablePlatforms;
-            return cordovaClean(platforms, verbose)
-                .then(runTasks(platforms, localSettings, verbose));
-        });
+       var availablePlatforms = localSettings.platforms.filter(isAvailableOnHost),
+           platforms = platform ? [platform] : availablePlatforms;
+        return cordovaClean(platforms, verbose)
+            .then(runTasks(platforms, localSettings, verbose));
     });
 };
 

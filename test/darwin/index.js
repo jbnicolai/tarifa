@@ -7,7 +7,8 @@ var should = require('should'),
     cleanHelper = require('../helper/clean'),
     prepareAction = require('../../actions/prepare'),
     buildAction = require('../../actions/build'),
-    cleanAction = require('../../actions/clean');
+    cleanAction = require('../../actions/clean'),
+    pluginAction = require('../../actions/plugin');
 
 describe('testing tarifa cli on darwin', function() {
 
@@ -78,6 +79,39 @@ describe('testing tarifa cli on darwin', function() {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
                 return cleanAction.clean('ios', false);
+            });
+        });
+    });
+
+    describe('tarifa plugin', function() {
+        it('tarifa plugin add ../../fixtures/emptyplugin', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return pluginAction.plugin('add', path.join(__dirname, '../fixtures/emptyplugin'), false);
+            });
+        });
+
+        it('tarifa plugin list', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return pluginAction.list(false).then(function (rslt) {
+                    rslt.indexOf("test.test.test").should.equal(1);
+                });
+            });
+        });
+
+        it('re tarifa plugin add ../fixtures/emptyplugin', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                var p = path.join(__dirname, '../fixtures/emptyplugin');
+                return pluginAction.plugin('add', p, false).should.be.rejected;
+            });
+        });
+
+        it('tarifa plugin remove test.test.test', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return pluginAction.plugin('remove', 'test.test.test');
             });
         });
     });
