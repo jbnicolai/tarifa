@@ -8,7 +8,10 @@ var should = require('should'),
     prepareAction = require('../../actions/prepare'),
     buildAction = require('../../actions/build'),
     cleanAction = require('../../actions/clean'),
-    pluginAction = require('../../actions/plugin');
+    pluginAction = require('../../actions/plugin'),
+    checkAction = require('../../actions/check'),
+    configAction = require('../../actions/config'),
+    runAction = require('../../actions/run');
 
 describe('testing tarifa cli on darwin', function() {
 
@@ -126,6 +129,69 @@ describe('testing tarifa cli on darwin', function() {
             });
         });
 
+    });
+
+    describe('tarifa check', function () {
+        it('check android & ios', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return checkAction.check(false);
+            });
+        });
+    });
+
+    describe('tarifa config', function () {
+        it('tarifa config icons generate red dev', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return configAction.generateIcons('red', 'dev', false);
+            });
+        });
+
+        it('tarifa config splashscreens red dev', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return configAction.generateSplashscreens('red', 'dev', false);
+            });
+        });
+
+        it('tarifa config icons file test.png stage', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return configAction.generateIconsFromFile(path.resolve(__dirname, '..', 'fixtures', 'momo.png'), 'stage', false);
+            });
+        });
+
+    });
+
+    describe('tarifa run', function () {
+        it('tarifa run android dev', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return runAction.run('android', 'dev', false);
+            });
+        });
+
+        it('tarifa run android stage', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return runAction.run('android', 'stage', false);
+            });
+        });
+
+        it('tarifa run ios stage', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return runAction.run('ios', 'stage', false);
+            });
+        });
+
+        it('tarifa run ios', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return runAction.run('ios', 'default', false);
+            });
+        });
     });
 
     after('clean temp folder', cleanHelper(projectDefer, tmp, cwd));

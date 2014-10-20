@@ -23,13 +23,25 @@ var action = function (argv) {
 
         if(match(argv._, ['provisioning', 'list'])) return require('./ios/provisioning').list(verbose);
 
-        if(match(argv._, ['icons', 'generate', '+', '*'])) return require('./assets').generateIcons(argv._[2], argv._[3], verbose);
-        if(match(argv._, ['icons', 'file', '+', '*'])) return require('./assets').generateIconsFromFile(path.resolve(argv._[2]), argv._[3], verbose);
-        if(match(argv._, ['splashscreens', '+', '*'])) return require('./assets').generateSplashscreens(argv._[1], argv._[2], verbose);
+        if(match(argv._, ['icons', 'generate', '+', '*'])) return action.generateIcons(argv._[2], argv._[3], verbose);
+        if(match(argv._, ['icons', 'file', '+', '*'])) return action.generateIconsFromFile(path.resolve(argv._[2]), argv._[3], verbose);
+        if(match(argv._, ['splashscreens', '+', '*'])) return action.generateSplashscreens(argv._[1], argv._[2], verbose);
 
         return printHelp();
     }
     return printHelp();
+};
+
+action.generateIcons = function (color, config, verbose) {
+    return require('./assets').generateIcons(color, config, verbose);
+};
+
+action.generateIconsFromFile = function (filePath, config, verbose) {
+    return require('./assets').generateIconsFromFile(filePath, config, verbose);
+};
+
+action.generateSplashscreens = function (color, config, verbose) {
+    return require('./assets').generateSplashscreens(color, config, verbose);
 };
 
 module.exports = action;
