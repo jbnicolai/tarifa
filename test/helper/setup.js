@@ -1,7 +1,12 @@
 var path = require('path'),
+    fs = require('fs'),
     createAction = require('../../actions/create');
 
-module.exports = function (tmp, projectDefer, response) {
+module.exports = function (tmp, projectDefer, responseMockPath) {
+
+    var mock = path.join(__dirname, '..', 'fixtures', responseMockPath),
+        response = JSON.parse(fs.readFileSync(mock, 'utf-8'))
+
     return function createTarifaProject() {
         tmp.dir({ template: path.resolve(__dirname, '..', 'tmp', 'tarifa-XXXXXX') }, function (err, dirPath) {
 

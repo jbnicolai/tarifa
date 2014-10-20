@@ -1,27 +1,24 @@
 var should = require('should'),
-    fs = require('fs'),
     Q = require('q'),
+    fs = require('fs'),
     path = require('path'),
+    tmp = require('tmp'),
     setupHelper = require('../helper/setup'),
     cleanHelper = require('../helper/clean'),
     prepareAction = require('../../actions/prepare'),
-    tmp = require('tmp'),
-    buildAction = require('../../actions/build');
+    buildAction = require('../../actions/build'),
+    cleanAction = require('../../actions/clean');
 
 describe('testing tarifa cli on darwin', function() {
 
     var projectDefer = Q.defer(),
-        cwd = process.cwd(),
-        mock = path.join(__dirname, '..', 'fixtures', 'create_response_darwin.json'),
-        response = JSON.parse(fs.readFileSync(mock, 'utf-8'));
+        cwd = process.cwd();
 
-    before('create a empty project', setupHelper(tmp, projectDefer, response));
+    before('create a empty project', setupHelper(tmp, projectDefer, 'create_response_darwin.json'));
 
     it('create a project (android & ios)', function () {
         this.timeout(0);
-        return projectDefer.promise.then(function (rslt) {
-            rslt.rslt.should.equal(response);
-        });
+        return projectDefer.promise;
     });
 
     describe('tarifa prepare', function() {
@@ -66,6 +63,21 @@ describe('testing tarifa cli on darwin', function() {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
                 return buildAction.build('ios', 'default', false, false);
+            });
+        });
+    });
+
+    describe('tarifa clean', function() {
+        it('clean android', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return cleanAction.clean('android', false);
+            });
+        });
+        it('clean ios', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return cleanAction.clean('ios', false);
             });
         });
     });
