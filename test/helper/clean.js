@@ -5,7 +5,11 @@ module.exports = function (projectDefer, tmp, wd) {
         process.chdir(wd);
         tmp.setGracefulCleanup();
         return projectDefer.promise.then(function (obj) {
-            rimraf.sync(obj.dirPath);
+        	try {
+        		rimraf.sync(obj.dirPath);
+        	} catch(err) {
+        		console.log('can\'t remove ' + obj.dirPath);
+        	}
         });
     };
 };
