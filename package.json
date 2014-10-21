@@ -65,7 +65,8 @@
   },
   "scripts": {
     "test": "mocha test/xml test/xml/android test/xml/wp8",
-    "darwin": "mocha test/darwin"
+    "darwin": "mocha test/darwin",
+    "win32": "mocha test/win32"
   },
   "devDependencies": {
     "mocha": "^1.21.4",
