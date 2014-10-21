@@ -35,19 +35,15 @@ var prepareƒ = function (conf) {
     if(conf.verbose) print.success('prepare, launch www project build');
     return builder.build(conf.platform, conf.localSettings, conf.configuration, conf.verbose).then(function () {
         var defer = Q.defer();
-        if (conf.platform !== 'web') {
-            rimraf(cordovaWWW, function (err) {
-                if(err) defer.reject(err);
-                if(conf.verbose) print.success('prepare, rm cordova www folder');
-                // link/copy app www to project output
-                method[link_method](cordovaWWW, projectWWW).then(function() {
-                    if(conf.verbose) print.success('prepare, %s www project to cordova www', link_method);
-                    defer.resolve(conf);
-                }, function (err) { defer.reject(err); });
-            });
-        } else {
-            defer.resolve(conf);
-        }
+        rimraf(cordovaWWW, function (err) {
+            if(err) defer.reject(err);
+            if(conf.verbose) print.success('prepare, rm cordova www folder');
+            // link/copy app www to project output
+            method[link_method](cordovaWWW, projectWWW).then(function() {
+                if(conf.verbose) print.success('prepare, %s www project to cordova www', link_method);
+                defer.resolve(conf);
+            }, function (err) { defer.reject(err); });
+        });
         return defer.promise;
     });
 };

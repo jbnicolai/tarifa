@@ -14,7 +14,7 @@ var Q = require('q'),
 process.env.ANDROID_BUILD = 'gradle';
 
 var tasks = {
-    web: {
+    browser: {
         'pre-cordova-prepare-release': [],
         'pre-cordova-prepare' : [],
         'pre-cordova-compile' : [],
@@ -89,7 +89,6 @@ var tasks = {
 };
 
 var prepare = function (conf) {
-    if(conf.platform === 'web') return Q.resolve(conf);
     var cwd = process.cwd();
     var defer = Q.defer();
 
@@ -109,7 +108,7 @@ var prepare = function (conf) {
 };
 
 var compile = function (conf) {
-    if(conf.platform === 'web') return Q.resolve(conf);
+    if(conf.platform === 'browser') return Q.resolve(conf);
     var cwd = process.cwd();
     var defer = Q.defer();
     var options = conf.localSettings.mode ? [ conf.localSettings.mode ] : [];

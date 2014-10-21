@@ -15,7 +15,7 @@ var tasks = {
     android : [ './tasks/android/clean_gradle_build' ],
     ios : [ ],
     wp8 : [ ],
-    web : [ ]
+    browser : [ ]
 };
 
 var runTasks = function (platforms, localSettings, verbose) {

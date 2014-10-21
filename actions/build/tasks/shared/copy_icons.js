@@ -4,7 +4,6 @@ var Q = require('q'),
     copyIcons = require('../../../../lib/cordova/icon').copyIcons;
 
 module.exports = function (msg) {
-    if(msg.platform === 'web') return Q.resolve(msg);
     return copyIcons(msg.platform, msg.configuration)
     .then(function () {
         if(msg.verbose)

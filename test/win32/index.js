@@ -14,7 +14,7 @@ var should = require('should'),
     runAction = require('../../actions/run'),
     platformAction = require('../../actions/platform');
 
-describe('testing tarifa cli on darwin', function() {
+describe('testing tarifa cli on win32', function() {
 
     var projectDefer = Q.defer(),
         cwd = process.cwd();
@@ -27,10 +27,10 @@ describe('testing tarifa cli on darwin', function() {
     });
 
     describe('tarifa prepare', function() {
-        it('tarifa prepare web', function () {
+        it('tarifa prepare browser', function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
-                return prepareAction.prepare('web', 'default', false);
+                return prepareAction.prepare('browser', 'default', false);
             });
         });
 
@@ -50,10 +50,10 @@ describe('testing tarifa cli on darwin', function() {
     });
 
     describe('tarifa build', function() {
-        it('tarifa build web', function () {
+        it('tarifa build browser', function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
-                return buildAction.build('web', 'default', false, false);
+                return buildAction.build('browser', 'default', false, false);
             });
         });
 

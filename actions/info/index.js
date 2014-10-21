@@ -120,7 +120,7 @@ function listAvailablePlatforms() {
 }
 
 function check_cordova(platforms, verbose) {
-    var cordovaLibPaths = platforms.filter(function(p) { return p!== 'web'; }).map(function (platform) {
+    var cordovaLibPaths = platforms.map(function (platform) {
             return cordova_lazy_load.cordova(platform).then(function (libPath) {
                 return {
                     name: platform,

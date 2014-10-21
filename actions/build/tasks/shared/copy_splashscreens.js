@@ -4,7 +4,6 @@ var Q = require('q'),
     copySplashscreens = require('../../../../lib/cordova/splashscreen').copySplashscreens;
 
 module.exports = function (msg) {
-    if(msg.platform === 'web') return Q.resolve(msg);
     return copySplashscreens(msg.platform, msg.configuration)
         .then(function () {
             if(msg.verbose)

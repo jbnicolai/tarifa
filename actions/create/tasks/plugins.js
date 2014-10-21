@@ -17,8 +17,6 @@ function add_cordova_plugin (root, name, uri) {
 
 module.exports = function (response) {
 
-    var platforms = response.platforms.filter(function (platform) { return platform != 'web'; });
-
     // merge mandatory + user selected plugins
     response.plugins = pluginList.filter(function (p) { return p['default']; })
         .map(function (p) { return { uri: p.uri, value: p.value}; })

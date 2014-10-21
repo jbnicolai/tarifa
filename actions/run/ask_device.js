@@ -5,7 +5,7 @@ var Q = require('q'),
 
 module.exports = function (conf) {
 
-    if (conf.platform === 'web') return Q(conf);
+    if (conf.platform === 'browser') return Q(conf);
     if(!devices[conf.platform])
         return Q.reject(format("Get devices for platform %s not implemented!", conf.platform));
     var defer = Q.defer();

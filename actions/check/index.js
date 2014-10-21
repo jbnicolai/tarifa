@@ -17,7 +17,7 @@ var tasks = {
     ],
     ios : [],
     wp8 : [],
-    web : []
+    browser : []
 };
 
 function getUserTasks (availablePlatforms, localSettings) {
@@ -35,10 +35,9 @@ var check = function (verbose) {
             var platformNames = platforms.filter(function (p) {
                 return !p.disabled;
             }).map(function (p) { return p.name; });
-            platformNames.push('web');
             var userTasks = getUserTasks(platformNames.filter(isAvailableOnHost), localSettings);
             return localSettings.platforms.reduce(function (promiseP, platform) {
-                if(platform !== 'web' && platformNames.indexOf(platform) < 0) {
+                if(platformNames.indexOf(platform) < 0) {
                     if(settings.os_platforms[platform].indexOf(os.platform()) > -1)
                         print.error("platform %s is not installed on os, skipping checks...", platform);
                     return promiseP;

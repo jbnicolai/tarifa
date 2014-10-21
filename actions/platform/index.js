@@ -45,8 +45,6 @@ function remove(type, verbose) {
 }
 
 function platform (action, type, verbose) {
-    if(type === 'web') return Q.reject(format("Can't %s web platform!", action));
-
     var promises = [
         tarifaFile.parse(pathHelper.root()),
         platformsLib.isAvailableOnHost(type)
@@ -70,7 +68,6 @@ function action (argv) {
         }
         if(argv._[0] === 'list' && argsHelper.matchArgumentsCount(argv, [1])){
             return tarifaFile.parse(pathHelper.root()).then(function () {
-                print(chalk.green('web'));
                 return platformsLib.list(true);
             });
         }

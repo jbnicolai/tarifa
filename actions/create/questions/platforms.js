@@ -8,7 +8,7 @@ var question = function (response, verbose) {
             type : 'checkbox',
             name : 'platforms',
             choices : choices,
-            message : 'Choose platforms (web is added by default)?'
+            message : 'Choose platforms (browser is added by default)?'
         };
     });
 };
