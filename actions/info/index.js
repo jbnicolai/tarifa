@@ -7,10 +7,13 @@ var Q = require('q'),
     exec = require('child_process').exec,
     cordova_lazy_load = require('cordova-lib/src/cordova/lazy_load'),
     installed_platforms = require('../../lib/cordova/platforms').installedPlatforms,
+    getCordovaPlatformsVersion = require('../../lib/cordova/version').getCordovaPlatformsVersion,
     argsHelper = require('../../lib/helper/args'),
+    pathHelper = require('../../lib/helper/path'),
     devices = require('../../lib/devices'),
     settings = require('../../lib/settings'),
     print = require('../../lib/helper/print'),
+    tarifaFile = require('../../lib/tarifa-file'),
     pkg = require('../../package.json');
 
 function getToolVersion(name, tool, verbose) {
@@ -139,6 +142,24 @@ function check_cordova(platforms, verbose) {
     });
 }
 
+function check_cordova_platform_version(platforms, verbose) {
+    return function () {
+        return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
+            return getCordovaPlatformsVersion(
+                path.join(pathHelper.root(), settings.cordovaAppPath),
+                localSettings.platforms.filter(function (p) { return p!=='web'; })
+            ).then(function (versions) {
+                versions.forEach(function (v) {
+                    print("%s %s", chalk.green(format("current project version %s:", v.name)), v.version);
+                });
+            });
+        }, function (err) {
+            if(verbose) print.warning(err);
+            print.warning("Not in a tarifa project, can't output installed platform versions");
+        });
+    }
+}
+
 function check_requirements(verbose) {
     return function () {
         return installed_platforms(verbose).then(function (platforms) {
@@ -162,6 +183,7 @@ function info(verbose) {
 
     return check_cordova(platforms, verbose)
         .then(check_requirements(platforms, verbose))
+        .then(check_cordova_platform_version(platforms, verbose))
         .then(check_tools(verbose))
         .then(function (ok) {
             if(!ok) return Q.reject("not all needed tools are available, first install them!");
