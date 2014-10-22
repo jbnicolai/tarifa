@@ -4,7 +4,6 @@ var should = require('should'),
     path = require('path'),
     tmp = require('tmp'),
     setupHelper = require('../helper/setup'),
-    cleanHelper = require('../helper/clean'),
     prepareAction = require('../../actions/prepare'),
     buildAction = require('../../actions/build'),
     cleanAction = require('../../actions/clean'),
@@ -187,10 +186,10 @@ describe('testing tarifa cli on darwin', function() {
             });
         });
 
-        it('tarifa run ios', function () {
+        it('tarifa run ios dev', function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
-                return runAction.run('ios', 'default', false);
+                return runAction.run('ios', 'dev', false);
             });
         });
 
@@ -250,5 +249,4 @@ describe('testing tarifa cli on darwin', function() {
 
     });
 
-    after('clean temp folder', cleanHelper(projectDefer, tmp, cwd));
 });

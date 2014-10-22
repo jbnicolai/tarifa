@@ -4,7 +4,6 @@ var should = require('should'),
     path = require('path'),
     tmp = require('tmp'),
     setupHelper = require('../helper/setup'),
-    cleanHelper = require('../helper/clean'),
     prepareAction = require('../../actions/prepare'),
     buildAction = require('../../actions/build'),
     cleanAction = require('../../actions/clean'),
@@ -251,5 +250,4 @@ describe('testing tarifa cli on win32', function() {
 
     });
 
-    after('clean temp folder', cleanHelper(projectDefer, tmp, cwd));
 });
