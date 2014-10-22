@@ -193,6 +193,20 @@ describe('testing tarifa cli on darwin', function() {
                 return runAction.run('ios', 'default', false);
             });
         });
+
+        it('tarifa run browser stage', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return runAction.run('browser', 'stage', false);
+            });
+        });
+
+        it('tarifa run browser', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return runAction.run('browser', 'default', false);
+            });
+        });
     });
 
     describe('tarifa platform', function () {

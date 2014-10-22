@@ -27,10 +27,10 @@ describe('testing tarifa cli on linux', function() {
     });
 
     describe('tarifa prepare', function() {
-        it('tarifa prepare web', function () {
+        it('tarifa prepare browser', function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
-                return prepareAction.prepare('web', 'default', false);
+                return prepareAction.prepare('browser', 'default', false);
             });
         });
 
@@ -43,10 +43,10 @@ describe('testing tarifa cli on linux', function() {
     });
 
     describe('tarifa build', function() {
-        it('tarifa build web', function () {
+        it('tarifa build browser', function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
-                return buildAction.build('web', 'default', false, false);
+                return buildAction.build('browser', 'default', false, false);
             });
         });
 
@@ -159,6 +159,21 @@ describe('testing tarifa cli on linux', function() {
                 return runAction.run('android', 'stage', false);
             });
         });
+
+        it('tarifa run browser stage', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return runAction.run('browser', 'stage', false);
+            });
+        });
+
+        it('tarifa run browser', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return runAction.run('browser', 'default', false);
+            });
+        });
+
     });
 
     describe('tarifa platform', function () {

@@ -193,6 +193,21 @@ describe('testing tarifa cli on win32', function() {
                 return runAction.run('wp8', 'default', false);
             });
         });
+
+        it('tarifa run browser stage', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return runAction.run('browser', 'stage', false);
+            });
+        });
+
+        it('tarifa run browser', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return runAction.run('browser', 'default', false);
+            });
+        });
+
     });
 
     describe('tarifa platform', function () {

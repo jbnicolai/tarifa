@@ -8,6 +8,9 @@ var question = function (response, verbose) {
             type : 'checkbox',
             name : 'platforms',
             choices : choices,
+            validate: function (answer) {
+                return answer.length > 0 || 'one platform mandatory!';
+            },
             message : 'Choose platforms (browser is added by default)?'
         };
     });

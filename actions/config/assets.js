@@ -17,7 +17,7 @@ function generate(color, config, f, verbose) {
 
     return tarifaFile.parse(root).then(function (localSettings) {
         return Q.all(createFolders(root, localSettings.platforms, config)).then(function () {
-            return f(color, root, platforms, config, verbose);
+            return f(color, root, localSettings.platforms, config, verbose);
         });
     });
 }
@@ -28,7 +28,7 @@ function generateFromFile(file, config, f, verbose) {
 
     return tarifaFile.parse(root).then(function (localSettings) {
         return Q.all(createFolders(root, localSettings.platforms, config)).then(function () {
-            return f(file, root, platforms, config, verbose);
+            return f(file, root, localSettings.platforms, config, verbose);
         });
     });
 }

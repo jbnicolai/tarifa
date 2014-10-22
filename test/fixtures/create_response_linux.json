@@ -10,7 +10,8 @@
   "author_email": "paul@42loops.com",
   "author_href": "http://42loops.com",
   "platforms": [
-    "android"
+    "android",
+    "browser"
   ],
   "plugins": [],
   "www": "template/project",
