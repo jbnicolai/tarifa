@@ -162,14 +162,14 @@ describe('testing tarifa cli on linux', function() {
         it('tarifa run browser stage', function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
-                return runAction.run('browser', 'stage', false);
+                return runAction.run('browser', 'stage', false).should.be.rejected;
             });
         });
 
         it('tarifa run browser', function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
-                return runAction.run('browser', 'default', false);
+                return runAction.run('browser', 'default', false).should.be.rejected;
             });
         });
 

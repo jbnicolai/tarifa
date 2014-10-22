@@ -15,6 +15,8 @@ module.exports = function (conf) {
             maxBuffer: 1024 * 400
         };
 
+    if(process.platform === 'linux') return Q.reject("Can't run browser platform in linux!");
+
     if(conf.verbose)
         print.success('trying to open browser!');
 
