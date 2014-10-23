@@ -47,7 +47,7 @@ function remove(type, verbose) {
 function platform (action, type, verbose) {
     var promises = [
         tarifaFile.parse(pathHelper.root()),
-        platformsLib.isAvailableOnHost(type)
+        platformsLib.isAvailableOnHost(type.indexOf('@') > -1 ? type.split('@')[0] : type)
     ];
 
     return Q.all(promises).spread(function (localSettings, available) {
