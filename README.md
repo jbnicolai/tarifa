@@ -75,16 +75,10 @@ git clone https://github.com/TarifaTools/tarifa.git && cd tarifa && npm link .
 
 ### Tests
 
-Quite minimalist right now: testing needed xml files changes
+You need to attach one device of each available platforms on your os
 
 ```
 npm test
-```
-
-testing the cli on macosx:
-
-```
-npm run darwin
 ```
 
 ## License
