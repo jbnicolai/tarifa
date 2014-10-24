@@ -6,10 +6,25 @@ var Q = require('q'),
     tarifaFile = require('../../lib/tarifa-file'),
     pathHelper = require('../../lib/helper/path'),
     print = require('../../lib/helper/print'),
+    settings = require('../../lib/settings'),
+    pluginXML = require('../../lib/xml/plugin.xml'),
     plugins = require('../../lib/cordova/plugins');
 
 function printPlugins(items) {
-    print(items.length ?  items.join('\n') : "no plugin installed!");
+    if(items.length === 0) {
+        print("no plugin installed!");
+        return Q.resolve();
+    }
+
+    return items.reduce(function (promise, p) {
+        return promise.then(function () {
+            var pluginPath = path.join(process.cwd(), settings.cordovaAppPath, 'plugins', p, 'plugin.xml');
+            return pluginXML.getVersion(pluginPath)
+                .then(function (v) {
+                    print('%s@%s', p, v);
+                });
+        });
+    }, Q.resolve());
 }
 
 function log(action, verbose) {
