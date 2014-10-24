@@ -52,7 +52,7 @@ function raw_plugin (root, action, arg, verbose) {
             if(action == 'remove' && Object.keys(settings.plugins).indexOf(arg) < 0)
                 return Q.reject(format("Can't remove uninstalled plugin %s", arg));
             if(action == 'add' && Object.keys(settings.plugins).indexOf(arg) > -1)
-                return Q.reject(format("Can't installed already installed plugin %s", arg));
+                return Q.reject(format("Can't install already installed plugin %s", arg));
             return plugins[action](root, arg)
                 .then(function (val) {
                     if (!val || !val.val || !val.uri) {
