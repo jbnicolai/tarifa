@@ -40,8 +40,8 @@ var clean = function (platform, verbose) {
             return Q.reject('platform not available in host!');
         if(platform && localSettings.platforms.indexOf(platform) < 0)
             return Q.reject('platform not available in project!');
-       var availablePlatforms = localSettings.platforms.filter(isAvailableOnHost),
-           platforms = platform ? [platform] : availablePlatforms;
+        var availablePlatforms = localSettings.platforms.filter(isAvailableOnHost),
+            platforms = platform ? [platform] : availablePlatforms;
         return cordovaClean(platforms, verbose)
             .then(runTasks(platforms, localSettings, verbose));
     });
