@@ -24,7 +24,8 @@ var availableActions = [
         // clean alias
         { name : 'cls', action : '../actions/clean' },
         { name : 'check', action : '../actions/check' },
-        { name : 'hockeyapp', action: '../actions/hockeyapp' }
+        { name : 'hockeyapp', action: '../actions/hockeyapp' },
+        { name : 'update', action: '../actions/update' }
     ],
     singleOptions = [
         { small: 'v', name : 'version', action : printVersion },

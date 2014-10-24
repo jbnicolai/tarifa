@@ -58,6 +58,7 @@ Commands:
     check          Check the current project after cloning
     clean          Clean the given platform
     hockeyapp      Interface with hockeyapp beta testing platform
+    update         Update current project cordova platforms and core plugins
 
 Options:
 
