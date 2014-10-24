@@ -11,7 +11,7 @@ function openChromeOnDarwin(conf) {
     var defer = Q.defer(),
         cmd = path.join('platforms', 'browser', 'cordova', 'run'),
         options = {
-            cwd:settings.cordovaAppPath,
+            cwd: pathHelper.app(),
             timeout : 100000,
             maxBuffer: 1024 * 400
         };
@@ -36,7 +36,7 @@ function openChromeOnDarwin(conf) {
 }
 
 function openChromeOnWin32(conf) {
-    var indexPath = path.resolve(process.cwd(), settings.cordovaAppPath, 'platforms', 'browser', 'www', 'index.html'),
+    var indexPath = path.resolve(pathHelper.app(), 'platforms', 'browser', 'www', 'index.html'),
         project = format('file://%s', indexPath);
         child = spawn(
             'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe',
@@ -49,7 +49,7 @@ function openChromeOnWin32(conf) {
 }
 
 function openChromeOnLinux(conf) {
-    var indexPath = path.resolve(process.cwd(), settings.cordovaAppPath, 'platforms', 'browser', 'www', 'index.html'),
+    var indexPath = path.resolve(pathHelper.app(), 'platforms', 'browser', 'www', 'index.html'),
         project = format('file://%s', indexPath);
         child = spawn(
             'chromium',

@@ -4,19 +4,19 @@ var Q = require('q'),
     mkdirp = require('mkdirp'),
     path = require('path'),
     fs = require('fs'),
+    pathHelper = require('../../../../lib/helper/path'),
     settings = require('../../../../lib/settings'),
     inferJavaClassNameFromProductName = require('../../../../lib/android/infer-classname'),
     AndroidManifestBuilder = require('../../../../lib/xml/android/AndroidManifest.xml');
 
 module.exports = function (msg) {
     var defer = Q.defer();
-    var cwd = process.cwd();
     var androidConfs = msg.localSettings.configurations.android;
     var name = androidConfs[msg.configuration]['product_name'] || androidConfs['default']['product_name'] || androidConfs['name'];
     var id = androidConfs[msg.configuration]['id'] || msg.localSettings.id;
-    var srcPath = path.join(cwd, settings.cordovaAppPath, '/platforms/android/src/');
+    var srcPath = path.join(pathHelper.app(), '/platforms/android/src/');
     var javaActivityTmpl = fs.readFileSync(path.join(__dirname, 'activity.java.tmpl'), 'utf-8');
-    var androidManifestXmlPath = path.join(cwd, settings.cordovaAppPath, 'platforms/android/AndroidManifest.xml');
+    var androidManifestXmlPath = path.join(pathHelper.app(), 'platforms/android/AndroidManifest.xml');
 
     var asbPath = path.join(srcPath, id.replace(/\./g, '/'));
     var activityFiles = Object.keys(androidConfs).filter(function (e) {

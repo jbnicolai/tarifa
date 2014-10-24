@@ -1,6 +1,7 @@
 var Q = require('q'),
     path = require('path'),
     settings = require('../../../../lib/settings'),
+    pathHelper = require('../../../../lib/helper/path'),
     print = require('../../../../lib/helper/print'),
     mergeObject = require('../../../../lib/helper/collections').mergeObject;
     ConfigBuilder = require('../../../../lib/xml/config.xml');
@@ -15,7 +16,7 @@ module.exports = function (msg) {
         version = conf.version || msg.localSettings.version,
         preferences = msg.localSettings.cordova.preferences,
         accessOrigin = (conf.cordova && conf.cordova.accessOrigin) || msg.localSettings.cordova.accessOrigin,
-        config_xml_path = path.join(process.cwd(), settings.cordovaAppPath, 'config.xml');
+        config_xml_path = path.join(pathHelper.app(), 'config.xml');
 
     if (conf.cordova && conf.cordova.preferences)
         preferences = mergeObject(preferences, conf.cordova.preferences);

@@ -162,7 +162,7 @@ function askUserForUpdate(root) {
 function runUpdatePlatforms(root) {
     return function (msg) {
         if(!msg.platformsToUpdate.length) return msg;
-        return cordovaPlatforms.update(msg.platformsToUpdate)
+        return cordovaPlatforms.update(root, msg.platformsToUpdate)
             .then(function () {
                 if(msg.verbose) print.success('updated platforms');
                 return msg;

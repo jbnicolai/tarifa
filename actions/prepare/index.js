@@ -27,13 +27,12 @@ var method = {
 };
 
 var prepareƒ = function (conf) {
-    var cwd = process.cwd(),
-        cordovaWWW = path.join(cwd, settings.cordovaAppPath, 'www'),
-        projectWWW = path.join(cwd, conf.localSettings.project_output),
+    var cordovaWWW = path.join(pathHelper.app(), 'www'),
+        projectWWW = path.join(pathHelper.root(), conf.localSettings.project_output),
         link_method = settings.www_link_method[os.platform()];
 
     if(conf.verbose) print.success('prepare, launch www project build');
-    return builder.build(conf.platform, conf.localSettings, conf.configuration, conf.verbose).then(function () {
+    return builder.build(pathHelper.root(), conf.platform, conf.localSettings, conf.configuration, conf.verbose).then(function () {
         var defer = Q.defer();
         rimraf(cordovaWWW, function (err) {
             if(err) defer.reject(err);

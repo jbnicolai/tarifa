@@ -2,11 +2,12 @@ var Q = require('q'),
     path = require('path'),
     fs = require('q-io/fs'),
     rimraf = require('rimraf'),
+    pathHelper = require('../../../../lib/helper/path'),
     print = require('../../../../lib/helper/print'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
-    var androidPath = path.join(process.cwd(), settings.cordovaAppPath, 'platforms', 'android'),
+    var androidPath = path.join(pathHelper.app(), 'platforms', 'android'),
         out_dir = path.join(androidPath, 'build', 'apk'),
         res_dir = path.join(androidPath, 'build', 'res'),
         defer = Q.defer();

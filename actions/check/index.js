@@ -30,6 +30,8 @@ function getUserTasks (availablePlatforms, localSettings) {
 }
 
 var check = function (verbose) {
+    var cwd = process.cwd();
+    process.chdir(pathHelper.root());
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         return installedPlatforms().then(function (platforms) {
             var platformNames = platforms.filter(function (p) {
@@ -55,10 +57,15 @@ var check = function (verbose) {
                 settings: localSettings,
                 verbose: verbose
             }));
-
         });
     }).then(function (msg) {
-        return builder.init(process.cwd(), msg.verbose);
+        return builder.init(pathHelper.root(), msg.verbose);
+    }).then(function (val) {
+        process.chdir(cwd);
+        return val;
+    }, function (err) {
+        process.chdir(cwd);
+        throw err;
     });
 };
 
