@@ -13,7 +13,6 @@ var Q = require('q'),
     intersection = require('interset/intersection'),
     print = require('../../lib/helper/print'),
     plugins = require('../../lib/cordova/plugins'),
-    pluginsList = require('../../lib/plugins'),
     pluginXML = require('../../lib/xml/plugin.xml'),
     pluginAction = require('../plugin').plugin;
 
@@ -57,7 +56,10 @@ function _addAvailablePlatforms(platforms) {
             print.line(chalk.underline('platforms to update'));
             msg.platformsToUpdate = [];
             inter.forEach(function (name) {
-                if(versionGreater(availablePlatforms[name], msg.installedPlatforms[name])) {
+                if(name === 'browser') {
+                    // !! do nothing currently no update script in cordova-browser
+                }
+                else if(versionGreater(availablePlatforms[name], msg.installedPlatforms[name])) {
                     msg.platformsToUpdate.push(name);
                     print.line(
                         '  %s: %s -> %s',
@@ -170,15 +172,16 @@ function runUpdatePlatforms(root) {
 
 function runUpdatePlugins(root) {
     return function (msg) {
+        var plgs = plugins.listAll();
         return msg.pluginToUpdate.reduce(function (promise, plugin) {
             return promise.then(function () {
                 return pluginAction('remove', plugin, msg.verbose);
             }).then(function () {
-                var idx = pluginsList.map(function (p) {
+                var idx = plgs.map(function (p) {
                     return p.value;
                 }).indexOf(plugin);
 
-                return pluginAction('add', pluginsList[idx].uri, msg.verbose);
+                return pluginAction('add', plgs[idx].uri, msg.verbose);
             });
         }, Q.resolve())
         .then(function () {
