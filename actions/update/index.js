@@ -143,7 +143,7 @@ function askUserForUpdate(root) {
     return function (msg) {
         if(!msg.platformsToUpdate.length && !msg.pluginToUpdate.length) {
             print.success('nothing to update');
-            process.exit(0);
+            return Q.resolve(msg);
         }
 
         var defer = Q.defer();
@@ -185,6 +185,7 @@ function runUpdatePlugins(root) {
             });
         }, Q.resolve())
         .then(function () {
+            if(msg.pluginToUpdate.length === 0) return msg;
             if(msg.verbose) print.success('updated plugins');
             return msg;
         });
@@ -214,7 +215,8 @@ function update(verbose) {
                 current: pkg.version,
                 created: msg.versionObj.created
             }));
-            print.success('update current project');
+            if(msg.pluginToUpdate.length || msg.platformsToUpdate.length)
+                print.success('update current project');
         });
 }
 
