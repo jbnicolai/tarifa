@@ -58,6 +58,7 @@ Commands:
     check          Check the current project after cloning
     clean          Clean the given platform
     hockeyapp      Interface with hockeyapp beta testing platform
+    update         Update current project cordova platforms and core plugins
 
 Options:
 
@@ -74,16 +75,10 @@ git clone https://github.com/TarifaTools/tarifa.git && cd tarifa && npm link .
 
 ### Tests
 
-Quite minimalist right now: testing needed xml files changes
+You need to attach one device of each available platforms on your os
 
 ```
 npm test
-```
-
-testing the cli on macosx:
-
-```
-npm run darwin
 ```
 
 ## License
