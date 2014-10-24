@@ -18,7 +18,7 @@ function printPlugins(items) {
 
     return items.reduce(function (promise, p) {
         return promise.then(function () {
-            var pluginPath = path.join(process.cwd(), settings.cordovaAppPath, 'plugins', p, 'plugin.xml');
+            var pluginPath = path.join(pathHelper.app(), 'plugins', p, 'plugin.xml');
             return pluginXML.getVersion(pluginPath)
                 .then(function (v) {
                     print('%s@%s', p, v);
