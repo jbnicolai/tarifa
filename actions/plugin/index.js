@@ -49,9 +49,9 @@ function plugin(action, arg, verbose) {
 function raw_plugin (root, action, arg, verbose) {
     return tarifaFile.parse(root)
         .then(function (settings) {
-            if(action == 'remove' && Object.keys(settings.plugins).indexOf(arg) < 0)
+            if(action == 'remove' && (!settings.plugins || Object.keys(settings.plugins).indexOf(arg) < 0))
                 return Q.reject(format("Can't remove uninstalled plugin %s", arg));
-            if(action == 'add' && Object.keys(settings.plugins).indexOf(arg) > -1)
+            if(action == 'add' && (settings.plugins && Object.keys(settings.plugins).indexOf(arg) > -1))
                 return Q.reject(format("Can't install already installed plugin %s", arg));
             return plugins[action](root, arg)
                 .then(function (val) {
