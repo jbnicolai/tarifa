@@ -11,7 +11,7 @@ var question = function (response, verbose) {
             validate: function (answer) {
                 return answer.length > 0 || 'one platform mandatory!';
             },
-            message : 'Choose platforms (browser is added by default)?'
+            message : 'Choose platforms?'
         };
     });
 };
