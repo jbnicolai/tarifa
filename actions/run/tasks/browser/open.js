@@ -59,6 +59,10 @@ function openChromeOnLinux(conf) {
             { detached: true , stdio:'ignore'}
         );
 
+    child.on('error', function (err){
+        if(err.code === 'ENOENT') print.error('can not find chrome executable, check your configstore, ~/.config/configstore/tarifa.yml and add a chrome attribute pointing to your chrome or chromium executable');
+	else print.stack(err);
+    });
     child.unref();
     return Q.resolve(conf);
 }
