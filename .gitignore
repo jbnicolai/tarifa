@@ -1,4 +1,4 @@
 node_modules
-test/tmp
+test/tmp/**
 
 .DS_Store
