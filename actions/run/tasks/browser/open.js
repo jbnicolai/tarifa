@@ -3,9 +3,11 @@ var Q = require('q'),
     exec = require('child_process').exec,
     spawn = require('child_process').spawn,
     path = require('path'),
+    Configstore = require('configstore'),
     print = require('../../../../lib/helper/print'),
     pathHelper = require('../../../../lib/helper/path'),
-    settings = require('../../../../lib/settings');
+    settings = require('../../../../lib/settings'),
+    confStore = new Configstore('tarifa');
 
 function openChromeOnDarwin(conf) {
     var defer = Q.defer(),
@@ -39,7 +41,7 @@ function openChromeOnWin32(conf) {
     var indexPath = path.resolve(pathHelper.app(), 'platforms', 'browser', 'www', 'index.html'),
         project = format('file://%s', indexPath);
         child = spawn(
-            'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe',
+            confStore.get('chrome') || 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe',
             ['--user-data-dir=C:/Chromedevsession', '--disable-web-security', project],
             { detached: true , stdio:'ignore'}
         );
@@ -52,7 +54,7 @@ function openChromeOnLinux(conf) {
     var indexPath = path.resolve(pathHelper.app(), 'platforms', 'browser', 'www', 'index.html'),
         project = format('file://%s', indexPath);
         child = spawn(
-            'chromium',
+            confStore.get('chrome') || 'chrome-browser',
             ['--user-data-dir=/tmp/temp_chrome_user_data_dir_for_cordova_browser', '--disable-web-security', project],
             { detached: true , stdio:'ignore'}
         );
