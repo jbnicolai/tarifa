@@ -57,6 +57,12 @@ function platform (action, type, verbose) {
     });
 }
 
+function list(verbose) {
+    return tarifaFile.parse(pathHelper.root()).then(function () {
+        return platformsLib.list(pathHelper.root(), verbose);
+    });
+}
+
 function action (argv) {
     var verbose = false,
         actions = ['add', 'remove'],
@@ -67,9 +73,7 @@ function action (argv) {
             verbose = true;
         }
         if(argv._[0] === 'list' && argsHelper.matchArgumentsCount(argv, [1])){
-            return tarifaFile.parse(pathHelper.root()).then(function () {
-                return platformsLib.list(pathHelper.root(), true);
-            });
+            return list(true);
         }
         if(actions.indexOf(argv._[0]) > -1
             && argsHelper.matchArgumentsCount(argv, [2])) {
@@ -81,5 +85,5 @@ function action (argv) {
 }
 
 action.platform = platform;
-action.list = platformsLib.list;
+action.list = list;
 module.exports = action;

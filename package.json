@@ -65,7 +65,8 @@
     "cordova-deploy-windows-phone": "3.5.0-2"
   },
   "scripts": {
-    "test": "mocha test/xml test/xml/android test/xml/wp8 test"
+    "test": "mocha test/xml test/xml/android test/xml/wp8 test",
+    "all": "mocha test/xml test/xml/android test/xml/wp8 test/all"
   },
   "devDependencies": {
     "mocha": "^1.21.4",

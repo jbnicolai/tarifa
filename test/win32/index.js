@@ -13,241 +13,245 @@ var should = require('should'),
     runAction = require('../../actions/run'),
     platformAction = require('../../actions/platform');
 
-describe('testing tarifa cli on win32', function() {
+module.exports = function (options) {
+    describe('testing tarifa cli on win32', function() {
 
-    var projectDefer = Q.defer(),
-        cwd = process.cwd();
+        var projectDefer = Q.defer(),
+            cwd = process.cwd();
 
-    before('create a empty project', setupHelper(tmp, projectDefer, 'create_response_win32.json'));
+        before('create a empty project', setupHelper(tmp, projectDefer, 'create_response_win32.json'));
 
-    it('create a project (wp8 & android)', function () {
-        this.timeout(0);
-        return projectDefer.promise;
-    });
-
-    describe('tarifa prepare', function() {
-        it('tarifa prepare browser', function () {
+        it('create a project (wp8 & android)', function () {
             this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return prepareAction.prepare('browser', 'default', false);
-            });
+            return projectDefer.promise;
         });
 
-        it('tarifa prepare android stage', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return prepareAction.prepare('android', 'stage', false);
+        describe('tarifa prepare', function() {
+            it('tarifa prepare browser', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return prepareAction.prepare('browser', 'default', false);
+                });
             });
-        });
 
-        it('tarifa prepare wp8 prod', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return prepareAction.prepare('wp8', 'prod', false);
+            it('tarifa prepare android stage', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return prepareAction.prepare('android', 'stage', false);
+                });
             });
-        });
-    });
 
-    describe('tarifa build', function() {
-        it('tarifa build browser', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return buildAction.build('browser', 'default', false, false);
-            });
-        });
-
-        it('tarifa build android', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return buildAction.build('android', 'default', false, false);
-            });
-        });
-
-        it('tarifa build wp8', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return buildAction.build('wp8', 'default', false, false);
-            });
-        });
-    });
-
-    describe('tarifa clean', function() {
-        it('clean android', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return cleanAction.clean('android', false);
-            });
-        });
-        it('clean wp8', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return cleanAction.clean('wp8', false);
-            });
-        });
-    });
-
-    describe('tarifa plugin', function() {
-        it('tarifa plugin add ../../fixtures/emptyplugin', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return pluginAction.plugin('add', path.join(__dirname, '../fixtures/emptyplugin'), false);
-            });
-        });
-
-        it('tarifa plugin list', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return pluginAction.list(false).then(function (rslt) {
-                    rslt.indexOf("test.test.test").should.equal(1);
+            it('tarifa prepare wp8 prod', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return prepareAction.prepare('wp8', 'prod', false);
                 });
             });
         });
 
-        it('re tarifa plugin add ../fixtures/emptyplugin', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                var p = path.join(__dirname, '../fixtures/emptyplugin');
-                return pluginAction.plugin('add', p, false).should.be.rejected;
+        describe('tarifa build', function() {
+            it('tarifa build browser', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return buildAction.build('browser', 'default', false, false);
+                });
+            });
+
+            it('tarifa build android', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return buildAction.build('android', 'default', false, false);
+                });
+            });
+
+            it('tarifa build wp8', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return buildAction.build('wp8', 'default', false, false);
+                });
             });
         });
 
-        it('tarifa plugin remove test.test.test', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return pluginAction.plugin('remove', 'test.test.test');
+        describe('tarifa clean', function() {
+            it('clean android', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return cleanAction.clean('android', false);
+                });
+            });
+            it('clean wp8', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return cleanAction.clean('wp8', false);
+                });
             });
         });
 
-        it('tarifa plugin add https://github.com/apache/cordova-plugin-vibration.git#r0.3.11', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return pluginAction.plugin('add', 'https://github.com/apache/cordova-plugin-vibration.git#r0.3.11', false).then(function () {
+        describe('tarifa plugin', function() {
+            it('tarifa plugin add ../../fixtures/emptyplugin', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return pluginAction.plugin('add', path.join(__dirname, '../fixtures/emptyplugin'), false);
+                });
+            });
+
+            it('tarifa plugin list', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
                     return pluginAction.list(false).then(function (rslt) {
-                        rslt.indexOf("org.apache.cordova.vibration").should.equal(1);
+                        rslt.indexOf("test.test.test").should.equal(1);
                     });
                 });
             });
-        });
 
-    });
-
-    describe('tarifa check', function () {
-        it('check android & wp8', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return checkAction.check(false);
+            it('re tarifa plugin add ../fixtures/emptyplugin', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    var p = path.join(__dirname, '../fixtures/emptyplugin');
+                    return pluginAction.plugin('add', p, false).should.be.rejected;
+                });
             });
-        });
-    });
 
-    describe('tarifa config', function () {
-        it('tarifa config icons generate red dev', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return configAction.generateIcons('red', 'dev', false);
+            it('tarifa plugin remove test.test.test', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return pluginAction.plugin('remove', 'test.test.test');
+                });
             });
-        });
 
-        it('tarifa config splashscreens red dev', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return configAction.generateSplashscreens('red', 'dev', false);
+            it('tarifa plugin add https://github.com/apache/cordova-plugin-vibration.git#r0.3.11', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return pluginAction.plugin('add', 'https://github.com/apache/cordova-plugin-vibration.git#r0.3.11', false).then(function () {
+                        return pluginAction.list(false).then(function (rslt) {
+                            rslt.indexOf("org.apache.cordova.vibration").should.equal(1);
+                        });
+                    });
+                });
             });
+
         });
 
-        it('tarifa config icons file test.png stage', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return configAction.generateIconsFromFile(path.resolve(__dirname, '..', 'fixtures', 'momo.png'), 'stage', false);
-            });
-        });
-
-    });
-
-    describe('tarifa run', function () {
-        it('tarifa run android dev', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return runAction.run('android', 'dev', false);
-            });
-        });
-
-        it('tarifa run android stage', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return runAction.run('android', 'stage', false);
-            });
-        });
-
-        it('tarifa run wp8 stage', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return runAction.run('wp8', 'stage', false);
-            });
-        });
-
-        it('tarifa run wp8', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return runAction.run('wp8', 'default', false);
-            });
-        });
-
-        it('tarifa run browser stage', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return runAction.run('browser', 'stage', false);
-            });
-        });
-
-        it('tarifa run browser', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return runAction.run('browser', 'default', false);
-            });
-        });
-
-    });
-
-    describe('tarifa platform', function () {
-        it('tarifa platform list', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function () {
-                return platformAction.list().then(function (rslt) {
-                    rslt.indexOf('android').should.be.above(-1);
-                    rslt.indexOf('wp8').should.be.above(-1);
+        describe('tarifa check', function () {
+            it('check android & wp8', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return checkAction.check(false);
                 });
             });
         });
 
-        it('tarifa platform remove wp8', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return platformAction.platform('remove', 'wp8', false);
+        describe('tarifa config', function () {
+            it('tarifa config icons generate red dev', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return configAction.generateIcons('red', 'dev', false);
+                });
             });
+
+            it('tarifa config splashscreens red dev', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return configAction.generateSplashscreens('red', 'dev', false);
+                });
+            });
+
+            it('tarifa config icons file test.png stage', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return configAction.generateIconsFromFile(path.resolve(__dirname, '..', 'fixtures', 'momo.png'), 'stage', false);
+                });
+            });
+
         });
 
-        it('tarifa platform remove android', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return platformAction.platform('remove', 'android', false);
-            });
-        });
+        if(options.run) {
+            describe('tarifa run', function () {
+                it('tarifa run android dev', function () {
+                    this.timeout(0);
+                    return projectDefer.promise.then(function (rslt) {
+                        return runAction.run('android', 'dev', false);
+                    });
+                });
 
-        it('tarifa platform add android', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return platformAction.platform('add', 'android', false);
-            });
-        });
+                it('tarifa run android stage', function () {
+                    this.timeout(0);
+                    return projectDefer.promise.then(function (rslt) {
+                        return runAction.run('android', 'stage', false);
+                    });
+                });
 
-        it('try to re call tarifa platform add android', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (rslt) {
-                return platformAction.platform('add', 'android', false).should.be.rejected;
+                it('tarifa run wp8 stage', function () {
+                    this.timeout(0);
+                    return projectDefer.promise.then(function (rslt) {
+                        return runAction.run('wp8', 'stage', false);
+                    });
+                });
+
+                it('tarifa run wp8', function () {
+                    this.timeout(0);
+                    return projectDefer.promise.then(function (rslt) {
+                        return runAction.run('wp8', 'default', false);
+                    });
+                });
+
+                it('tarifa run browser stage', function () {
+                    this.timeout(0);
+                    return projectDefer.promise.then(function (rslt) {
+                        return runAction.run('browser', 'stage', false);
+                    });
+                });
+
+                it('tarifa run browser', function () {
+                    this.timeout(0);
+                    return projectDefer.promise.then(function (rslt) {
+                        return runAction.run('browser', 'default', false);
+                    });
+                });
+
             });
+        }
+
+        describe('tarifa platform', function () {
+            it('tarifa platform list', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function () {
+                    return platformAction.list().then(function (rslt) {
+                        rslt.indexOf('android').should.be.above(-1);
+                        rslt.indexOf('wp8').should.be.above(-1);
+                    });
+                });
+            });
+
+            it('tarifa platform remove wp8', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return platformAction.platform('remove', 'wp8', false);
+                });
+            });
+
+            it('tarifa platform remove android', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return platformAction.platform('remove', 'android', false);
+                });
+            });
+
+            it('tarifa platform add android', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return platformAction.platform('add', 'android', false);
+                });
+            });
+
+            it('try to re call tarifa platform add android', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return platformAction.platform('add', 'android', false).should.be.rejected;
+                });
+            });
+
         });
 
     });
-
-});
+};
