@@ -47,11 +47,18 @@ module.exports = function (projectDefer, options) {
                 });
             });
         });
+
+        it('tarifa plugin remove org.apache.cordova.vibration', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return pluginAction.plugin('remove', 'org.apache.cordova.vibration');
+            });
+        });
     });
 
     describe('be able to add and remove any default plugins', function () {
 
-        plugins.filter(function (p) { return !p["default"]; }).forEach(function (plugin) {
+        plugins.filter(function (p) { return !p["default"] && p.value !== 'org.apache.cordova.file'; }).forEach(function (plugin) {
             it(format('tarifa plugin add %s', plugin.uri), function () {
                 this.timeout(0);
                 return projectDefer.promise.then(function (rslt) {
@@ -64,7 +71,7 @@ module.exports = function (projectDefer, options) {
             });
         });
 
-        plugins.forEach(function (plugin) {
+        plugins.filter(function (p) { return p.value !== 'org.apache.cordova.file'; }).forEach(function (plugin) {
             it(format('tarifa plugin remove %s', plugin.value), function () {
                 this.timeout(0);
                 return projectDefer.promise.then(function (rslt) {
