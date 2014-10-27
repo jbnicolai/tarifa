@@ -26,6 +26,10 @@ attribute in the tarifa.json file
 - cleaning gradle build cache on `tarifa clean`
 - update .gitignore for gradle builds
 - ability to overwrite chrome path on linux and windows in user configstore yaml file
+- be able to choose `all` devices on `tarifa run`
+- speed up the cli by not requiring all actions on start
+- support 9patch splashscreens on android
+- `tarifa platform` supports following format for add action: `$platform@version`
 
 ## 0.2.5 10/09/2014
 
