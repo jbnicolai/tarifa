@@ -25,7 +25,7 @@ attribute in the tarifa.json file
 - adding a wp8 gitignore
 - cleaning gradle build cache on `tarifa clean`
 - update .gitignore for gradle builds
-
+- ability to overwrite chrome path on linux and windows in user configstore yaml file
 
 ## 0.2.5 10/09/2014
 
