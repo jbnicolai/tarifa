@@ -13,7 +13,7 @@ corresponding value is `'./project/bin/check_browser.js'`
 - update cordova-lib to 4.0.0
 - replace the `web` platform with the new `browser` platform
 - `tarifa info` adding current project cordova-$platform versions
-- adding tests: `npm test`
+- adding tests: `npm test` and `npm run all`
 - www project output can be changed in any configuration with
 the `project_output` attribute
 - warn user if name given in tarifa file does not match the cordova project's name

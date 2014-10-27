@@ -5,9 +5,9 @@ tarifa [![experimental](http://hughsk.github.io/stability-badges/dist/experiment
     <img src="./template/assets/logo.png" width="100px" align="center" alt="tarifa logo" />
 </a>
 
-*Your friendly toolchain for mobile app development based on Apache Cordova*
+*Your friendly toolchain for mobile app development on top of Apache Cordova*
 
-tarifa is a CLI based on [Apache Cordova](http://cordova.apache.org/).
+tarifa is a CLI on top of [Apache Cordova](http://cordova.apache.org/).
 It aims at simplifying the Apache Cordova workflow and adding features to complete cordova toolchain such as:
 
 * **multiple configurations**: produce multiple unique apps easily on a given platform within a single project.
@@ -22,7 +22,7 @@ with adequate questions and save the answers in the project files.
 | -------------------------------------------|:------:|:-----:|:-----:|
 | [ios](http://developer.apple.com/)         | ✔      | ✗     | ✗     |
 | [android](http://developer.android.com/)   | ✔      | ✔     | ✔     |
-| [windows phone](http://msdn.microsoft.com/en-us/library/windows/apps/ff630878(v=vs.105).aspx) | ✗      | ✗     | ✔     |
+| [windows phone](http://msdn.microsoft.com/en-us/library/windows/apps/ff630878) | ✗      | ✗     | ✔     |
 
 * [nomad cli: cupertino](https://github.com/nomad/cupertino) (only for ios)
 * [ImageMagick](http://www.imagemagick.org/)
