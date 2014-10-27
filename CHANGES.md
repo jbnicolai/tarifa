@@ -9,14 +9,14 @@
 ### changes
 
 - update cordova-lib to 4.0.0
-- switch `web` platform to new `browser`platform
+- replace the `web` platform with the new `browser` platform
 - `tarifa info` adding current project cordova-$platform versions
-- adding test: `npm test`
+- adding tests: `npm test`
 - www project output can be changed in any configuration with
 the `project_output` attribute
-- warn user if name given in tarifa file does not match cordova project
-- icons and splashscreens folder `image` can be overwritten with the `assets_path`
-attribute in any tarifa.json file
+- warn user if name given in tarifa file does not match the cordova project's name
+- icons and splashscreens folder `images` can be overwritten with the `assets_path`
+attribute in the tarifa.json file
 - the cordova attribute in tarifa.json can be overwritten in any configuration
 - new command `tarifa update` for updating default plugins and cordova platforms
 - call tarifa in any project subdirectory
