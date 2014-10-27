@@ -26,6 +26,8 @@ module.exports = function (options) {
             return projectDefer.promise;
         });
 
+        require('../plugins/install')(projectDefer, options);
+
         describe('tarifa prepare', function() {
             it('tarifa prepare browser', function () {
                 this.timeout(0);
