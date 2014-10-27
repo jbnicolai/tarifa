@@ -1,9 +1,12 @@
 ## 0.3.0 10/XX/2014
 
-upgrade a project from 0.2.5 to 0.3.0:
-• remove the `web` platform and the according configuration in the tarifa.json
-• execute the command `tarifa update --verbose` to update cordova plugins and platforms
-• execute the command `tarifa platform add browser --verbose` to add the browser platform
+### upgrade a project from 0.2.5 to 0.3.0
+
+- remove the `web` platform and the according configuration in the tarifa.json
+- execute the command `tarifa update --verbose` to update cordova plugins and platforms
+- execute the command `tarifa platform add browser --verbose` to add the browser platform
+
+### changes
 
 - update cordova-lib to 4.0.0
 - switch `web` platform to new `browser`platform
