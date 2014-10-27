@@ -1,4 +1,28 @@
-## 0.2.5 10/09/2014¬
+## 0.3.0 10/XX/2014
+
+upgrade a project from 0.2.5 to 0.3.0:
+• remove the `web` platform and the according configuration in the tarifa.json
+• execute the command `tarifa update --verbose` to update cordova plugins and platforms
+• execute the command `tarifa platform add browser --verbose` to add the browser platform
+
+- update cordova-lib to 4.0.0
+- switch `web` platform to new `browser`platform
+- `tarifa info` adding current project cordova-$platform versions
+- adding test: `npm test`
+- www project output can be changed in any configuration with
+the `project_output` attribute
+- warn user if name given in tarifa file does not match cordova project
+- icons and splashscreens folder `image` can be overwritten with the `assets_path`
+attribute in any tarifa.json file
+- the cordova attribute in tarifa.json can be overwritten in any configuration
+- new command `tarifa update` for updating default plugins and cordova platforms
+- call tarifa in any project subdirectory
+- adding a wp8 gitignore
+- cleaning gradle build cache on `tarifa clean`
+- update .gitignore for gradle builds
+
+
+## 0.2.5 10/09/2014
 
 - remove postinstall scripts
 
