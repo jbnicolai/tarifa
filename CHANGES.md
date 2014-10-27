@@ -5,6 +5,8 @@
 - remove the `web` platform and the according configuration in the tarifa.json
 - execute the command `tarifa update --verbose` to update cordova plugins and platforms
 - execute the command `tarifa platform add browser --verbose` to add the browser platform
+- in the tarifa.json file, rename the `check.web` key to `check.browser` and ensure the
+corresponding value is `'./project/bin/check_browser.js'`
 
 ### changes
 
