@@ -1,4 +1,5 @@
 var Q = require('q'),
+    pathHelper = require('../../../../lib/helper/path'),
     print = require('../../../../lib/helper/print'),
     exec = require('child_process').exec,
     path = require('path');
@@ -6,7 +7,7 @@ var Q = require('q'),
 var install = function (conf, device) {
     var defer = Q.defer();
     var product_name = conf.localSettings.configurations['ios'][conf.configuration].product_name;
-    var app_path = path.join('app/platforms/ios/build/device', product_name.replace(/ /g, '\\ ') + '.app');
+    var app_path = path.join(pathHelper.app(), 'platforms/ios/build/device', product_name.replace(/ /g, '\\ ') + '.app');
     var bin = path.join(__dirname, '..', '..', '..', '..', 'node_modules', 'ios-deploy', 'ios-deploy');
     var cmd = bin + ' -L -i ' + device + ' -b ' + app_path + ' --verbose';
     var options = {

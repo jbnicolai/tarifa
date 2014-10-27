@@ -14,7 +14,7 @@ var Q = require('q'),
 process.env.ANDROID_BUILD = 'gradle';
 
 var tasks = {
-    web: {
+    browser: {
         'pre-cordova-prepare-release': [],
         'pre-cordova-prepare' : [],
         'pre-cordova-compile' : [],
@@ -89,11 +89,10 @@ var tasks = {
 };
 
 var prepare = function (conf) {
-    if(conf.platform === 'web') return Q.resolve(conf);
     var cwd = process.cwd();
     var defer = Q.defer();
 
-    process.chdir(path.join(cwd, settings.cordovaAppPath));
+    process.chdir(pathHelper.app());
     if(conf.verbose) print.success('start cordova prepare');
 
     cordova.prepare({
@@ -109,14 +108,14 @@ var prepare = function (conf) {
 };
 
 var compile = function (conf) {
-    if(conf.platform === 'web') return Q.resolve(conf);
+    if(conf.platform === 'browser') return Q.resolve(conf);
     var cwd = process.cwd();
     var defer = Q.defer();
     var options = conf.localSettings.mode ? [ conf.localSettings.mode ] : [];
 
     if(conf.platform === 'ios') options.push('--device');
 
-    process.chdir(path.join(cwd, settings.cordovaAppPath));
+    process.chdir(pathHelper.app());
     if(conf.verbose) print.success('start cordova build');
 
     cordova.compile({
@@ -154,6 +153,8 @@ var buildƒ = function (conf){
 
     if(conf.verbose) print.success('start to build the www project');
 
+    var cwd = process.cwd();
+    process.chdir(pathHelper.root());
     return prepareAction.prepareƒ(conf)
         .then(runReleaseTasks('pre-cordova-prepare-release'))
         .then(runTasks('pre-cordova-prepare'))
@@ -162,9 +163,11 @@ var buildƒ = function (conf){
         .then(compile)
         .then(runTasks('post-cordova-compile'))
         .then(function () {
+            process.chdir(cwd);
             if (conf.keepFileChanges) return Q.resolve(conf);
             else return runTasks('undo')(conf);
         }, function (err) {
+            process.chdir(cwd);
             if(conf.verbose) print.error('build action chain failed, start undo tasks...');
             return runTasks('undo')(conf).then(function () {
                 return Q.reject(err);

@@ -123,7 +123,7 @@ function listAvailablePlatforms() {
 }
 
 function check_cordova(platforms, verbose) {
-    var cordovaLibPaths = platforms.filter(function(p) { return p!== 'web'; }).map(function (platform) {
+    var cordovaLibPaths = platforms.map(function (platform) {
             return cordova_lazy_load.cordova(platform).then(function (libPath) {
                 return {
                     name: platform,
@@ -147,7 +147,7 @@ function check_cordova_platform_version(platforms, verbose) {
         return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
             return getCordovaPlatformsVersion(
                 path.join(pathHelper.root(), settings.cordovaAppPath),
-                localSettings.platforms.filter(function (p) { return p!=='web'; })
+                localSettings.platforms
             ).then(function (versions) {
                 versions.forEach(function (v) {
                     print("%s %s", chalk.green(format("current project version %s:", v.name)), v.version);

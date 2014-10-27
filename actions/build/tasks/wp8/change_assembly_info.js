@@ -1,12 +1,12 @@
 var Q = require('q'),
     path = require('path'),
     fs = require('q-io/fs'),
+    pathHelper = require('../../../../lib/helper/path'),
     print = require('../../../../lib/helper/print'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
-    var cwd = process.cwd();
-    var assemblyPath = path.join(cwd, settings.cordovaAppPath, 'platforms', 'wp8', 'Properties', 'AssemblyInfo.cs');
+    var assemblyPath = path.join(pathHelper.app(), 'platforms', 'wp8', 'Properties', 'AssemblyInfo.cs');
     var product_file_name = msg.localSettings.configurations.wp8[msg.configuration]['product_file_name'];
     var guid = msg.localSettings.configurations.wp8[msg.configuration]['guid'];
     var author = msg.localSettings.author.name;

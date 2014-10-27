@@ -1,8 +1,8 @@
 {
   "name": "tarifa",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "author": "Paul Panserrieu <paul@42loops.com>",
-  "description": "Your friendly toolchain for mobile app development based on Cordova",
+  "description": "Your friendly toolchain for mobile app development on top of Apache Cordova",
   "repository": {
     "type": "git",
     "url": "https://github.com/TarifaTools/tarifa.git"
@@ -14,7 +14,7 @@
     "mobile",
     "ios",
     "android",
-    "web",
+    "browser",
     "app",
     "cli",
     "worflow"
@@ -39,7 +39,7 @@
     "char-spinner": "^1.0.1",
     "color": "^0.7.1",
     "configstore": "^0.3.1",
-    "cordova-lib": "0.21.13",
+    "cordova-lib": "4.0.0",
     "figures": "^1.3.3",
     "findit": "^2.0.0",
     "inquirer": "^0.8.0",
@@ -64,8 +64,8 @@
     "cordova-deploy-windows-phone": "3.5.0-2"
   },
   "scripts": {
-    "test": "mocha test/xml test/xml/android test/xml/wp8",
-    "darwin": "mocha test/darwin"
+    "test": "mocha test/xml test/xml/android test/xml/wp8 test",
+    "all": "mocha test/xml test/xml/android test/xml/wp8 test/all"
   },
   "devDependencies": {
     "mocha": "^1.21.4",

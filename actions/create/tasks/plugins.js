@@ -17,14 +17,14 @@ function add_cordova_plugin (root, name, uri) {
 
 module.exports = function (response) {
 
-    var platforms = response.platforms.filter(function (platform) { return platform != 'web'; });
-
     // merge mandatory + user selected plugins
-    response.plugins = pluginList.filter(function (p) { return p['default']; })
+    response.plugins = plugins.listAll().filter(function (p) { return p['default']; })
         .map(function (p) { return { uri: p.uri, value: p.value}; })
         .concat(response.plugins.map(function (plugin) {
-            return pluginList.reduce(function (r, p) {
-                if(p.value === plugin) { r.uri = p.uri; r.value = p.value; }
+            return plugins.listAll().reduce(function (r, p) {
+                if(p.value === plugin) {
+                    r.uri = p.uri; r.value = p.value;
+                }
                 return r;
             }, {});
         }));

@@ -15,7 +15,7 @@ var tasks = {
     android : [ './tasks/android/clean_gradle_build' ],
     ios : [ ],
     wp8 : [ ],
-    web : [ ]
+    browser : [ ]
 };
 
 var runTasks = function (platforms, localSettings, verbose) {
@@ -35,15 +35,23 @@ var runTasks = function (platforms, localSettings, verbose) {
 
 var clean = function (platform, verbose) {
     spinner();
+    var cwd = process.cwd();
+    process.chdir(pathHelper.root());
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         if(platform && !isAvailableOnHost(platform))
             return Q.reject('platform not available in host!');
         if(platform && localSettings.platforms.indexOf(platform) < 0)
             return Q.reject('platform not available in project!');
-       var availablePlatforms = localSettings.platforms.filter(isAvailableOnHost),
-           platforms = platform ? [platform] : availablePlatforms;
-        return cordovaClean(platforms, verbose)
+        var availablePlatforms = localSettings.platforms.filter(isAvailableOnHost),
+            platforms = platform ? [platform] : availablePlatforms;
+        return cordovaClean(pathHelper.root(), platforms, verbose)
             .then(runTasks(platforms, localSettings, verbose));
+    }).then(function (msg) {
+        process.chdir(cwd);
+        return msg;
+    }, function (err) {
+        process.chdir(cwd);
+        throw err;
     });
 };
 

@@ -16,11 +16,8 @@ function generate(color, config, f, verbose) {
     if(!colorHelper.validate(color)) return Q.reject('invalid color!');
 
     return tarifaFile.parse(root).then(function (localSettings) {
-        var platforms = localSettings.platforms.filter(function (platform) {
-            return platform !== 'web';
-        });
-        return Q.all(createFolders(root, platforms, config)).then(function () {
-            return f(color, root, platforms, config, verbose);
+        return Q.all(createFolders(root, localSettings.platforms, config)).then(function () {
+            return f(color, root, localSettings.platforms, config, verbose);
         });
     });
 }
@@ -30,11 +27,8 @@ function generateFromFile(file, config, f, verbose) {
     var root = pathHelper.root();
 
     return tarifaFile.parse(root).then(function (localSettings) {
-        var platforms = localSettings.platforms.filter(function (platform) {
-            return platform !== 'web';
-        });
-        return Q.all(createFolders(root, platforms, config)).then(function () {
-            return f(file, root, platforms, config, verbose);
+        return Q.all(createFolders(root, localSettings.platforms, config)).then(function () {
+            return f(file, root, localSettings.platforms, config, verbose);
         });
     });
 }

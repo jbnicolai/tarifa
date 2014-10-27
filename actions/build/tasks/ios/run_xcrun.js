@@ -1,6 +1,7 @@
 var Q = require('q'),
     exec = require('child_process').exec,
     path = require('path'),
+    pathHelper = require('../../../../lib/helper/path'),
     print = require('../../../../lib/helper/print'),
     settings = require('../../../../lib/settings');
 
@@ -13,11 +14,11 @@ module.exports = function (msg) {
 
     var product_file_name = conf['product_file_name'] + '.ipa',
         developer_identity = conf['apple_developer_identity'],
-        output = path.join(process.cwd(), 'app/platforms/ios/build', product_file_name),
+        output = path.join(pathHelper.app(), 'platforms', 'ios', 'build', product_file_name),
         provisioning_profile_path = conf['provisioning_profile_path'];
 
     var defer = Q.defer(),
-        app_input = path.join('app/platforms/ios/build/device', conf['product_name'] + '.app'),
+        app_input = path.join(pathHelper.app(), 'platforms', 'ios', 'build', 'device', conf['product_name'] + '.app'),
         cmd = 'xcrun -log -sdk iphoneos PackageApplication -v "'
             + app_input + '" -o "'
             + output

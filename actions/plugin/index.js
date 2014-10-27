@@ -6,10 +6,25 @@ var Q = require('q'),
     tarifaFile = require('../../lib/tarifa-file'),
     pathHelper = require('../../lib/helper/path'),
     print = require('../../lib/helper/print'),
+    settings = require('../../lib/settings'),
+    pluginXML = require('../../lib/xml/plugin.xml'),
     plugins = require('../../lib/cordova/plugins');
 
 function printPlugins(items) {
-    print(items.length ?  items.join('\n') : "no plugin installed!");
+    if(items.length === 0) {
+        print("no plugin installed!");
+        return Q.resolve();
+    }
+
+    return items.reduce(function (promise, p) {
+        return promise.then(function () {
+            var pluginPath = path.join(pathHelper.app(), 'plugins', p, 'plugin.xml');
+            return pluginXML.getVersion(pluginPath)
+                .then(function (v) {
+                    print('%s@%s', p, v);
+                });
+        });
+    }, Q.resolve());
 }
 
 function log(action, verbose) {
@@ -49,10 +64,10 @@ function plugin(action, arg, verbose) {
 function raw_plugin (root, action, arg, verbose) {
     return tarifaFile.parse(root)
         .then(function (settings) {
-            if(action == 'remove' && Object.keys(settings.plugins).indexOf(arg) < 0)
+            if(action == 'remove' && (!settings.plugins || Object.keys(settings.plugins).indexOf(arg) < 0))
                 return Q.reject(format("Can't remove uninstalled plugin %s", arg));
-            if(action == 'add' && Object.keys(settings.plugins).indexOf(arg) > -1)
-                return Q.reject(format("Can't installed already installed plugin %s", arg));
+            if(action == 'add' && (settings.plugins && Object.keys(settings.plugins).indexOf(arg) > -1))
+                return Q.reject(format("Can't install already installed plugin %s", arg));
             return plugins[action](root, arg)
                 .then(function (val) {
                     if (!val || !val.val || !val.uri) {

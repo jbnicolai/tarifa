@@ -58,7 +58,7 @@ function createUserCheckScripts(response) {
         write = function (platform) {
             return fs.write(path.join(response.path, 'project/bin', format('check_%s.js', platform)), content);
         };
-    return Q.all(response.platforms.map(write).concat([write('web')]))
+    return Q.all(response.platforms.map(write))
         .then(function () { return response; });
 }
 

@@ -8,7 +8,10 @@ var question = function (response, verbose) {
             type : 'checkbox',
             name : 'platforms',
             choices : choices,
-            message : 'Choose platforms (web is added by default)?'
+            validate: function (answer) {
+                return answer.length > 0 || 'one platform mandatory!';
+            },
+            message : 'Choose platforms?'
         };
     });
 };

@@ -1,11 +1,12 @@
 var Q = require('q'),
     settings = require('../../../../lib/settings'),
     print = require('../../../../lib/helper/print'),
+    pathHelper = require('../../../../lib/helper/path')
     exec = require('child_process').exec,
     path = require('path');
 
 module.exports = function (msg) {
-    var manifestPath = path.join(process.cwd(), settings.cordovaAppPath, 'platforms', 'android'),
+    var manifestPath = path.join(pathHelper.app(), 'platforms', 'android'),
         cmd = "android -s update project -p " + manifestPath + " -s",
         options = {
             timeout : 0,

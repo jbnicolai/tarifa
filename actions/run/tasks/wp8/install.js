@@ -1,13 +1,14 @@
 var Q = require('q'),
     exec = require('child_process').exec,
     format = require('util').format,
+    pathHelper = require('../../../../lib/helper/path'),
     print = require('../../../../lib/helper/print'),
     settings = require('../../../../lib/settings'),
     path = require('path');
 
 var install = function (conf, deviceIndex) {
     var defer = Q.defer(),
-        app_path = path.join('app','platforms','wp8'),
+        app_path = path.join(pathHelper.app(), 'platforms','wp8'),
         cmd = format("%s %s -d:%d", settings.external.cordovadeploy.name, app_path,  deviceIndex),
         options = {
             timeout : 0,

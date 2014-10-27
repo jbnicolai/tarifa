@@ -1,12 +1,12 @@
 var Q = require('q'),
     path = require('path'),
+    pathHelper = require('../../../../lib/helper/path'),
     print = require('../../../../lib/helper/print'),
     WMAppManifestBuilder = require('../../../../lib/xml/wp8/WMAppManifest.xml'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
-    var cwd = process.cwd(),
-        manifestPath = path.join(cwd, settings.cordovaAppPath, 'platforms', 'wp8', 'Properties', 'WMAppManifest.xml'),
+    var manifestPath = path.join(pathHelper.app(), 'platforms', 'wp8', 'Properties', 'WMAppManifest.xml'),
         name = msg.localSettings.configurations.wp8[msg.configuration]['product_name'],
         guid = msg.localSettings.configurations.wp8[msg.configuration]['guid'];
 

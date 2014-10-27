@@ -17,7 +17,7 @@ var tasks = {
     ],
     ios : [],
     wp8 : [],
-    web : []
+    browser : []
 };
 
 function getUserTasks (availablePlatforms, localSettings) {
@@ -30,15 +30,16 @@ function getUserTasks (availablePlatforms, localSettings) {
 }
 
 var check = function (verbose) {
+    var cwd = process.cwd();
+    process.chdir(pathHelper.root());
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         return installedPlatforms().then(function (platforms) {
             var platformNames = platforms.filter(function (p) {
                 return !p.disabled;
             }).map(function (p) { return p.name; });
-            platformNames.push('web');
             var userTasks = getUserTasks(platformNames.filter(isAvailableOnHost), localSettings);
             return localSettings.platforms.reduce(function (promiseP, platform) {
-                if(platform !== 'web' && platformNames.indexOf(platform) < 0) {
+                if(platformNames.indexOf(platform) < 0) {
                     if(settings.os_platforms[platform].indexOf(os.platform()) > -1)
                         print.error("platform %s is not installed on os, skipping checks...", platform);
                     return promiseP;
@@ -56,10 +57,15 @@ var check = function (verbose) {
                 settings: localSettings,
                 verbose: verbose
             }));
-
         });
     }).then(function (msg) {
-        return builder.init(process.cwd(), msg.verbose);
+        return builder.init(pathHelper.root(), msg.verbose);
+    }).then(function (val) {
+        process.chdir(cwd);
+        return val;
+    }, function (err) {
+        process.chdir(cwd);
+        throw err;
     });
 };
 

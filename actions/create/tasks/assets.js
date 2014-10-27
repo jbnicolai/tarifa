@@ -30,16 +30,13 @@ function copyDefaultAssets(root, platforms, verbose) {
 }
 
 module.exports = function (response) {
-    var platforms = response.platforms.filter(function (platform) {
-            return platform !== 'web';
-        }),
-        root = response.path,
+    var root = response.path,
         verbose = response.options.verbose;
 
-    return Q.all(createFolders(root, platforms, 'default', true))
+    return Q.all(createFolders(root, response.platforms, 'default', true))
         .then(log('assets folder created', verbose))
         .then(function () {
-            if(response.color) return generateAssets(response.color, root, platforms, verbose);
-            else return copyDefaultAssets(root, platforms, verbose);
+            if(response.color) return generateAssets(response.color, root, response.platforms, verbose);
+            else return copyDefaultAssets(root, response.platforms, verbose);
         }).then(function () { return response; });
 };
