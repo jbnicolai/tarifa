@@ -75,11 +75,19 @@ git clone https://github.com/TarifaTools/tarifa.git && cd tarifa && npm link .
 
 ### Tests
 
-You need to attach one device of each available platforms on your os
+run
 
 ```
 npm test
 ```
+
+test with devices:
+
+```
+npm run all
+```
+
+You need to attach one device of each available platforms on your os.
 
 ## License
 
