@@ -11,7 +11,8 @@ var should = require('should'),
     checkAction = require('../../actions/check'),
     configAction = require('../../actions/config'),
     runAction = require('../../actions/run'),
-    platformAction = require('../../actions/platform');
+    platformAction = require('../../actions/platform'),
+    settings = require('../../lib/settings');
 
 describe('testing tarifa cli on darwin', function() {
 
@@ -247,6 +248,26 @@ describe('testing tarifa cli on darwin', function() {
             });
         });
 
+    });
+
+    describe('run tarifa from various directories', function () {
+        it('tarifa build from project subdir', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                process.chdir(path.join(process.cwd(), settings.images));
+            }).then(function (rslt) {
+                return buildAction.build('browser', 'default', false, false);
+            });
+        });
+
+        it('tarifa build from root dir', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                process.chdir('/');
+            }).then(function (rslt) {
+                return buildAction.build('browser', 'default', false, false).should.be.rejected;
+            });
+        });
     });
 
 });

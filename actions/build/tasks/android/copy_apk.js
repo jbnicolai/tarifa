@@ -2,12 +2,13 @@ var Q = require('q'),
     path = require('path'),
     fs = require('q-io/fs'),
     format = require('util').format,
+    pathHelper = require('../../../../lib/helper/path'),
     print = require('../../../../lib/helper/print'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
     var product_name = msg.localSettings.configurations.android[msg.configuration]['product_file_name'],
-        out_dir = path.join(process.cwd(), settings.cordovaAppPath, 'platforms', 'android', 'build', 'apk'),
+        out_dir = path.join(pathHelper.app(), 'platforms', 'android', 'build', 'apk'),
         apk_name = msg.localSettings.mode ? 'android-release.apk' : 'android-debug-unaligned.apk';
 
     return fs.list(out_dir).then(function (files) {

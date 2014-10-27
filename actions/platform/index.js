@@ -15,15 +15,15 @@ var Q = require('q'),
     fs = require('q-io/fs');
 
 function addAssets(platform, verbose) {
-    var cwd = process.cwd();
-    return Q.all(createDefaultAssetsFolders(cwd, [platform], 'default'))
-        .then(function () { return copyDefaultIcons(cwd, [platform], verbose); })
-        .then(function () { return copyDefaultSplash(cwd, [platform], verbose); });
+    var root = pathHelper.root();
+    return Q.all(createDefaultAssetsFolders(root, [platform], 'default'))
+        .then(function () { return copyDefaultIcons(root, [platform], verbose); })
+        .then(function () { return copyDefaultSplash(root, [platform], verbose); });
 }
 
 function rmAssets(platform, verbose) {
     var defer = Q.defer();
-    var platformAssetsPath = path.join(process.cwd(), settings.images, platform);
+    var platformAssetsPath = path.join(pathHelper.root(), settings.images, platform);
     rimraf(platformAssetsPath, function (err) {
         if(err) defer.reject(err);
         if(verbose) print.success('removed asset folder');
@@ -34,13 +34,13 @@ function rmAssets(platform, verbose) {
 
 function add(type, verbose) {
     return tarifaFile.addPlatform(pathHelper.root(), type)
-        .then(function () { return platformsLib.add([type], verbose); })
+        .then(function () { return platformsLib.add(pathHelper.root(), [type], verbose); })
         .then(function () { return addAssets(type, verbose); });
 }
 
 function remove(type, verbose) {
     return tarifaFile.removePlatform(pathHelper.root(), type)
-        .then(function () { return platformsLib.remove([type], verbose); })
+        .then(function () { return platformsLib.remove(pathHelper.root(), [type], verbose); })
         .then(function () { return rmAssets(type, verbose); });
 }
 
@@ -68,7 +68,7 @@ function action (argv) {
         }
         if(argv._[0] === 'list' && argsHelper.matchArgumentsCount(argv, [1])){
             return tarifaFile.parse(pathHelper.root()).then(function () {
-                return platformsLib.list(true);
+                return platformsLib.list(pathHelper.root(), true);
             });
         }
         if(actions.indexOf(argv._[0]) > -1

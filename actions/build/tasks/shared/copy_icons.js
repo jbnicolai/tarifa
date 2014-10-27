@@ -1,10 +1,10 @@
 var Q = require('q'),
-    path = require('path'),
+    pathHelper = require('../../../../lib/helper/path'),
     print = require('../../../../lib/helper/print'),
     copyIcons = require('../../../../lib/cordova/icon').copyIcons;
 
 module.exports = function (msg) {
-    return copyIcons(msg.platform, msg.configuration)
+    return copyIcons(pathHelper.root(), msg.platform, msg.configuration)
     .then(function () {
         if(msg.verbose)
             print.success('copied icons for platform %s', msg.platform);

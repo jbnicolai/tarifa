@@ -3,6 +3,7 @@ var Q = require('q'),
     rimraf = require('rimraf'),
     mkdirp = require('mkdirp'),
     path = require('path'),
+    pathHelper = require('../../../../lib/helper/path'),
     print = require('../../../../lib/helper/print'),
     fs = require('fs'),
     settings = require('../../../../lib/settings'),
@@ -11,14 +12,13 @@ var Q = require('q'),
 
 module.exports = function (msg) {
     var defer = Q.defer();
-    var cwd = process.cwd();
     var androidConfs = msg.localSettings.configurations.android;
     var androidName = androidConfs[msg.configuration]['product_name'] || androidConfs['default']['product_name'] || androidConfs['name'];
     var androidId = msg.localSettings.configurations.android[msg.configuration]['id'] || msg.localSettings.id;
-    var srcPath = path.join(cwd, settings.cordovaAppPath, '/platforms/android/src/');
-    var finder = find(path.join(cwd, settings.cordovaAppPath, '/platforms/android/src/'));
+    var srcPath = path.join(pathHelper.app(), '/platforms/android/src/');
+    var finder = find(path.join(pathHelper.app(), '/platforms/android/src/'));
     var javaActivityTmpl = fs.readFileSync(path.join(__dirname, 'activity.java.tmpl'), 'utf-8');
-    var androidManifestXmlPath = path.join(cwd, settings.cordovaAppPath, 'platforms/android/AndroidManifest.xml');
+    var androidManifestXmlPath = path.join(pathHelper.app(), 'platforms/android/AndroidManifest.xml');
     var asbPath = path.join(srcPath, msg.localSettings.id.replace(/\./g, '/'));
 
     var currentActivityFile = path.join(
