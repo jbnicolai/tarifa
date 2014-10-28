@@ -11,6 +11,21 @@ var Q = require('q'),
     path = require('path'),
     fs = require('q-io/fs');
 
+var tryRemoveWWW = function (verbose) {
+    var defer = Q.defer();
+    var www = path.join(pathHelper.app(), "www");
+    rimraf(www, function (err) {
+        if(err) {
+            print.warning(err);
+            print.warning("not able to remove www folder in cordova app!");
+        }
+        fs.makeDirectory(www).then(function() {
+            defer.resolve();
+        });
+    });
+    return defer.promise;
+};
+
 var tasks = {
     android : [ './tasks/android/clean_gradle_build' ],
     ios : [ ],
@@ -44,8 +59,10 @@ var clean = function (platform, verbose) {
             return Q.reject('platform not available in project!');
         var availablePlatforms = localSettings.platforms.filter(isAvailableOnHostSync),
             platforms = platform ? [platform] : availablePlatforms;
-        return cordovaClean(pathHelper.root(), platforms, verbose)
-            .then(runTasks(platforms, localSettings, verbose));
+        return tryRemoveWWW().then(function () {
+            return cordovaClean(pathHelper.root(), platforms, verbose)
+                .then(runTasks(platforms, localSettings, verbose));
+        });
     }).then(function (msg) {
         process.chdir(cwd);
         return msg;
