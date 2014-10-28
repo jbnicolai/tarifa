@@ -7,7 +7,7 @@ var Q = require('q'),
     tarifaFile = require('../../lib/tarifa-file'),
     builder = require('../../lib/builder'),
     installedPlatforms = require('../../lib/cordova/platforms').installedPlatforms,
-    isAvailableOnHost = require('../../lib/cordova/platforms').isAvailableOnHost,
+    isAvailableOnHostSync = require('../../lib/cordova/platforms').isAvailableOnHostSync,
     path = require('path'),
     fs = require('q-io/fs');
 
@@ -37,7 +37,7 @@ var check = function (verbose) {
             var platformNames = platforms.filter(function (p) {
                 return !p.disabled;
             }).map(function (p) { return p.name; });
-            var userTasks = getUserTasks(platformNames.filter(isAvailableOnHost), localSettings);
+            var userTasks = getUserTasks(platformNames.filter(isAvailableOnHostSync), localSettings);
             return localSettings.platforms.reduce(function (promiseP, platform) {
                 if(platformNames.indexOf(platform) < 0) {
                     if(settings.os_platforms[platform].indexOf(os.platform()) > -1)

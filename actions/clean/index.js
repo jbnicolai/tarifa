@@ -5,11 +5,26 @@ var Q = require('q'),
     pathHelper = require('../../lib/helper/path'),
     print = require('../../lib/helper/print'),
     tarifaFile = require('../../lib/tarifa-file'),
-    isAvailableOnHost = require('../../lib/cordova/platforms').isAvailableOnHost,
+    isAvailableOnHostSync = require('../../lib/cordova/platforms').isAvailableOnHostSync,
     cordovaClean = require('../../lib/cordova/clean'),
     settings = require('../../lib/settings'),
     path = require('path'),
     fs = require('q-io/fs');
+
+var tryRemoveWWW = function (verbose) {
+    var defer = Q.defer();
+    var www = path.join(pathHelper.app(), "www");
+    rimraf(www, function (err) {
+        if(err) {
+            print.warning(err);
+            print.warning("not able to remove www folder in cordova app!");
+        }
+        fs.makeDirectory(www).then(function() {
+            defer.resolve();
+        });
+    });
+    return defer.promise;
+};
 
 var tasks = {
     android : [ './tasks/android/clean_gradle_build' ],
@@ -38,14 +53,16 @@ var clean = function (platform, verbose) {
     var cwd = process.cwd();
     process.chdir(pathHelper.root());
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
-        if(platform && !isAvailableOnHost(platform))
+        if(platform && !isAvailableOnHostSync(platform))
             return Q.reject('platform not available in host!');
         if(platform && localSettings.platforms.indexOf(platform) < 0)
             return Q.reject('platform not available in project!');
-        var availablePlatforms = localSettings.platforms.filter(isAvailableOnHost),
+        var availablePlatforms = localSettings.platforms.filter(isAvailableOnHostSync),
             platforms = platform ? [platform] : availablePlatforms;
-        return cordovaClean(pathHelper.root(), platforms, verbose)
-            .then(runTasks(platforms, localSettings, verbose));
+        return tryRemoveWWW().then(function () {
+            return cordovaClean(pathHelper.root(), platforms, verbose)
+                .then(runTasks(platforms, localSettings, verbose));
+        });
     }).then(function (msg) {
         process.chdir(cwd);
         return msg;
