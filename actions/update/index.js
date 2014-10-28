@@ -1,5 +1,6 @@
 var Q = require('q'),
     path = require('path'),
+    os = require('os'),
     fs = require('fs'),
     chalk = require('chalk'),
     inquirer = require('inquirer'),
@@ -31,8 +32,8 @@ function versionGreater(version1, version2) {
     var v1 = version1.split('.'),
         v2 = version2.split('.');
 
-    function greater(a, b) { return parseInt(a, 10) > parseInt(b, 10); };
-    function smaller(a, b) { return parseInt(a, 10) < parseInt(b, 10); };
+    function greater(a, b) { return parseInt(a, 10) > parseInt(b, 10); }
+    function smaller(a, b) { return parseInt(a, 10) < parseInt(b, 10); }
 
     for(var i=0, l=v1.length; i<l; i++) {
         if(greater(v1[i], v2[i])) return true;
@@ -114,7 +115,7 @@ function _addAvailablePlugins(root) {
                     }
                     return Q.resolve();
                 });
-            })
+            });
         }, Q.resolve()).then(function () {
             if(!msg.pluginToUpdate.length) print.line('  none');
             print.line();
