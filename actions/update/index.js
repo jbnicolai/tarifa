@@ -200,7 +200,9 @@ function update(verbose) {
             return {
                 localSettings: localSettings,
                 versionObj: JSON.parse(fs.readFileSync(path.join(root, '.tarifa.json'), 'utf-8')),
-                platforms: intersection(settings.platforms, localSettings.platforms),
+                platforms: intersection(settings.platforms.filter(function (p) {
+                    return settings.os_platforms[p].indexOf(os.platform()) > -1;
+                }), localSettings.platforms),
                 pluginToUpdate: [],
                 platformsToUpdate : [],
                 verbose: verbose
