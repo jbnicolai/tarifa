@@ -1,3 +1,7 @@
+## 0.3.1 10/28/2014
+
+- something went wrong while publishing 0.3.0 on npm: republish on npm.
+
 ## 0.3.0 10/28/2014
 
 ### upgrade a project from 0.2.5 to 0.3.0
