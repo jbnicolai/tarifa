@@ -8,8 +8,13 @@ var Q = require('q'),
     builder = require('../../../lib/builder');
 
 function makeRootDirectory(response) {
-    return fs.makeDirectory(response.path)
-        .then(function () { return response });
+    return fs
+      .isDirectory(response.path)
+      .then(function(exist) {
+        if(exist) return response;
+        return fs.makeDirectory(response.path)
+          .then(function () { return response });
+    });
 };
 
 function copyWWWProject(response) {
