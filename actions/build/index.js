@@ -190,9 +190,8 @@ var build = function (platform, config, keepFileChanges, verbose) {
 
 var buildAll = function (config, keepFileChanges, verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
-        return localSettings.platforms.filter(
-            platformsLib.isAvailableOnHostSync
-        ).reduce(function(promise, platform) {
+        return localSettings.platforms.filter(platformsLib.isAvailableOnHostSync)
+        .reduce(function(promise, platform) {
             return promise.then(function () {
                 print.outline('Launch build for ' + platform + ' platform!');
                 return buildƒ({
