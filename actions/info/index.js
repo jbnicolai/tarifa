@@ -6,7 +6,7 @@ var Q = require('q'),
     format = require('util').format,
     exec = require('child_process').exec,
     cordova_lazy_load = require('cordova-lib/src/cordova/lazy_load'),
-    installed_platforms = require('../../lib/cordova/platforms').installedPlatforms,
+    platformsLib = require('../../lib/cordova/platforms'),
     getCordovaPlatformsVersion = require('../../lib/cordova/version').getCordovaPlatformsVersion,
     argsHelper = require('../../lib/helper/args'),
     pathHelper = require('../../lib/helper/path'),
@@ -147,7 +147,7 @@ function check_cordova_platform_version(platforms, verbose) {
         return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
             return getCordovaPlatformsVersion(
                 path.join(pathHelper.root(), settings.cordovaAppPath),
-                localSettings.platforms
+                localSettings.platforms.filter(platformsLib.isAvailableOnHostSync)
             ).then(function (versions) {
                 versions.forEach(function (v) {
                     print("%s %s", chalk.green(format("current project version %s:", v.name)), v.version);
@@ -162,7 +162,7 @@ function check_cordova_platform_version(platforms, verbose) {
 
 function check_requirements(verbose) {
     return function () {
-        return installed_platforms(verbose).then(function (platforms) {
+        return platformsLib.installedPlatforms(verbose).then(function (platforms) {
             var installed = platforms.filter(function(platform) { return !platform.disabled; })
                 .map(function(platform) { return platform.name; });
             if (installed.length)
