@@ -1,7 +1,7 @@
-Usage: tarifa build <platform> [configuration]
+Usage: tarifa build <configuration> [platform]
 
-Build the project for the given platform, with no
-configuration 'default' will be used.
+Build the project for the given configuration. With no platform specified, all 
+installed platforms that your system support are built.
 
 Options:
 
@@ -11,4 +11,4 @@ Options:
 
 Examples:
 
-    tarifa build android prod
+    tarifa build prod android

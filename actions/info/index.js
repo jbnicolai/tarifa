@@ -157,7 +157,7 @@ function check_cordova_platform_version(platforms, verbose) {
             if(verbose) print.warning(err);
             print.warning("Not in a tarifa project, can't output installed platform versions");
         });
-    }
+    };
 }
 
 function check_requirements(verbose) {
@@ -172,7 +172,7 @@ function check_requirements(verbose) {
             if (disabled.length)
                 print("%s %s", chalk.green("disabled platforms on host:"), disabled.join(', '));
         });
-    }
+    };
 }
 
 function info(verbose) {

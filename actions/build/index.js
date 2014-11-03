@@ -8,7 +8,8 @@ var Q = require('q'),
     tarifaFile = require('../../lib/tarifa-file'),
     path = require('path'),
     fs = require('q-io/fs'),
-    prepareAction = require('../prepare');
+    prepareAction = require('../prepare'),
+    platformsLib = require('../../lib/cordova/platforms');
 
 // set android build to gradle!!!
 process.env.ANDROID_BUILD = 'gradle';
@@ -187,20 +188,42 @@ var build = function (platform, config, keepFileChanges, verbose) {
     });
 };
 
+var buildAll = function (config, keepFileChanges, verbose) {
+    return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
+        return localSettings.platforms.filter(
+            platformsLib.isAvailableOnHostSync
+        ).reduce(function(promise, platform) {
+            return promise.then(function () {
+                print.outline('Launch build for ' + platform + ' platform!');
+                return buildƒ({
+                    platform: platform,
+                    configuration: config,
+                    localSettings: localSettings,
+                    keepFileChanges: keepFileChanges,
+                    verbose: verbose
+                });
+            });
+        }, Q());
+    });
+};
+
 var action = function (argv) {
     var verbose = false,
         keepFileChanges = false,
         helpPath = path.join(__dirname, 'usage.txt');
 
-    if(argsHelper.matchArgumentsCount(argv, [1,2])
-            && argsHelper.checkValidOptions(argv, ['V', 'verbose', 'keep-file-changes'])) {
+    if(argsHelper.matchArgumentsCount(argv, [1,2]) &&
+    argsHelper.checkValidOptions(argv, ['V', 'verbose', 'keep-file-changes'])) {
         if(argsHelper.matchOption(argv, 'V', 'verbose')) {
             verbose = true;
         }
         if(argsHelper.matchOption(argv, null, 'keep-file-changes')) {
             keepFileChanges = true;
         }
-        return build(argv._[0], argv._[1] || 'default', keepFileChanges, verbose);
+        if (argv._[1])
+            return build(argv._[1], argv._[0], keepFileChanges, verbose);
+        else
+            return buildAll(argv._[0], keepFileChanges, verbose);
     }
 
     return fs.read(helpPath).then(print);
