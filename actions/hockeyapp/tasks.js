@@ -33,7 +33,10 @@ var upload = function (platform, config, argv, verbose) {
                     'versions_status',
                     'versions_tags',
                     'versions_teams',
-                    'versions_users'
+                    'versions_users',
+                    'versions_commit_sha',
+                    'versions_build_server_url',
+                    'versions_repository_url'
                 ].indexOf(e) > -1;
             });
             params = collsHelper.mapKeys(params, function (e) {
@@ -43,7 +46,8 @@ var upload = function (platform, config, argv, verbose) {
 
         // get relevant options in cmd args
         var opts = collsHelper.filterKeys(argv, function(e) {
-            return ['notes', 'notify', 'status', 'tags', 'teams', 'users'].indexOf(e) > -1;
+            return ['notes', 'notify', 'status', 'tags', 'teams', 'users',
+                'commit_sha', 'build_server_url', 'repository_url'].indexOf(e) > -1;
         });
 
         params = collsHelper.mergeObject(params, opts);
