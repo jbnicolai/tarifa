@@ -2,17 +2,20 @@ Usage: tarifa hockeyapp <task>
 
 Tasks:
 
-    version list <platform> <config>
-        Fetch the list of hockeyapp versions of <config> env for given platform.
+    version list <config> [<platform>]
+        Fetch the list of hockeyapp versions of <config> env for given platform,
+        or all platforms.
 
-    version upload <platform> <config> [options]
+    version upload <config> [<platform>] [options]
         Upload a version of <config> env package to hockeyapp for given platform.
+        If no platform specified, upload for all platforms installed.
         Options can be any of 'notes', 'notify', 'status', 'tags', 'teams', 'users'.
         See http://support.hockeyapp.net/kb/api/api-versions#upload-version for details.
 
-    version update <platform> <config> [options]
+    version update <config> [<platform>] [options]
         Modify last version of given platform for <config> env. You can only 
         modify metadatas; you can't upload a new package.
+        If no platform specified, upload for all platforms installed.
         Options can be any of 'notes', 'notify', 'status', 'tags', 'teams', 'users'.
         See http://support.hockeyapp.net/kb/api/api-versions#update-version for details.
 
