@@ -229,5 +229,6 @@ var action = function (argv) {
 };
 
 action.build = build;
+action.buildAll = buildAll;
 action.buildƒ = buildƒ;
 module.exports = action;

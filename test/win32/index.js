@@ -28,21 +28,21 @@ module.exports = function (options) {
         require('../plugins/install')(projectDefer, options);
 
         describe('tarifa prepare', function() {
-            it('tarifa prepare browser', function () {
+            it('tarifa prepare default browser', function () {
                 this.timeout(0);
                 return projectDefer.promise.then(function (rslt) {
                     return prepareAction.prepare('browser', 'default', false);
                 });
             });
 
-            it('tarifa prepare android stage', function () {
+            it('tarifa prepare stage android', function () {
                 this.timeout(0);
                 return projectDefer.promise.then(function (rslt) {
                     return prepareAction.prepare('android', 'stage', false);
                 });
             });
 
-            it('tarifa prepare wp8 prod', function () {
+            it('tarifa prepare prod wp8', function () {
                 this.timeout(0);
                 return projectDefer.promise.then(function (rslt) {
                     return prepareAction.prepare('wp8', 'prod', false);
@@ -51,21 +51,28 @@ module.exports = function (options) {
         });
 
         describe('tarifa build', function() {
-            it('tarifa build browser', function () {
+            it('tarifa build dev', function() {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return buildAction.buildAll('dev', false, false);
+                });
+            });
+
+            it('tarifa build default browser', function () {
                 this.timeout(0);
                 return projectDefer.promise.then(function (rslt) {
                     return buildAction.build('browser', 'default', false, false);
                 });
             });
 
-            it('tarifa build android', function () {
+            it('tarifa build default android', function () {
                 this.timeout(0);
                 return projectDefer.promise.then(function (rslt) {
                     return buildAction.build('android', 'default', false, false);
                 });
             });
 
-            it('tarifa build wp8', function () {
+            it('tarifa build default wp8', function () {
                 this.timeout(0);
                 return projectDefer.promise.then(function (rslt) {
                     return buildAction.build('wp8', 'default', false, false);
@@ -123,42 +130,49 @@ module.exports = function (options) {
 
         if(options.run) {
             describe('tarifa run', function () {
-                it('tarifa run android dev', function () {
+                it('tarifa run dev', function() {
+                    this.timeout(0);
+                    return projectDefer.promise.then(function (rslt) {
+                        return runAction.runAll('dev', false);
+                    });
+                });
+
+                it('tarifa run dev android', function () {
                     this.timeout(0);
                     return projectDefer.promise.then(function (rslt) {
                         return runAction.run('android', 'dev', false);
                     });
                 });
 
-                it('tarifa run android stage', function () {
+                it('tarifa run stage android', function () {
                     this.timeout(0);
                     return projectDefer.promise.then(function (rslt) {
                         return runAction.run('android', 'stage', false);
                     });
                 });
 
-                it('tarifa run wp8 stage', function () {
+                it('tarifa run stage wp8', function () {
                     this.timeout(0);
                     return projectDefer.promise.then(function (rslt) {
                         return runAction.run('wp8', 'stage', false);
                     });
                 });
 
-                it('tarifa run wp8', function () {
+                it('tarifa run default wp8', function () {
                     this.timeout(0);
                     return projectDefer.promise.then(function (rslt) {
                         return runAction.run('wp8', 'default', false);
                     });
                 });
 
-                it('tarifa run browser stage', function () {
+                it('tarifa run stage browser', function () {
                     this.timeout(0);
                     return projectDefer.promise.then(function (rslt) {
                         return runAction.run('browser', 'stage', false);
                     });
                 });
 
-                it('tarifa run browser', function () {
+                it('tarifa run default browser', function () {
                     this.timeout(0);
                     return projectDefer.promise.then(function (rslt) {
                         return runAction.run('browser', 'default', false);

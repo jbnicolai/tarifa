@@ -84,4 +84,5 @@ var action = function (argv) {
 };
 
 action.run = run;
+action.runAll = runAll;
 module.exports = action;
