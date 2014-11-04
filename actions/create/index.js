@@ -28,9 +28,22 @@ var Q = require('q'),
         require('./questions/deploy/apple_password'),
         require('./questions/deploy/has_apple_developer_team'),
         require('./questions/deploy/apple_developer_identity'),
-        require('./questions/deploy/provisioning_profile_name'),
-        require('./questions/deploy/keystore_path'),
-        require('./questions/deploy/keystore_alias')
+        require('./questions/deploy/provisioning_profile_name')
+    ],
+
+    shallReuseKeystore = [
+        require('./questions/deploy/keystore_reuse')
+    ],
+    reuseKeystoreQuestions = [
+        require('./questions/deploy/keystore_path_existing'),
+        require('./questions/deploy/keystore_storepass'),
+        require('./questions/deploy/keystore_alias_list')
+    ],
+    createKeystoreQuestions = [
+        require('./questions/deploy/keystore_path_non_existing'),
+        require('./questions/deploy/keystore_storepass'),
+        require('./questions/deploy/keystore_alias'),
+        require('./questions/deploy/keystore_keypass')
     ],
 
     isHockeyApp = [
@@ -46,6 +59,7 @@ var Q = require('q'),
         require('./tasks/cordova'),
         require('./tasks/platforms'),
         require('./tasks/fetch-provisioning-file'),
+        require('./tasks/create-keystore'),
         require('./tasks/tarifa-file'),
         require('./tasks/git'),
         require('./tasks/plugins'),
@@ -127,6 +141,14 @@ function create(verbose) {
         .then(function (resp) {
             if(resp.deploy) return askQuestions(deployQuestions, 'deploy')(resp);
             else return resp;
+        })
+        .then(function (resp) {
+            return askQuestions(shallReuseKeystore, 'deploy')(resp);
+        })
+        .then(function (resp) {
+            var nextQuestions = resp.keystore_reuse ? reuseKeystoreQuestions :
+                                                      createKeystoreQuestions;
+            return askQuestions(nextQuestions, 'deploy')(resp);
         })
         .then(function (resp) {
             return askQuestions(isHockeyApp, '')(resp);

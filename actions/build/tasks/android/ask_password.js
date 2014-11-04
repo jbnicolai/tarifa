@@ -1,18 +1,15 @@
 var Q = require('q'),
-    inquirer = require('inquirer'),
+    inquirer = require('inquirer');
 
-    question = [{
-        type:'password',
-        name:'password',
-        message:'What is your keystore password?'
-    }];
-
-module.exports = function () {
-    var defer = Q.defer();
-
-    inquirer.prompt(question, function(response) {
-        defer.resolve(response.password);
+module.exports = function (message) {
+    var d = Q.defer(),
+        question = [{
+            type: 'password',
+            name: 'password',
+            message: message
+        }];
+    inquirer.prompt(question, function (resp) {
+        d.resolve(resp.password);
     });
-
-    return defer.promise;
+    return d.promise;
 };
