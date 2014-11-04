@@ -9,7 +9,7 @@ var Q = require('q'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
     pathHelper = require('../../lib/helper/path'),
-    isAvailableOnHost = require('../../lib/cordova/platforms').isAvailableOnHost,
+    platformsLib = require('../../lib/cordova/platforms'),
     buildAction = require('../build'),
     askDevice = require('./ask_device'),
 
@@ -37,7 +37,7 @@ var run = function (platform, config, verbose) {
     spinner();
     return Q.all([
             tarifaFile.parse(pathHelper.root(), platform, config),
-            isAvailableOnHost(platform)
+            platformsLib.isAvailableOnHost(platform)
         ]).spread(function (localSettings) {
             return runƒ({
                 localSettings: localSettings,
@@ -48,16 +48,36 @@ var run = function (platform, config, verbose) {
         });
 };
 
+var runAll = function (config, verbose) {
+    return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
+        return localSettings.platforms.filter(platformsLib.isAvailableOnHostSync)
+        .reduce(function(promise, platform) {
+            return promise.then(function () {
+                print.outline('Launch run for ' + platform + ' platform!');
+                return runƒ({
+                    localSettings: localSettings,
+                    platform: platform,
+                    configuration: config,
+                    verbose: verbose
+                });
+            });
+        }, Q());
+    });
+};
+
 var action = function (argv) {
     var verbose = false,
-        helpPath = path.join(__dirname, 'usage.txt');
+    helpPath = path.join(__dirname, 'usage.txt');
 
-    if(argsHelper.matchArgumentsCount(argv, [1,2])
-            && argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
+    if(argsHelper.matchArgumentsCount(argv, [1,2]) &&
+    argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
         if(argsHelper.matchOption(argv, 'V', 'verbose')) {
             verbose = true;
         }
-        return run(argv._[0], argv._[1] || 'default', verbose);
+        if(argv._[1])
+            return run(argv._[1], argv._[0], verbose);
+        else
+            return runAll(argv._[0], verbose);
     }
 
     return fs.read(helpPath).then(print);

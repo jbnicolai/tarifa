@@ -1,7 +1,7 @@
 Usage: tarifa build <configuration> [platform]
 
-Build the project for the given configuration. With no platform specified, all 
-installed platforms that your system support are built.
+Build the project for the given configuration. With no platform specified, it 
+will build all installed platforms available on your operating system.
 
 Options:
 

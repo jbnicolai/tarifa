@@ -1,7 +1,7 @@
-Usage: tarifa run <platform> [configuration]
+Usage: tarifa run <configuration> [platform]
 
-Run the project on your device for the given platform, with no
-configuration 'default' will be used.
+Run the project on your device for the given platform. With no platform
+specified, it will run all installed platforms available on your operating system.
 
 Options:
 
@@ -10,4 +10,4 @@ Options:
 
 Examples:
 
-    tarifa run android stage
+    tarifa run stage android
