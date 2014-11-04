@@ -67,16 +67,18 @@ function ask(defer, question, type, value, verbose) {
         inquirer.prompt([question], function (answer) {
             value[question.name] = answer[question.name];
             // linked question
-            if(question.question && value[question.name]){
-                return ask(
-                    defer,
-                    require(path.join(__dirname, question.question)),
-                    type,
-                    value,
-                    verbose
-                );
-            }
-            else {
+            if (question.question && value[question.name]) {
+                var linked = require(path.join(__dirname, question.question)),
+                    // if the linked question is a function it must return a promise
+                    // that means, the question needs to do some async tasks in
+                    // order to populate the choices
+                    p = (typeof linked === 'function') ? linked(value, verbose) : Q.resolve(linked);
+                p.then(function (qst) {
+                    ask(defer, qst, type, value, verbose);
+                }, function (err) {
+                    defer.reject(err);
+                });
+            } else {
                 defer.resolve(value);
             }
         });
@@ -95,7 +97,7 @@ function askQuestions(questions, type) {
                     d.resolve(val);
                 }
                 else {
-                    // if the question is a function it must retrun a promise
+                    // if the question is a function it must return a promise
                     // that means, the question needs to do some async tasks
                     // in order to populate the choices
                     if(typeof question === 'function') {
