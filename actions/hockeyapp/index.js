@@ -19,12 +19,14 @@ function allPlatformsTask(taskƒ, config, argv, verbose) {
         .reduce(function(promise, platform) {
             return promise.then(function () {
                 print.outline('Run task for ' + platform + ' platform.');
-                return taskƒ({
-                    localSettings: localSettings,
-                    platform: platform,
-                    config: config,
-                    argv: argv,
-                    verbose: verbose
+                return tarifaFile.parse(pathHelper.root(), platform, config).then(function () {
+                    return taskƒ({
+                        localSettings: localSettings,
+                        platform: platform,
+                        config: config,
+                        argv: argv,
+                        verbose: verbose
+                    });
                 });
             });
         }, Q());

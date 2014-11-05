@@ -194,12 +194,14 @@ var buildAll = function (config, keepFileChanges, verbose) {
         .reduce(function(promise, platform) {
             return promise.then(function () {
                 print.outline('Launch build for ' + platform + ' platform!');
-                return buildƒ({
-                    platform: platform,
-                    configuration: config,
-                    localSettings: localSettings,
-                    keepFileChanges: keepFileChanges,
-                    verbose: verbose
+                return tarifaFile.parse(pathHelper.root(), platform, config).then(function () {
+                    return buildƒ({
+                        platform: platform,
+                        configuration: config,
+                        localSettings: localSettings,
+                        keepFileChanges: keepFileChanges,
+                        verbose: verbose
+                    });
                 });
             });
         }, Q());
