@@ -54,14 +54,7 @@ var runAll = function (config, verbose) {
         .reduce(function(promise, platform) {
             return promise.then(function () {
                 print.outline('Launch run for ' + platform + ' platform!');
-                return tarifaFile.parse(pathHelper.root(), platform, config).then(function () {
-                    return runƒ({
-                        localSettings: localSettings,
-                        platform: platform,
-                        configuration: config,
-                        verbose: verbose
-                    });
-                });
+                return run (platform, config, verbose);
             });
         }, Q());
     });

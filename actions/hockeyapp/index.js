@@ -13,26 +13,6 @@ function printHelp() {
     return fs.read(path.join(__dirname, 'usage.txt')).then(print);
 }
 
-function allPlatformsTask(taskƒ, config, argv, verbose) {
-    return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
-        return localSettings.platforms.filter(platformsLib.isAvailableOnHostSync)
-        .reduce(function(promise, platform) {
-            return promise.then(function () {
-                print.outline('Run task for ' + platform + ' platform.');
-                return tarifaFile.parse(pathHelper.root(), platform, config).then(function () {
-                    return taskƒ({
-                        localSettings: localSettings,
-                        platform: platform,
-                        config: config,
-                        argv: argv,
-                        verbose: verbose
-                    });
-                });
-            });
-        }, Q());
-    });
-}
-
 function platformTask(taskƒ, config, platform, argv, verbose) {
     return tarifaFile.parse(pathHelper.root(), platform, config)
     .then(function (localSettings) {
@@ -43,6 +23,18 @@ function platformTask(taskƒ, config, platform, argv, verbose) {
             argv: argv,
             verbose: verbose
         });
+    });
+}
+
+function allPlatformsTask(taskƒ, config, argv, verbose) {
+    return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
+        return localSettings.platforms.filter(platformsLib.isAvailableOnHostSync)
+        .reduce(function(promise, platform) {
+            return promise.then(function () {
+                print.outline('Run task for ' + platform + ' platform.');
+                return platformTask(taskƒ, config, platform, argv, verbose);
+            });
+        }, Q());
     });
 }
 
