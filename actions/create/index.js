@@ -139,16 +139,14 @@ function create(verbose) {
     if(verbose) print.banner();
     return askQuestions(mainQuestions, '')({ options : { verbose : verbose } })
         .then(function (resp) {
-            if(resp.deploy) return askQuestions(deployQuestions, 'deploy')(resp);
-            else return resp;
-        })
-        .then(function (resp) {
-            return askQuestions(shallReuseKeystore, 'deploy')(resp);
-        })
-        .then(function (resp) {
-            var nextQuestions = resp.keystore_reuse ? reuseKeystoreQuestions :
-                                                      createKeystoreQuestions;
-            return askQuestions(nextQuestions, 'deploy')(resp);
+            if (!resp.deploy) return resp;
+            return askQuestions(deployQuestions, 'deploy')(resp)
+                    .then(askQuestions(shallReuseKeystore, 'deploy'))
+                    .then(function (resp) {
+                        var nextQuestions = resp.keystore_reuse ? reuseKeystoreQuestions :
+                                                                  createKeystoreQuestions;
+                        return askQuestions(nextQuestions, 'deploy')(resp);
+                    });
         })
         .then(function (resp) {
             return askQuestions(isHockeyApp, '')(resp);
