@@ -8,7 +8,7 @@ var should = require('should'),
     setupHelper = require('./helper/setup');
 
 module.exports = function (options) {
-    describe('testing tarifa cli on darwin', function() {
+    describe(format('testing tarifa cli on %s', os.platform()), function() {
 
         var projectDefer = Q.defer(),
             cwd = process.cwd();
