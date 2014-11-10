@@ -211,3 +211,5 @@ module.exports = function (argv) {
     }
     return fs.read(helpPath).then(print);
 };
+
+module.exports.info = info;

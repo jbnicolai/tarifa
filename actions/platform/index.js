@@ -25,8 +25,8 @@ function rmAssets(platform, verbose) {
     var defer = Q.defer();
     var platformAssetsPath = path.join(pathHelper.root(), settings.images, platform);
     rimraf(platformAssetsPath, function (err) {
-        if(err) defer.reject(err);
-        if(verbose) print.success('removed asset folder');
+        if(err) print.warning('%s assets folder could not be removed: %s', platform, err);
+        if(!err && verbose) print.success('removed asset folder');
         defer.resolve();
     });
     return defer.promise;

@@ -75,19 +75,24 @@ git clone https://github.com/TarifaTools/tarifa.git && cd tarifa && npm link .
 
 ### Tests
 
-run
+running all tests without devices:
 
 ```
 npm test
 ```
 
-test with devices:
+test with attached devices:
 
 ```
-npm run all
+npm run test-with-devices
 ```
 
-You need to attach one device of each available platforms on your os.
+you can run single tests from `test/actions` or `xml/**` by calling `npm run mocha -- path/to/test/file`.
+For example, calling `tarifa prepare` action tests:
+
+```
+npm run mocha -- test/actions/prepare
+```
 
 ## License
 

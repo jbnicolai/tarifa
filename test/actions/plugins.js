@@ -1,15 +1,22 @@
 var should = require('should'),
+    Q = require('q'),
+    os = require('os'),
     format = require('util').format,
+    tmp = require('tmp'),
+    path = require('path'),
+    setupHelper = require('../helper/setup'),
     plugins = require('../../lib/plugins'),
     pluginAction = require('../../actions/plugin');
 
-module.exports = function (projectDefer, options) {
+var emptyPluginPath = path.join(__dirname, '../fixtures/emptyplugin');
+
+function testPlugins(projectDefer) {
 
     describe('tarifa plugin', function() {
-        it('tarifa plugin add ../../fixtures/emptyplugin', function () {
+        it('tarifa plugin add ../fixtures/emptyplugin', function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
-                return pluginAction.plugin('add', path.join(__dirname, '../fixtures/emptyplugin'), false);
+                return pluginAction.plugin('add', emptyPluginPath, false);
             });
         });
 
@@ -22,10 +29,10 @@ module.exports = function (projectDefer, options) {
             });
         });
 
-        it('re tarifa plugin add ../fixtures/emptyplugin', function () {
+        it('re tarifa plugin add ./fixtures/emptyplugin', function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
-                var p = path.join(__dirname, '../fixtures/emptyplugin');
+                var p = path.join(__dirname, emptyPluginPath);
                 return pluginAction.plugin('add', p, false).should.be.rejected;
             });
         });
@@ -84,4 +91,12 @@ module.exports = function (projectDefer, options) {
             });
         });
     });
-};
+}
+
+if(module.parent.id.indexOf("mocha.js") > 0) {
+    var projectDefer = Q.defer();
+    before('create a empty project', setupHelper(tmp, projectDefer, format('create_response_%s.json', os.platform())));
+    testPlugins(projectDefer);
+}
+
+module.exports = testPlugins;
