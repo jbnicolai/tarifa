@@ -28,6 +28,6 @@ module.exports = function (options) {
         require('./actions/check')(projectDefer, options);
         require('./actions/config')(projectDefer, options);
         require('./actions/platform')(projectDefer, options);
-        //if(options.run) require('./actions/run')(projectDefer, options);
+        if(options.run) require('./actions/run')(projectDefer, options);
     });
 };

@@ -64,8 +64,8 @@
   },
   "scripts": {
     "test": "mocha test",
-    "test-with-devices": "mocha test/with-devices",
-    "mocha" : "mocha"
+    "mocha": "mocha",
+    "test-with-devices": "mocha test/with-devices"
   },
   "devDependencies": {
     "mocha": "^1.21.4",
