@@ -3,8 +3,8 @@ var validator = require('../../../../lib/helper/validator'),
 
 module.exports = {
     dependency: 'android',
-    type:'input',
-    name:'keystore_alias',
+    type: 'input',
+    name: 'keystore_alias',
     validate: validateKeystoreAlias,
-    message:'What is the keystore alias?'
+    message: 'What is the alias?'
 };
