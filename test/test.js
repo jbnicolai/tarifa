@@ -20,13 +20,13 @@ module.exports = function (options) {
             return projectDefer.promise;
         });
 
+        require('./actions/config')(projectDefer, options);
         require('./actions/plugins')(projectDefer, options);
         require('./actions/info')(projectDefer, options);
         require('./actions/prepare')(projectDefer, options);
         require('./actions/build')(projectDefer, options);
         require('./actions/clean')(projectDefer, options);
         require('./actions/check')(projectDefer, options);
-        require('./actions/config')(projectDefer, options);
         require('./actions/platform')(projectDefer, options);
         if(options.run) require('./actions/run')(projectDefer, options);
     });

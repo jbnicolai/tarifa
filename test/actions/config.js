@@ -9,6 +9,12 @@ var should = require('should'),
 
 function testConfig(projectDefer) {
     describe('tarifa config', function () {
+        it('tarifa config icons file test.png stage', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return configAction.generateIconsFromFile(path.resolve(__dirname, '..', 'fixtures', 'momo.png'), 'stage', false);
+            });
+        });
         it('tarifa config icons generate red dev', function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
@@ -23,10 +29,45 @@ function testConfig(projectDefer) {
             });
         });
 
-        it('tarifa config icons file test.png stage', function () {
+        it('tarifa config icons generate red stage', function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
-                return configAction.generateIconsFromFile(path.resolve(__dirname, '..', 'fixtures', 'momo.png'), 'stage', false);
+                return configAction.generateIcons('red', 'stage', false);
+            });
+        });
+
+        it('tarifa config splashscreens red stage', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return configAction.generateSplashscreens('red', 'stage', false);
+            });
+        });
+
+        it('tarifa config icons generate red prod', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return configAction.generateIcons('red', 'prod', false);
+            });
+        });
+
+        it('tarifa config splashscreens red prod', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return configAction.generateSplashscreens('red', 'prod', false);
+            });
+        });
+
+        it('tarifa config icons generate red', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return configAction.generateIcons('red', 'default', false);
+            });
+        });
+
+        it('tarifa config splashscreens red', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return configAction.generateSplashscreens('red', 'default', false);
             });
         });
 
