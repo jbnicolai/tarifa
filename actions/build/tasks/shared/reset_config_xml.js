@@ -16,9 +16,19 @@ module.exports = function (msg) {
         accessOrigin = msg.localSettings.cordova.accessOrigin,
         config_xml_path = path.join(pathHelper.app(), 'config.xml');
 
-    return ConfigBuilder.set(config_xml_path, id, version, author, author_email, author_href, description, preferences, accessOrigin).then(function () {
-        if(msg.verbose)
-            print.success('reset config.xml to global values');
+    return ConfigBuilder.set(
+        config_xml_path,
+        id,
+        version,
+        author,
+        author_email,
+        author_href,
+        description,
+        preferences,
+        accessOrigin,
+        'index.html'
+    ).then(function () {
+        if(msg.verbose) print.success('reset config.xml to global values');
         return msg;
     });
 };

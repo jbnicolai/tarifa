@@ -64,4 +64,5 @@ var action = function (argv) {
 };
 
 action.run = run;
+action.runƒ = runƒ;
 module.exports = action;

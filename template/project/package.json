@@ -10,7 +10,6 @@
   },
   "devDependencies": {
     "browserify": "5.13.1",
-    "tmp": "0.0.24",
-    "preprocess": "^2.0.0"
+    "chokidar": "^0.10.5"
   }
 }
