@@ -65,8 +65,11 @@ module.exports.build = function build(platform, settings, configurationName) {
 };
 
 module.exports.watch = function watch(f, settings) {
-    var watcher = chokidar.watch(path.join(__dirname, '..', '..', settings.project_output, 'index.html'));
-    watcher.on('change', function () {
+    var watcher = chokidar.watch(
+            path.join(__dirname, '..', '..', settings.project_output, 'index.html'),
+            {ignored: /[\/\\]\./, persistent: true});
+
+    watcher.on('all', function () {
         console.log('change in file from www build system');
         f();
     });

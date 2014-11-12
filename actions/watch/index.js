@@ -2,6 +2,13 @@ var Q = require('q'),
     path = require('path'),
     tty = require("tty"),
     fs = require('q-io/fs'),
+
+    request = require('request'),
+    connect = require("connect"),
+    serveStatic = require('serve-static'),
+    tinylr = require('tiny-lr-fork'),
+    lr = require('connect-livereload'),
+
     format = require('util').format,
     argsHelper = require('../../lib/helper/args'),
     builder = require('../../lib/builder'),
@@ -11,25 +18,32 @@ var Q = require('q'),
     runAction = require('../run'),
     tarifaFile = require('../../lib/tarifa-file');
 
-function setupBrowserSync(msg) {
+function setupLiveReload(msg) {
     var defer = Q.defer(),
         conf = msg.localSettings.configurations[msg.platform][msg.configuration],
         index = pathHelper.wwwFinalLocation(pathHelper.root(), msg.platform),
-        config = {
-            server: {
-                baseDir: index
-            },
-            port: conf.watch_port,
-            ghostMode: false,
-            logLevel: 'silent',
-            open: false,
-            notify: false,
-            minify: false,
-            host: conf.watch_host
-        };
+        jsSrc = path.join(__dirname, 'client', 'livereload.js'),
+        jsDest = path.join(index, 'livereload.js');
 
-    // TODO launch livereload
-    defer.resolve(msg)
+    var app = connect();
+
+    var lrServer = tinylr();
+
+    lrServer.listen(35729, function(err) {
+        if(err) console.log(err);
+    });
+
+    console.log(index)
+    var serve = serveStatic(index, {index: true});
+
+    app.use(require('connect-livereload')({
+        port: 35729
+    }));
+
+    app.use(serve);
+
+    app.listen(9004);
+    defer.resolve(msg);
     return defer.promise;
 }
 
@@ -50,7 +64,7 @@ function run(platform, config, verbose) {
                 verbose : verbose
             };
 
-        return setupBrowserSync(msg)
+        return setupLiveReload(msg)
             .then(runAction.runƒ)
             .then(function (msg) {
                 if (msg.verbose) print.success('run app for watch');
@@ -60,11 +74,27 @@ function run(platform, config, verbose) {
 }
 
 function wait(msg) {
+
     print.todo('waiting for a www build to trigger a to reload');
 
     builder.watch(pathHelper.root(), function () {
         // TODO trigger livereload refresh
         console.log('change in file from www build system back to tarifa');
+
+
+        request.post('http://localhost:' + 35729 + '/changed', {
+            path: '/changed',
+            method: 'POST',
+            body: JSON.stringify({
+              files: []
+            })
+          }, function(err, res, body) {
+            if(err) {
+              console.error('Unable to update live reload:', err);
+            }
+          });
+
+
     }, msg.localSettings);
 
     var defer = Q.defer();
