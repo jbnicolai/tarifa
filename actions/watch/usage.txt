@@ -1,6 +1,7 @@
-Usage: tarifa watch
+Usage: tarifa watch <platform> [configuration]
 
-Watch the current project.
+Watch the current project on the given platform,with no
+configuration 'default' will be used.
 
 Options:
 
