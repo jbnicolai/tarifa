@@ -208,4 +208,5 @@ var action = function (argv) {
 
 action.build = build;
 action.buildƒ = buildƒ;
+action.prepare = prepare;
 module.exports = action;

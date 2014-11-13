@@ -2,13 +2,11 @@ var Q = require('q'),
     path = require('path'),
     tty = require("tty"),
     fs = require('q-io/fs'),
-
     request = require('request'),
     connect = require("connect"),
     serveStatic = require('serve-static'),
     tinylr = require('tiny-lr-fork'),
     lr = require('connect-livereload'),
-
     format = require('util').format,
     argsHelper = require('../../lib/helper/args'),
     builder = require('../../lib/builder'),
@@ -16,35 +14,26 @@ var Q = require('q'),
     isAvailableOnHost = require('../../lib/cordova/platforms').isAvailableOnHost,
     pathHelper = require('../../lib/helper/path'),
     runAction = require('../run'),
+    buildAction = require('../build'),
     tarifaFile = require('../../lib/tarifa-file');
 
 function setupLiveReload(msg) {
-    var defer = Q.defer(),
-        conf = msg.localSettings.configurations[msg.platform][msg.configuration],
+    var conf = msg.localSettings.configurations[msg.platform][msg.configuration],
         index = pathHelper.wwwFinalLocation(pathHelper.root(), msg.platform),
-        jsSrc = path.join(__dirname, 'client', 'livereload.js'),
-        jsDest = path.join(index, 'livereload.js');
+        app = connect(),
+        lrServer = tinylr(),
+        serve = serveStatic(index, {index: true});
 
-    var app = connect();
-
-    var lrServer = tinylr();
-
-    lrServer.listen(35729, function(err) {
-        if(err) console.log(err);
+    lrServer.listen(/* FIXME */ 35729, function(err) {
+        if(err) print.error('error while starting the live reload server %s', err);
+        if(msg.verbose) print.success('started live reload server');
     });
 
-    console.log(index)
-    var serve = serveStatic(index, {index: true});
-
-    app.use(require('connect-livereload')({
-        port: 35729
-    }));
-
+    app.use(lr({ port: 35729 }));
     app.use(serve);
+    app.listen(conf.watch_port);
 
-    app.listen(9004);
-    defer.resolve(msg);
-    return defer.promise;
+    return Q.resolve(msg);
 }
 
 function run(platform, config, verbose) {
@@ -54,10 +43,8 @@ function run(platform, config, verbose) {
         if(!conf.watch_port && !conf.watch_host)
             return Q.reject(format('watch_port or/and watch_host are not correctly defined in configuration %s', config));
 
-        var port = conf.watch_port,
-            host = conf.watch_host,
-            msg = {
-                watch : format('http://%s:%s/index.html', host, port),
+        var msg = {
+                watch : format('http://%s:%s/index.html', conf.watch_host, conf.watch_port),
                 localSettings: localSettings,
                 platform : platform,
                 configuration: config,
@@ -75,35 +62,33 @@ function run(platform, config, verbose) {
 
 function wait(msg) {
 
-    print.todo('waiting for a www build to trigger a to reload');
+    var closeBuilderWatch = builder.watch(pathHelper.root(), function (file) {
+        if(msg.verbose) print.success('change www build');
 
-    builder.watch(pathHelper.root(), function () {
-        // TODO trigger livereload refresh
-        console.log('change in file from www build system back to tarifa');
+        function onchange() {
+            // FIXME use restlet
+            request.post('http://localhost:' + 35729 + '/changed', {
+                path: '/changed',
+                method: 'POST',
+                body: JSON.stringify({ files: [file] })
+            }, function(err, res, body) {
+                if(err) print.error('can not update live reload %s', err);
+                if(msg.verbose) print.success('live reload updated');
+            });
+        }
 
+        return buildAction.prepare(msg).then(onchange);
 
-        request.post('http://localhost:' + 35729 + '/changed', {
-            path: '/changed',
-            method: 'POST',
-            body: JSON.stringify({
-              files: []
-            })
-          }, function(err, res, body) {
-            if(err) {
-              console.error('Unable to update live reload:', err);
-            }
-          });
-
-
-    }, msg.localSettings);
+    }, msg.localSettings, msg.platform, msg.configuration);
 
     var defer = Q.defer();
 
     process.openStdin().on("keypress", function(chunk, key) {
         if(key && key.name === "c" && key.ctrl) {
             Q.delay(2000).then(function () {
-                print()
-                print.todo('stopping tarifa watch...');
+                print();
+                if(msg.verbose) print.success('closing www builder');
+                closeBuilderWatch();
                 defer.resolve();
             });
         }
@@ -113,8 +98,9 @@ function wait(msg) {
 
     process.on('SIGINT', function() {
         Q.delay(200).then(function () {
-            print()
-            print.todo('stopping tarifa watch...');
+            print();
+            if(msg.verbose) print.success('closing www builder');
+            closeBuilderWatch();
             defer.resolve();
         });
     });

@@ -9,7 +9,8 @@
     "zanimo": "^1.1.2"
   },
   "devDependencies": {
-    "browserify": "5.13.1",
-    "chokidar": "^0.10.5"
+    "browserify": "^6.3.2",
+    "chokidar": "^0.10.5",
+    "watchify": "^2.1.1"
   }
 }
