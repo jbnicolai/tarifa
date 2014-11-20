@@ -15,9 +15,6 @@ var upload = function (platform, config, argv, verbose) {
         var envSettings = localSettings.configurations[platform][config];
         var hockeyapp_id = envSettings.hockeyapp_id;
 
-        if (!hockeyapp_id)
-            return Q.reject('No hockeyapp_id key is available in ' + config + 'for platform ' + platform);
-
         if (!localSettings.hockeyapp || !localSettings.hockeyapp.api_url ||
         !localSettings.hockeyapp.token) {
             return Q.reject('No hockeyapp informations are available in the current tarifa.json' +
@@ -54,7 +51,6 @@ var upload = function (platform, config, argv, verbose) {
 
         var conf = {
             localSettings: localSettings,
-            hockeyapp_id: hockeyapp_id,
             uploadParams: params,
             verbose: verbose
         };
@@ -64,7 +60,7 @@ var upload = function (platform, config, argv, verbose) {
             getMode(platform, config, localSettings)
         );
 
-        return hockeyapp.uploadVersion(productFileName, conf).then(function () {
+        return hockeyapp.uploadVersion(productFileName, conf, hockeyapp_id).then(function () {
           print.success('Uploaded new version successfully for ' + platform + ' ' + config + '.');
         });
     });
