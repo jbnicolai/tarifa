@@ -108,7 +108,7 @@ function wait(msg) {
         if(msg.verbose) print.success('www project triggering tarifa');
 
         function onchange() {
-            restler.post('http://localhost:' + 35729 + '/changed', {
+            restler.post(format('http://%s:%s/changed', msg.ip, msg.port), {
                 data: JSON.stringify({ files: [file] })
             }).on('complete', function(data, response) {
                 if (response.statusCode >= 200 && response.statusCode  < 300) {
@@ -120,7 +120,7 @@ function wait(msg) {
         }
 
         var copyPromise = (settings.www_link_method[os.platform()] === 'copy')
-            ? prepareAction.copy_method(pathHelper.app(), msg.localSettings.project_output) : Q.resolve();
+            ? prepareAction.copy_method(pathHelper.cordova_www(), path.resolve(msg.localSettings.project_output)) : Q.resolve();
 
         return copyPromise.then(function () {
             return buildAction.prepare(msg);
