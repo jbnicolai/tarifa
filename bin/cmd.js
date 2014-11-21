@@ -25,7 +25,8 @@ var availableActions = [
         { name : 'cls', action : '../actions/clean' },
         { name : 'check', action : '../actions/check' },
         { name : 'hockeyapp', action: '../actions/hockeyapp' },
-        { name : 'update', action: '../actions/update' }
+        { name : 'update', action: '../actions/update' },
+        { name : 'watch', action: '../actions/watch' }
     ],
     singleOptions = [
         { small: 'v', name : 'version', action : printVersion },
@@ -54,11 +55,13 @@ function matchAction(args) {
 function actionSuccess(val) {
     var t = (new Date()).getTime();
     print(chalk.magenta('done in ~ %ds'), Math.floor((t-t0)/1000));
+    process.exit();
 }
 
 function actionError(name) {
     return function (err) {
         print.trace(err);
+        process.exit(1);
     };
 }
 

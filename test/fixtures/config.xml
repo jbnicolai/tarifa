@@ -8,4 +8,5 @@
   <preference name="DisallowOverscroll" value="true"/>
   <preference name="EnableViewportScale" value="false"/>
   <preference name="KeyboardDisplayRequiresUserAction" value="false"/>
+  <content src="index.html" />
 </widget>

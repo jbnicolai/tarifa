@@ -16,10 +16,10 @@ process.env.ANDROID_BUILD = 'gradle';
 var tasks = {
     browser: {
         'pre-cordova-prepare-release': [],
-        'pre-cordova-prepare' : [],
+        'pre-cordova-prepare' : ['shared/populate_config_xml'],
         'pre-cordova-compile' : [],
         'post-cordova-compile' : [],
-        'undo':[]
+        'undo':['shared/reset_config_xml']
     },
     wp8: {
         'pre-cordova-prepare-release': [],
@@ -208,4 +208,5 @@ var action = function (argv) {
 
 action.build = build;
 action.buildƒ = buildƒ;
+action.prepare = prepare;
 module.exports = action;
