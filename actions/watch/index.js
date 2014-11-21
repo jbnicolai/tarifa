@@ -1,11 +1,14 @@
 var Q = require('q'),
     path = require('path'),
+    os = require('os'),
     tty = require("tty"),
     fs = require('q-io/fs'),
-    request = require('request'),
+    restler = require('restler'),
     connect = require("connect"),
     serveStatic = require('serve-static'),
     tinylr = require('tiny-lr-fork'),
+    findPort = require('find-port'),
+    inquirer = require('inquirer'),
     lr = require('connect-livereload'),
     format = require('util').format,
     argsHelper = require('../../lib/helper/args'),
@@ -15,7 +18,43 @@ var Q = require('q'),
     pathHelper = require('../../lib/helper/path'),
     runAction = require('../run'),
     buildAction = require('../build'),
-    tarifaFile = require('../../lib/tarifa-file');
+    tarifaFile = require('../../lib/tarifa-file'),
+    settings = require('../../lib/settings');
+
+function askHostIp() {
+    var defer = Q.defer(),
+        interfaces = os.networkInterfaces(),
+        interfaceNames = Object.keys(interfaces),
+        ips = interfaceNames.map(function (i) {
+            return interfaces[i].filter(function (addr) {
+                return addr.family === 'IPv4';
+            }).map(function (i) { return i.address; });
+        }).reduce(function (acc, i) { return acc.concat(i); }, []);
+
+    inquirer.prompt([{
+        type:'list',
+        name:'ip',
+        choices:ips,
+        message:'Which ip should be used to serve the configuration?'
+    }], function (response) {
+        defer.resolve(response.ip);
+    });
+
+    return defer.promise;
+}
+
+function findLiveReloadPort() {
+    var defer = Q.defer(),
+        start = settings.livereload_port,
+        max = start + settings.livereload_range;
+
+    findPort(start, max, function (ports) {
+        if(ports.length > 0) defer.resolve(ports[0]);
+        else defer.reject(format('not port found in range [%s, %s]', start, max));
+    });
+
+    return defer.promise;
+}
 
 function setupLiveReload(msg) {
     var conf = msg.localSettings.configurations[msg.platform][msg.configuration],
@@ -24,56 +63,58 @@ function setupLiveReload(msg) {
         lrServer = tinylr(),
         serve = serveStatic(index, {index: true});
 
-    lrServer.listen(/* FIXME */ 35729, function(err) {
+    lrServer.listen(msg.port, function(err) {
         if(err) print.error('error while starting the live reload server %s', err);
-        if(msg.verbose) print.success('started live reload server');
+        if(msg.verbose) print.success('started live reload server on %s:%s', msg.ip, msg.port);
     });
 
-    app.use(lr({ port: 35729 }));
+    app.use(lr({ port: msg.port }));
     app.use(serve);
-    app.listen(conf.watch_port);
+    app.listen(settings.default_http_port);
+
+    if(msg.verbose) print.success('started web server on %s:%s', msg.ip, settings.default_http_port);
 
     return Q.resolve(msg);
 }
 
 function run(platform, config, verbose) {
     return function (localSettings) {
-        var conf = localSettings.configurations[platform][config];
-
-        if(!conf.watch_port && !conf.watch_host)
-            return Q.reject(format('watch_port or/and watch_host are not correctly defined in configuration %s', config));
-
-        var msg = {
-                watch : format('http://%s:%s/index.html', conf.watch_host, conf.watch_port),
-                localSettings: localSettings,
-                platform : platform,
-                configuration: config,
-                verbose : verbose
-            };
-
-        return setupLiveReload(msg)
-            .then(runAction.runƒ)
-            .then(function (msg) {
-                if (msg.verbose) print.success('run app for watch');
-                return msg;
+        return builder.checkWatcher(pathHelper.root()).then(function (){
+            return Q.all([findLiveReloadPort(), askHostIp()]).spread(function (port, ip) {
+                return {
+                    watch : format('http://%s:%s/index.html', ip, settings.default_http_port),
+                    localSettings: localSettings,
+                    platform : platform,
+                    configuration: config,
+                    verbose : verbose,
+                    port : port,
+                    ip : ip
+                };
             });
+        })
+        .then(setupLiveReload)
+        .then(runAction.runƒ)
+        .then(function (msg) {
+            if (msg.verbose) print.success('run app for watch');
+            return msg;
+        });
     };
 }
 
 function wait(msg) {
 
     var closeBuilderWatch = builder.watch(pathHelper.root(), function (file) {
-        if(msg.verbose) print.success('change www build');
+        if(msg.verbose) print.success('www project triggering tarifa');
 
         function onchange() {
-            // FIXME use restlet
-            request.post('http://localhost:' + 35729 + '/changed', {
-                path: '/changed',
-                method: 'POST',
-                body: JSON.stringify({ files: [file] })
-            }, function(err, res, body) {
-                if(err) print.error('can not update live reload %s', err);
-                if(msg.verbose) print.success('live reload updated');
+            restler.post('http://localhost:' + 35729 + '/changed', {
+                data: JSON.stringify({ files: [file] })
+            }).on('complete', function(data, response) {
+                if (response.statusCode >= 200 && response.statusCode  < 300) {
+                    if(msg.verbose) print.success('live reload updated');
+                } else {
+                    print.error('can not update live reload %s', response.statusCode);
+                }
             });
         }
 
