@@ -18,6 +18,7 @@ var Q = require('q'),
     pathHelper = require('../../lib/helper/path'),
     runAction = require('../run'),
     buildAction = require('../build'),
+    prepareAction = require('../prepare'),
     tarifaFile = require('../../lib/tarifa-file'),
     settings = require('../../lib/settings');
 
@@ -118,7 +119,12 @@ function wait(msg) {
             });
         }
 
-        return buildAction.prepare(msg).then(onchange);
+        var copyPromise = (settings.www_link_method[os.platform()] === 'copy')
+            ? prepareAction.copy_method(pathHelper.app(), msg.localSettings.project_output) : Q.resolve();
+
+        return copyPromise.then(function () {
+            return buildAction.prepare(msg);
+        }).then(onchange);
 
     }, msg.localSettings, msg.platform, msg.configuration);
 
