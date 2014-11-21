@@ -9,6 +9,7 @@ var Q = require('q'),
     tinylr = require('tiny-lr-fork'),
     findPort = require('find-port'),
     inquirer = require('inquirer'),
+    rimraf = require('rimraf'),
     lr = require('connect-livereload'),
     format = require('util').format,
     argsHelper = require('../../lib/helper/args'),
@@ -119,8 +120,24 @@ function wait(msg) {
             });
         }
 
-        var copyPromise = (settings.www_link_method[os.platform()] === 'copy')
-            ? prepareAction.copy_method(pathHelper.cordova_www(), path.resolve(msg.localSettings.project_output)) : Q.resolve();
+        function copyOutput(cordova_www, project_output){
+            var defer = Q.defer();
+
+            rimraf(cordova_www, function (err) {
+                if(err) return defer.reject(err);
+                if(msg.verbose) print.success('rm cordova www folder');
+                defer.resolve();
+            }, function (err) { defer.reject(err); });
+
+            return defer.promise.then(function () {
+                return prepareAction.copy_method(cordova_www, project_output);
+            });
+        }
+
+        var www = pathHelper.cordova_www(),
+            out = msg.localSettings.project_output,
+            copy_method = settings.www_link_method[os.platform()],
+            copyPromise = (copy_method === 'copy') ? copyOutput(www, out) : Q.resolve();
 
         return copyPromise.then(function () {
             return buildAction.prepare(msg);
