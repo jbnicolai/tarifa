@@ -60,8 +60,16 @@ var upload = function (platform, config, argv, verbose) {
             getMode(platform, config, localSettings)
         );
 
-        return hockeyapp.uploadVersion(productFileName, conf, hockeyapp_id).then(function () {
-          print.success('Uploaded new version successfully for ' + platform + ' ' + config + '.');
+        return hockeyapp.uploadVersion(productFileName, conf, hockeyapp_id).then(function (data) {
+            // in case of app creation, add 'hockeyapp_id' to configuration
+            if (data.public_identifier)
+                tarifaFile.addHockeyappId(pathHelper.root(), platform, config, data.public_identifier).then(function() {
+                    print.success('Created hockeyapp application and uploaded new package "' + path.basename(productFileName) + '" successfully.\nSee new version at ' + data.public_url);
+                }, function(error) {
+                    print.error(error);
+                });
+            else
+                print.success('Uploaded new package "' + path.basename(productFileName) + '" successfully.\nSee new version at ' + data.public_url);
         });
     });
 };
