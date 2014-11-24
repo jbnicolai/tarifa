@@ -5,6 +5,7 @@ configuration 'default' will be used.
 
 Options:
 
-    --help, -h     Show this message
-    --verbose, -V  Be more verbose on everything
+    --port=PORT, -p=PORT  Set http server port, default is 7042
+    --help, -h            Show this message
+    --verbose, -V         Be more verbose on everything
 

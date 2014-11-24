@@ -11,6 +11,7 @@ var Q = require('q'),
     inquirer = require('inquirer'),
     rimraf = require('rimraf'),
     lr = require('connect-livereload'),
+    chalk = require('chalk'),
     format = require('util').format,
     argsHelper = require('../../lib/helper/args'),
     builder = require('../../lib/builder'),
@@ -63,6 +64,7 @@ function setupLiveReload(msg) {
         index = pathHelper.wwwFinalLocation(pathHelper.root(), msg.platform),
         app = connect(),
         lrServer = tinylr(),
+        defer = Q.defer(),
         serve = serveStatic(index, {index: true});
 
     lrServer.listen(msg.port, function(err) {
@@ -72,32 +74,40 @@ function setupLiveReload(msg) {
 
     app.use(lr({ port: msg.port }));
     app.use(serve);
-    app.listen(settings.default_http_port);
 
-    if(msg.verbose) print.success('started web server on %s:%s', msg.ip, settings.default_http_port);
+    var server = app.listen(msg.http_port,function () {
+        print.success('started web server on %s', chalk.green.underline(format("http://%s:%s", msg.ip, msg.http_port)));
+        defer.resolve(msg);
+    });
 
-    return Q.resolve(msg);
+    server.on('error',function (err) {
+        if(msg.verbose) print(err);
+        defer.reject(format('Can not serve %s on %s:%s', index, msg.ip, msg.http_port));
+    });
+
+    return defer.promise;;
 }
 
-function run(platform, config, verbose) {
+function run(platform, config, port, verbose) {
     return function (localSettings) {
-        return builder.checkWatcher(pathHelper.root()).then(function (){
-            return Q.all([findLiveReloadPort(), askHostIp()]).spread(function (port, ip) {
+        return builder.checkWatcher(pathHelper.root()).then(function () {
+            return Q.all([findLiveReloadPort(), askHostIp()]).spread(function (livereload_port, ip) {
                 return {
-                    watch : format('http://%s:%s/index.html', ip, settings.default_http_port),
+                    watch : format('http://%s:%s/index.html', ip, port),
                     localSettings: localSettings,
                     platform : platform,
                     configuration: config,
                     verbose : verbose,
-                    port : port,
-                    ip : ip
+                    port : livereload_port,
+                    ip : ip,
+                    http_port : port
                 };
             });
         })
         .then(setupLiveReload)
         .then(runAction.runƒ)
         .then(function (msg) {
-            if (msg.verbose) print.success('run app for watch');
+            if (msg.verbose) print.success('run app for watch: %s', msg.watch);
             return msg;
         });
     };
@@ -105,15 +115,21 @@ function run(platform, config, verbose) {
 
 function wait(msg) {
 
+    function rewritePath(filePath) {
+        var srcPath = path.resolve(msg.localSettings.project_output);
+        return filePath.replace(srcPath, msg.watch.replace('/index.html', ''));
+    }
+
     var closeBuilderWatch = builder.watch(pathHelper.root(), function (file) {
         if(msg.verbose) print.success('www project triggering tarifa');
 
         function onchange() {
+
             restler.post(format('http://%s:%s/changed', msg.ip, msg.port), {
-                data: JSON.stringify({ files: [file] })
+                data: JSON.stringify({ files: [rewritePath(file)] })
             }).on('complete', function(data, response) {
                 if (response.statusCode >= 200 && response.statusCode  < 300) {
-                    if(msg.verbose) print.success('live reload updated');
+                    if(msg.verbose) print.success('live reload updated: %s', rewritePath(file));
                 } else {
                     print.error('can not update live reload %s', response.statusCode);
                 }
@@ -172,23 +188,42 @@ function wait(msg) {
     return defer.promise;
 }
 
-function watch(platform, config, verbose) {
+function httpPortAvailable(port) {
+    var d = Q.defer();
+    findPort([port], function (ports) {
+        if(ports.length > 0) d.resolve(ports[0]);
+        else d.reject(format('port %s already used!', port));
+    });
+    return d.promise;
+}
+
+function watch(platform, config, port, verbose) {
     return Q.all([
         tarifaFile.parse(pathHelper.root(), platform, config),
-        isAvailableOnHost(platform)
-    ]).spread(run(platform, config, verbose)).then(wait);
+        isAvailableOnHost(platform),
+        httpPortAvailable(port)
+    ]).spread(run(platform, config, port, verbose)).then(wait);
 }
 
 var action = function (argv) {
     var verbose = false,
+        port = settings.default_http_port,
         helpPath = path.join(__dirname, 'usage.txt');
 
     if(argsHelper.matchArgumentsCount(argv, [1,2])
-            && argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
+            && argsHelper.checkValidOptions(argv, ['V', 'verbose', 'p', 'port'])) {
         if(argsHelper.matchOption(argv, 'V', 'verbose')) {
             verbose = true;
         }
-        return watch(argv._[0], argv._[1] || 'default', verbose);
+
+        if(argsHelper.matchOptionWithValue(argv, 'p', 'port')) {
+            port = parseInt(argv.p || argv.port, 10);
+            if(isNaN(port)) {
+                print.error('port `%s` is not valid', argv.port === true ? '' : argv.port);
+                return fs.read(helpPath).then(print);
+            }
+        }
+        return watch(argv._[0], argv._[1] || 'default', port, verbose);
     }
 
     return fs.read(helpPath).then(print);
