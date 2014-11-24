@@ -1,6 +1,6 @@
-Usage: tarifa hockeyapp <task>
+Usage: tarifa hockeyapp <command>
 
-Tasks:
+Commands:
 
     version list <platform> <config>
         Fetch the list of hockeyapp versions of <config> env for given platform.
@@ -19,7 +19,6 @@ Tasks:
     version clean <keep>
         Clean all versions of all apps found in tarifa.json; specify the number
         of versions to keep (default: 3).
-
 
 Options:
 
