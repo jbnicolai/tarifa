@@ -2,18 +2,19 @@ var Q = require('q'),
     fs = require('q-io/fs'),
     path = require('path'),
     print = require('../../../lib/helper/print'),
+    pathHelper = require('../../../lib/helper/path'),
     settings = require('../../../lib/settings');
 
 function createGitIgnoreFiles(response) {
     var gitIgnoreBuilders = [
         {
             src: path.join(__dirname, 'gitignore-root.txt'),
-            destdir: response.path,
+            destdir: pathHelper.resolve(response.path),
             content: settings.privateTarifaFileName
         },
         {
             src: path.join(__dirname, 'gitignore-app.txt'),
-            destdir: path.join(response.path, settings.cordovaAppPath)
+            destdir: pathHelper.resolve(response.path, settings.cordovaAppPath)
         }
     ];
     var promises = gitIgnoreBuilders.map(function (builder) {
@@ -36,7 +37,7 @@ function createGitIgnoreFiles(response) {
 };
 
 function createGitKeepFiles(response) {
-    var dest = path.join(response.path, settings.cordovaAppPath, 'platforms/android/assets/.gitkeep'),
+    var dest = pathHelper.resolve(response.path, settings.cordovaAppPath, 'platforms/android/assets/.gitkeep'),
         dirname = path.dirname(dest),
         content = '',
         create = function () {

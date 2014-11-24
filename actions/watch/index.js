@@ -14,6 +14,7 @@ var Q = require('q'),
     chalk = require('chalk'),
     format = require('util').format,
     argsHelper = require('../../lib/helper/args'),
+    pathHelper = require('../../lib/helper/path'),
     builder = require('../../lib/builder'),
     print = require('../../lib/helper/print'),
     isAvailableOnHost = require('../../lib/cordova/platforms').isAvailableOnHost,
@@ -116,7 +117,7 @@ function run(platform, config, port, verbose) {
 function wait(msg) {
 
     function rewritePath(filePath) {
-        var srcPath = path.resolve(msg.localSettings.project_output);
+        var srcPath = pathHelper.resolve(msg.localSettings.project_output);
         return filePath.replace(srcPath, msg.watch.replace('/index.html', ''));
     }
 

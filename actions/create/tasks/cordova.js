@@ -6,6 +6,7 @@ var path = require('path'),
     cordova = require('cordova-lib/src/cordova/cordova'),
     Q = require('q'),
     print = require('../../../lib/helper/print'),
+    pathHelper = require('../../../lib/helper/path'),
     settings = require('../../../lib/settings'),
     // setting an empty folder as the default www template
     cfg = {
@@ -19,18 +20,10 @@ var path = require('path'),
     };
 
 module.exports = function (response) {
-    var cordova_path = path.resolve(path.join(response.path, settings.cordovaAppPath)),
-        cwd = process.cwd(),
-        defer = Q.defer();
+    var cordova_path = pathHelper.resolve(response.path, settings.cordovaAppPath);
 
-    cordova.create(cordova_path, response.id, response.name, cfg, function (err) {
-        if(err) {
-            defer.reject(err);
-            return;
-        }
+    return cordova.raw.create(cordova_path, response.id, response.name, cfg).then(function () {
         if (response.options.verbose) print.success('cordova raw app created here %s', cordova_path);
-        defer.resolve(response);
+        return response;
     });
-
-    return defer.promise;
 };

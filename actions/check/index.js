@@ -24,7 +24,7 @@ function getUserTasks (availablePlatforms, localSettings) {
     var usertasks = {};
     availablePlatforms.forEach(function (p) {
         usertasks[p] = localSettings.check && localSettings.check[p]
-            ? [require(path.resolve(localSettings.check[p]))] : [];
+            ? [require(pathHelper.resolve(localSettings.check[p]))] : [];
     });
     return usertasks;
 }

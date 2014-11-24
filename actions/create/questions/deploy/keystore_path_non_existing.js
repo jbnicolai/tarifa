@@ -1,4 +1,4 @@
-var path = require('path'),
+var pathHelper = require('../../../../lib/helper/path'),
     validator = require('../../../../lib/helper/validator'),
     validateFilePath = validator.toInquirerValidateƒ(validator.isNonExistingFilePath);
 
@@ -8,7 +8,7 @@ module.exports = {
     name: 'keystore_path',
     validate: validateFilePath,
     filter: function (answer) {
-        return path.resolve(answer);
+        return pathHelper.resolve(answer);
     },
     message: 'What shall be the path of the new keystore?'
 };
