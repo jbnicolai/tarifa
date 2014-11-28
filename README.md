@@ -95,6 +95,8 @@ For example, calling `tarifa prepare` action tests:
 npm run mocha -- test/actions/prepare
 ```
 
+npm >= 2.0 is needed!
+
 ## License
 
 tarifa is licensed under Apache version 2.0
