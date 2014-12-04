@@ -1,4 +1,4 @@
-tarifa [![experimental](http://hughsk.github.io/stability-badges/dist/experimental.svg)](http://github.com/hughsk/stability-badges)
+tarifa [![experimental](http://hughsk.github.io/stability-badges/dist/experimental.svg)](http://github.com/hughsk/stability-badges) [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/TarifaTools/tarifa?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 ======
 
 <a href="http://tarifa.tools">
@@ -82,6 +82,8 @@ running all tests without devices:
 npm test
 ```
 
+The stdio of `npm test` can be found on our buildbot [ci.tarifa.tools](http://ci.tarifa.tools/)
+
 test with attached devices:
 
 ```
@@ -94,6 +96,8 @@ For example, calling `tarifa prepare` action tests:
 ```
 npm run mocha -- test/actions/prepare
 ```
+
+npm >= 2.0 is needed!
 
 ## License
 
