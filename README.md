@@ -82,6 +82,8 @@ running all tests without devices:
 npm test
 ```
 
+The stdio of `npm test` can be found on our buildbot [ci.tarifa.tools](http://ci.tarifa.tools/)
+
 test with attached devices:
 
 ```
