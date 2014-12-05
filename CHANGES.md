@@ -1,3 +1,17 @@
+## 0.4.0 (not released yet!)
+
+- `tarifa watch` brings live reload for all platforms
+- tests (`npm test`) now run on http://ci.tarifa.tools with buildbot
+- add platform release build tests
+- upgrade to cordova 4.1.2 (which upgrade cordova-ios@3.7.0 and cordova-wp8@3.7.0)
+- ~ style path are now correctly handled in `tarifa create`
+- allow parentheses in product name
+- create a tarifa project in the current directory
+- support commit_sha, build_server_url and repository_url options in `tarifa hockeyapp`
+- do not impose what is private in tarifa.json/private.json files only on `tarifa create`
+- create an hockeyapp_id when upload new configuration
+- `tarifa create` creates android keystore if wanted
+
 ## 0.3.1 10/28/2014
 
 - something went wrong while publishing 0.3.0 on npm: republish on npm.
