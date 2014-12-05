@@ -11,11 +11,11 @@ module.exports = function (options) {
     describe(format('testing tarifa cli on %s', os.platform()), function() {
 
         var projectDefer = Q.defer(),
-            cwd = process.cwd();
+            anotherProjectDefer = Q.defer();
 
-        before('create a empty project', setupHelper(tmp, projectDefer, format('create_response_%s.json', os.platform())));
+        before('create project', setupHelper(tmp, projectDefer, format('create_response_%s.json', os.platform())));
 
-        it('create a project', function () {
+        it('create project', function () {
             this.timeout(0);
             return projectDefer.promise;
         });
@@ -28,7 +28,10 @@ module.exports = function (options) {
         require('./actions/clean')(projectDefer, options);
         require('./actions/check')(projectDefer, options);
         require('./actions/platform')(projectDefer, options);
-        require('./actions/sign_android')(projectDefer, options);
+
         if(options.run) require('./actions/run')(projectDefer, options);
+
+        before('create another project', setupHelper(tmp, anotherProjectDefer, 'create_response_android_sign.json'));
+        require('./actions/sign_android')(anotherProjectDefer, options);
     });
 };
