@@ -35,7 +35,7 @@ module.exports = function (options) {
         require('./actions/sign_android')(anotherProjectDefer, options);
     });
 
-    describe('testing tarifa android release build'), function() {
+    describe('testing tarifa android release build', function() {
 
         var projectDefer = Q.defer();
 
