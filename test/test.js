@@ -30,9 +30,6 @@ module.exports = function (options) {
         require('./actions/platform')(projectDefer, options);
 
         if(options.run) require('./actions/run')(projectDefer, options);
-
-        before('create another project', setupHelper(tmp, anotherProjectDefer, 'create_response_android_sign.json'));
-        require('./actions/sign_android')(anotherProjectDefer, options);
     });
 
     describe('testing tarifa android release build', function() {
