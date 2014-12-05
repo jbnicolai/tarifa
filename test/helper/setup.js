@@ -5,7 +5,10 @@ var path = require('path'),
 module.exports = function (tmp, projectDefer, responseMockPath) {
 
     var mock = path.join(__dirname, '..', 'fixtures', responseMockPath),
-        response = JSON.parse(fs.readFileSync(mock, 'utf-8'))
+        response = JSON.parse(fs.readFileSync(mock, 'utf-8'));
+
+    if(response.keystore_path)
+        response.keystore_path = path.join(__dirname, '..', 'fixtures', response.keystore_path);
 
     return function createTarifaProject() {
         tmp.dir({ template: path.resolve(__dirname, '..', 'tmp', 'tarifa-XXXXXX') }, function (err, dirPath) {
@@ -16,8 +19,8 @@ module.exports = function (tmp, projectDefer, responseMockPath) {
 
             process.chdir(dirPath);
             createAction.launchTasks(response).then(function (rslt) {
-                process.chdir('re');
-                projectDefer.resolve({ dirPath: dirPath, rslt: rslt });
+                process.chdir(response.path);
+                projectDefer.resolve({ dirPath: dirPath, rslt: rslt, response:response });
             }, function (err) {
                 projectDefer.reject(err);
             }).done();
