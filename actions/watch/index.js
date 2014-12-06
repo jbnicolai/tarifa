@@ -1,7 +1,6 @@
 var Q = require('q'),
     path = require('path'),
     os = require('os'),
-    tty = require("tty"),
     fs = require('q-io/fs'),
     restler = require('restler'),
     connect = require("connect"),
