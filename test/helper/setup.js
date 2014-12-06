@@ -8,7 +8,7 @@ module.exports = function (tmp, projectDefer, responseMockPath) {
         response = JSON.parse(fs.readFileSync(mock, 'utf-8'));
 
     if(response.keystore_path)
-        response.keystore_path = path.join(__dirname, '..', 'fixtures', response.keystore_path);
+        response.keystore_path = path.join(__dirname, '../fixtures', response.keystore_path);
 
     return function createTarifaProject() {
         tmp.dir({ template: path.resolve(__dirname, '..', 'tmp', 'tarifa-XXXXXX') }, function (err, dirPath) {
