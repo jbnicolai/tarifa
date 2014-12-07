@@ -97,6 +97,12 @@ For example, calling `tarifa prepare` action tests:
 npm run mocha -- test/actions/prepare
 ```
 
+To test the siging process for ad-hoc distribution on ios you need to provide a developer identity, a provisioning file and a bundleid:
+
+```
+npm run mocha -- test/actions/sign_ios.js --identity="iPhone Distribution: xxxxxxxxxxxxxxxxxxxxx (xxxxxxxxxx)" --provision="/my/path/to/project.mobileprovision" --id="com.42loops.test"
+```
+
 npm >= 2.0 is needed!
 
 ## License
