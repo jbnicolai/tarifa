@@ -106,3 +106,5 @@ tarifa is licensed under Apache version 2.0
 ## Sponsors
 
 * [zengularity](http://zengularity.com)
+
+[![Analytics](https://ga-beacon.appspot.com/UA-35740178-1/tarifa/readme?pixel)](https://github.com/igrigorik/ga-beacon)
