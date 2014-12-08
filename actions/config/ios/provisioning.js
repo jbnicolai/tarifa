@@ -10,10 +10,15 @@ var Q = require('q'),
 function list(verbose) {
     return tarifaFile.parse(pathHelper.root())
         .then(function (localSettings) {
+            if(!localSettings.deploy || !localSettings.deploy.apple_id)
+                return Q.reject('no apple_id defined in tarifa.json/private.json!');
+
+            var deploy = localSettings.deploy,
+                id = deploy.apple_id,
+                team = deploy.apple_developer_team;
+
             return askPassword().then(function (password) {
                 spinner();
-                var id = localSettings.deploy.apple_id,
-                    team = localSettings.deploy.apple_developer_team;
                 return provisioningList(id, team, password, verbose);
             });
         });
