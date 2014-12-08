@@ -44,7 +44,7 @@ function listDeviceInProvisioningWithInfo(config, verbose) {
             var provisioning_path = localConf.provisioning_profile_path;
             return parseProvisionFile(provisioning_path).then(function (provision) {
                 var devices = provision.uuids.map(function (uuid){
-                    return { name: null, uuid: uuid, enabled: true };
+                    return { name: '', uuid: uuid, enabled: true };
                 });
                 return {
                     type: provision.type,
