@@ -20,7 +20,7 @@ function testSign(projectDefer, certif_path, password) {
                         configuration: 'prod',
                         localSettings: localSettings,
                         keepFileChanges: false,
-                        verbose: false,
+                        verbose: true,
                         wp8_certif_password: password
                     });
                 });
