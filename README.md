@@ -103,6 +103,12 @@ To test the siging process for ad-hoc distribution on ios you need to provide a 
 npm run mocha -- test/actions/sign_ios.js --identity="iPhone Distribution: xxxxxxxxxxxxxxxxxxxxx (xxxxxxxxxx)" --provision="/my/path/to/project.mobileprovision" --id="com.42loops.test"
 ```
 
+To test the signing process for company app distribution on wp8, you need to provide the path of your certificate and the password:
+
+```
+npm run mocha -- test\actions\sign_wp8.js --certificat_path="c:\certificate.pfx" --password="xxxxxx"
+```
+
 npm >= 2.0 is needed!
 
 ## License
