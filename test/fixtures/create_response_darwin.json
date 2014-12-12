@@ -16,7 +16,7 @@
   ],
   "plugins": [],
   "www": "template/project",
-  "color": null,
+  "color": "blue",
   "deploy": false,
   "hockeyapp": false
 }

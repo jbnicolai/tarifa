@@ -14,7 +14,7 @@
   ],
   "plugins": [],
   "www": "template/project",
-  "color": null,
+  "color": "blue",
   "deploy": false,
   "keystore_reuse": true,
   "keystore_path": "demo.keystore",
