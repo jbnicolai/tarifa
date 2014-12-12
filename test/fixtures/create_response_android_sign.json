@@ -2,20 +2,23 @@
   "options": {
     "verbose": false
   },
-  "path": "re",
-  "id": "re.re.re",
-  "name": "re",
-  "description": "re",
+  "path": "we1",
+  "id": "com.test",
+  "name": "we",
+  "description": "",
   "author_name": "Paul Panserrieu",
   "author_email": "paul@42loops.com",
   "author_href": "http://42loops.com",
   "platforms": [
-    "android",
-    "browser"
+    "android"
   ],
   "plugins": [],
   "www": "template/project",
   "color": "blue",
   "deploy": false,
+  "keystore_reuse": true,
+  "keystore_path": "demo.keystore",
+  "keystore_storepass": "123456",
+  "keystore_alias": "123456",
   "hockeyapp": false
 }
