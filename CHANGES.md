@@ -1,13 +1,15 @@
 ## 0.4.0 (not released yet!)
 
-- `tarifa watch` brings live reload for all platforms
-- tests (`npm test`) now run on http://ci.tarifa.tools with buildbot
-- add platform release build tests
+- `tarifa watch`: live reload for all platforms
+- [wp8 company app distribution] replace `sign_mode` in `tarifa.json` with `certificate_path`
+- Now, we havea a buildbot!: http://ci.tarifa.tools
+- test android, ios(ad-hoc) and wp8 signing process
 - upgrade to cordova 4.1.2 (which upgrade cordova-ios@3.7.0 and cordova-wp8@3.7.0)
+- updade default plugins to latest cordova plugins release: http://cordova.apache.org/news/2014/12/09/plugins-release.html
 - ~ style path are now correctly handled in `tarifa create`
 - allow parentheses in product name
 - create a tarifa project in the current directory
-- support commit_sha, build_server_url and repository_url options in `tarifa hockeyapp`
+- support `commit_sha`, `build_server_url` and `repository_url` options in `tarifa hockeyapp`
 - do not impose what is private in tarifa.json/private.json files only on `tarifa create`
 - create an hockeyapp_id when upload new configuration
 - `tarifa create` creates android keystore if wanted
