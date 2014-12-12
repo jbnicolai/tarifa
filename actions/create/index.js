@@ -28,7 +28,8 @@ var Q = require('q'),
         require('./questions/deploy/apple_password'),
         require('./questions/deploy/has_apple_developer_team'),
         require('./questions/deploy/apple_developer_identity'),
-        require('./questions/deploy/provisioning_profile_name')
+        require('./questions/deploy/provisioning_profile_name'),
+        require('./questions/deploy/wp8_certificate_path')
     ],
 
     shallReuseKeystore = [
