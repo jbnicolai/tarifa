@@ -5,12 +5,12 @@ var Q = require('q'),
     tarifaFile = require('../../../lib/tarifa-file'),
     pathHelper = require('../../../lib/helper/path'),
     provisioningList = require('../../../lib/ios/nomad/provisioning/list'),
-    askPassword = require('./ask_password');
+    askPassword = require('../../../lib/helper/question').password;
 
 function list(verbose) {
     return tarifaFile.parse(pathHelper.root())
         .then(function (localSettings) {
-            return askPassword().then(function (password) {
+            return askPassword('What is your apple developer password?').then(function (password) {
                 spinner();
                 var id = localSettings.deploy.apple_id,
                     team = localSettings.deploy.apple_developer_team;

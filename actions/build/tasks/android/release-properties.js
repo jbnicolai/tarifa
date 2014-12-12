@@ -1,6 +1,6 @@
 var Q = require('q'),
     print = require('../../../../lib/helper/print'),
-    askPassword = require('./ask_password'),
+    askPassword = require('../../../../lib/helper/question').password,
     releaseProperties = require('../../../../lib/android/release-properties');
 
 module.exports = function (msg) {
