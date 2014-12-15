@@ -67,7 +67,7 @@ function setupLiveReload(msg) {
         app = connect(),
         lrServer = tinylr(),
         defer = Q.defer(),
-        serve = serveStatic(index, {index: true});
+        serve = serveStatic(index, {index: false});
 
     lrServer.listen(msg.port, function(err) {
         if(err) print.error('error while starting the live reload server %s', err);
@@ -78,7 +78,7 @@ function setupLiveReload(msg) {
     app.use(serve);
 
     var server = app.listen(msg.http_port,function () {
-        print.success('started web server on %s', chalk.green.underline(format("http://%s:%s", msg.ip, msg.http_port)));
+        print.success('started web server on %s', format("%s:%s", msg.ip, msg.http_port));
         defer.resolve(msg);
     });
 
@@ -109,7 +109,7 @@ function run(platform, config, port, verbose) {
         .then(setupLiveReload)
         .then(runAction.runƒ)
         .then(function (msg) {
-            if (msg.verbose) print.success('run app for watch: %s', msg.watch);
+            if (msg.verbose) print.success('run app for watch: %s', chalk.green.underline(msg.watch));
             return msg;
         });
     };
