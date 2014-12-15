@@ -12,6 +12,8 @@ var Q = require('q'),
     lr = require('connect-livereload'),
     chalk = require('chalk'),
     format = require('util').format,
+    chalk = require('chalk'),
+    cool = require('cool-ascii-faces'),
     argsHelper = require('../../lib/helper/args'),
     pathHelper = require('../../lib/helper/path'),
     builder = require('../../lib/builder'),
@@ -121,6 +123,7 @@ function wait(msg) {
     }
 
     var closeBuilderWatch = builder.watch(pathHelper.root(), function (file) {
+        var t0 = (new Date()).getTime();
         if(msg.verbose) print.success('www project triggering tarifa');
 
         function onchange() {
@@ -132,6 +135,11 @@ function wait(msg) {
                     if(msg.verbose) print.success('live reload updated: %s', rewritePath(file));
                 } else {
                     print.error('can not update live reload %s', response.statusCode);
+                }
+                if(msg.verbose) {
+                    var t = (new Date()).getTime();
+                    print('\n\t%s', chalk.green(cool()))
+                    print(chalk.magenta('\ndone in ~ %ds\n'), Math.floor((t-t0)/1000));
                 }
             });
         }
