@@ -2,7 +2,7 @@
 
 - `tarifa watch`: live reload for all platforms
 - [wp8 company app distribution] replace `sign_mode` in `tarifa.json` with `certificate_path`
-- Now, we havea a buildbot!: http://ci.tarifa.tools
+- now, we have a buildbot!: http://ci.tarifa.tools
 - test android, ios(ad-hoc) and wp8 signing process
 - upgrade to cordova 4.1.2 (which upgrade cordova-ios@3.7.0 and cordova-wp8@3.7.0)
 - updade default plugins to latest cordova plugins release: http://cordova.apache.org/news/2014/12/09/plugins-release.html
