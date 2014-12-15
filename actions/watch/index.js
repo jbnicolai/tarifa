@@ -90,7 +90,7 @@ function setupLiveReload(msg) {
     return defer.promise;;
 }
 
-function run(platform, config, port, verbose) {
+function run(platform, config, port, norun, verbose) {
     return function (localSettings) {
         return builder.checkWatcher(pathHelper.root()).then(function () {
             return Q.all([findLiveReloadPort(), askHostIp()]).spread(function (livereload_port, ip) {
@@ -107,7 +107,9 @@ function run(platform, config, port, verbose) {
             });
         })
         .then(setupLiveReload)
-        .then(runAction.runƒ)
+        .then(function (msg) {
+            return norun ? buildAction.buildƒ(msg) : runAction.runƒ(msg);
+        })
         .then(function (msg) {
             if (msg.verbose) print.success('run app for watch: %s', chalk.green.underline(msg.watch));
             return msg;
@@ -205,21 +207,22 @@ function httpPortAvailable(port) {
     return d.promise;
 }
 
-function watch(platform, config, port, verbose) {
+function watch(platform, config, port, norun, verbose) {
     return Q.all([
         tarifaFile.parse(pathHelper.root(), platform, config),
         isAvailableOnHost(platform),
         httpPortAvailable(port)
-    ]).spread(run(platform, config, port, verbose)).then(wait);
+    ]).spread(run(platform, config, port, norun, verbose)).then(wait);
 }
 
 var action = function (argv) {
     var verbose = false,
+        norun = false,
         port = settings.default_http_port,
         helpPath = path.join(__dirname, 'usage.txt');
 
     if(argsHelper.matchArgumentsCount(argv, [1,2])
-            && argsHelper.checkValidOptions(argv, ['V', 'verbose', 'p', 'port'])) {
+            && argsHelper.checkValidOptions(argv, ['V', 'verbose', 'p', 'port', 'norun'])) {
         if(argsHelper.matchOption(argv, 'V', 'verbose')) {
             verbose = true;
         }
@@ -231,7 +234,9 @@ var action = function (argv) {
                 return fs.read(helpPath).then(print);
             }
         }
-        return watch(argv._[0], argv._[1] || 'default', port, verbose);
+
+        norun = argsHelper.matchOptionWithValue(argv, 'norun');
+        return watch(argv._[0], argv._[1] || 'default', port, norun, verbose);
     }
 
     return fs.read(helpPath).then(print);
