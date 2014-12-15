@@ -19,7 +19,7 @@ var browserify = require('browserify'),
 function log(o) { if(o) console.log('- browserify - ' + o); }
 
 function rejectOnError(d) {
-    return function (o) { log(o); if(o) d.reject(err); };
+    return function (err) { log(err); if(err) d.reject(err); };
 }
 
 function bundle(conf) {
