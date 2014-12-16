@@ -11,7 +11,7 @@
 - create a tarifa project in the current directory
 - support `commit_sha`, `build_server_url` and `repository_url` options in `tarifa hockeyapp`
 - do not impose what is private in tarifa.json/private.json files only on `tarifa create`
-- create an hockeyapp_id when upload new configuration
+- create an `hockeyapp_id` when upload new configuration
 - `tarifa create` creates android keystore if wanted
 
 ## 0.3.1 10/28/2014
