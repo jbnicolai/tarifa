@@ -2,19 +2,21 @@ var Q = require('q'),
     pathHelper = require('../../../../lib/helper/path'),
     print = require('../../../../lib/helper/print'),
     exec = require('child_process').exec,
+    format = require('util').format,
     path = require('path');
 
 var install = function (conf, device) {
-    var defer = Q.defer();
-    var product_name = conf.localSettings.configurations['ios'][conf.configuration].product_name;
-    var app_path = path.join(pathHelper.app(), 'platforms/ios/build/device', product_name + '.app');
-    var bin = path.join(__dirname, '..', '..', '..', '..', 'node_modules', 'ios-deploy', 'ios-deploy');
-    var cmd = bin + ' --justlaunch --debug --id ' + device + ' --bundle "' + app_path + '" --verbose';
-    var options = {
-        // don't kill the ios-deploy process
-        timeout : 0,
-        maxBuffer: 1024 * 1000
-    };
+    var defer = Q.defer(),
+        configs = conf.localSettings.configurations,
+        product_name = configs['ios'][conf.configuration].product_name,
+        app_path = path.join(pathHelper.app(), 'platforms/ios/build/device', product_name + '.app'),
+        bin = path.join(__dirname, '..', '..', '..', '..', 'node_modules', 'ios-deploy', 'ios-deploy'),
+        cmd = format('%s -L -i %s -b "%s" --verbose', bin, device, app_path),
+        options = {
+            // don't kill the ios-deploy process
+            timeout : 0,
+            maxBuffer: 1024 * 1000
+        };
 
     if(conf.verbose)
         print.success('start ios app install %s to device %s', product_name, device);
