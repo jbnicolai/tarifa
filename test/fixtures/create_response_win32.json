@@ -1,6 +1,6 @@
 {
   "options": {
-    "verbose": false
+    "verbose": true
   },
   "path": "re",
   "id": "re.re.re",
