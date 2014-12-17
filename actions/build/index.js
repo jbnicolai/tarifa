@@ -15,14 +15,12 @@ process.env.ANDROID_BUILD = 'gradle';
 
 var tasks = {
     browser: {
-        'pre-cordova-prepare-release': [],
         'pre-cordova-prepare' : ['shared/populate_config_xml'],
         'pre-cordova-compile' : [],
         'post-cordova-compile' : [],
         'undo':['shared/reset_config_xml']
     },
     wp8: {
-        'pre-cordova-prepare-release': [],
         'pre-cordova-prepare' : [
             'shared/clean',
             'shared/populate_config_xml',
@@ -42,7 +40,6 @@ var tasks = {
         ]
     },
     ios: {
-        'pre-cordova-prepare-release': [],
         'pre-cordova-prepare' : [
             'shared/populate_config_xml',
             'shared/copy_icons',
@@ -63,7 +60,6 @@ var tasks = {
         ]
     },
     android: {
-        'pre-cordova-prepare-release': [ ],
         'pre-cordova-prepare' : [
             'android/clean_output_dir',
             'shared/populate_config_xml',
@@ -140,14 +136,6 @@ var runTasks = function (type) {
     };
 };
 
-var runReleaseTasks = function (type) {
-    return function (conf) {
-        if (conf.localSettings.mode == '--release')
-            return runTasks(type)(conf);
-        else return Q.resolve(conf);
-    };
-};
-
 var buildƒ = function (conf){
     conf.localSettings.mode = getMode(conf.platform, conf.configuration, conf.localSettings);
 
@@ -156,7 +144,6 @@ var buildƒ = function (conf){
     var cwd = process.cwd();
     process.chdir(pathHelper.root());
     return prepareAction.prepareƒ(conf)
-        .then(runReleaseTasks('pre-cordova-prepare-release'))
         .then(runTasks('pre-cordova-prepare'))
         .then(prepare)
         .then(runTasks('pre-cordova-compile'))
