@@ -1,4 +1,4 @@
-tarifa [![experimental](http://hughsk.github.io/stability-badges/dist/experimental.svg)](http://github.com/hughsk/stability-badges) [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/TarifaTools/tarifa?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+tarifa [![experimental](http://hughsk.github.io/stability-badges/dist/experimental.svg)](http://github.com/hughsk/stability-badges)
 ======
 
 <a href="http://tarifa.tools">
