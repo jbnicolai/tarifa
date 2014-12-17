@@ -1,6 +1,6 @@
 {
   "options": {
-    "verbose": true
+    "verbose": false
   },
   "path": "we1",
   "id": "com.test",
