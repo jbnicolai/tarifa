@@ -19,11 +19,11 @@ module.exports = function (r) {
     ).then(function () {
         return install(
             downloadDest,
-            true, // remove the downloaded.mobileprovision file after install
+            false, // do not remove the downloaded.mobileprovision file after install
             r.options.verbose
         );
-    }).then(function (profilePath) {
-        r.provisioning_profile_path = profilePath;
+    }).then(function () {
+        r.provisioning_profile_path = downloadDest;
         return r;
     });
 };
