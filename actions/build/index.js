@@ -176,13 +176,27 @@ var build = function (platform, config, keepFileChanges, verbose) {
     });
 };
 
-var buildAll = function (config, keepFileChanges, verbose) {
+var buildAllConfs = function(platform, keepFileChanges, verbose) {
+    return tarifaFile.parse(pathHelper.root(), platform).then(function (localSettings) {
+        return tarifaFile.getPlatformConfigs(localSettings, platform).reduce(function(promise, conf) {
+            return promise.then(function () {
+                print.outline('Build ' + conf + ' configuration!');
+                return build(platform, conf, keepFileChanges, verbose);
+            });
+        }, Q());
+    });
+};
+
+var buildAllPlatforms = function (config, keepFileChanges, verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         return localSettings.platforms.filter(platformsLib.isAvailableOnHostSync)
         .reduce(function(promise, platform) {
             return promise.then(function () {
                 print.outline('Launch build for ' + platform + ' platform!');
-                return build(platform, config, keepFileChanges, verbose);
+                if (config === '{*}')
+                    return buildAllConfs(platform, keepFileChanges, verbose);
+                else
+                    return build(platform, config, keepFileChanges, verbose);
             });
         }, Q());
     });
@@ -202,17 +216,19 @@ var action = function (argv) {
 
     // match args
     if (match(argv._, ['__all__', '*']))
-        return buildAll(argv._[1], keepFileChanges, verbose);
+        return buildAllPlatforms(argv._[1] || 'default', keepFileChanges, verbose);
 
-    if(match(argv._, ['+', '*']))
-        return build(argv._[0], argv._[1], keepFileChanges, verbose);
+    if (match(argv._, ['+', '__all__']))
+        return buildAllConfs(argv._[0], keepFileChanges, verbose);
 
+    if (match(argv._, ['+', '*']))
+        return build(argv._[0], argv._[1] || 'default', keepFileChanges, verbose);
 
     return fs.read(helpPath).then(print);
 };
 
 action.build = build;
-action.buildAll = buildAll;
+action.buildAllPlatforms = buildAllPlatforms;
 action.buildƒ = buildƒ;
 action.prepare = prepare;
 module.exports = action;

@@ -49,13 +49,27 @@ var run = function (platform, config, verbose) {
         });
 };
 
-var runAll = function (config, verbose) {
+var runAllConfs = function(platform, verbose) {
+    return tarifaFile.parse(pathHelper.root(), platform).then(function (localSettings) {
+        return tarifaFile.getPlatformConfigs(localSettings, platform).reduce(function(promise, conf) {
+            return promise.then(function () {
+                print.outline('Run ' + conf + ' configuration!');
+                return run(platform, conf, verbose);
+            });
+        }, Q());
+    });
+};
+
+var runAllPlatforms = function (config, verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         return localSettings.platforms.filter(platformsLib.isAvailableOnHostSync)
         .reduce(function(promise, platform) {
             return promise.then(function () {
                 print.outline('Launch run for ' + platform + ' platform!');
-                return run (platform, config, verbose);
+                if (config === '{*}')
+                    return runAllConfs(platform, verbose);
+                else
+                    return run(platform, config, verbose);
             });
         }, Q());
     });
@@ -71,15 +85,18 @@ var action = function (argv) {
 
     // match args
     if(match(argv._, ['__all__', '*']))
-        return runAll(argv._[1], verbose);
+        return runAllPlatforms(argv._[1] || 'default', verbose);
+
+    if (match(argv._, ['+', '__all__']))
+        return runAllConfs(argv._[0], verbose);
 
     if(match(argv._, ['+', '*']))
-        return run(argv._[1], argv._[0], verbose);
+        return run(argv._[1], argv._[0] || 'default', verbose);
 
     return fs.read(helpPath).then(print);
 };
 
 action.run = run;
-action.runAll = runAll;
+action.runAllPlatforms = runAllPlatforms;
 action.runƒ = runƒ;
 module.exports = action;
