@@ -12,6 +12,7 @@ var Q = require('q'),
     platformsLib = require('../../lib/cordova/platforms'),
     buildAction = require('../build'),
     askDevice = require('./ask_device'),
+    match = require('../../lib/helper/args').matchCmd,
 
     tasks = {
         android : [
@@ -64,16 +65,16 @@ var action = function (argv) {
     var verbose = false,
     helpPath = path.join(__dirname, 'usage.txt');
 
-    if(argsHelper.matchArgumentsCount(argv, [1,2]) &&
-    argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
-        if(argsHelper.matchOption(argv, 'V', 'verbose')) {
-            verbose = true;
-        }
-        if(argv._[1])
-            return run(argv._[1], argv._[0], verbose);
-        else
-            return runAll(argv._[0], verbose);
+    if(argsHelper.matchOption(argv, 'V', 'verbose')) {
+        verbose = true;
     }
+
+    // match args
+    if(match(argv._, ['__all__', '*']))
+        return runAll(argv._[1], verbose);
+
+    if(match(argv._, ['+', '*']))
+        return run(argv._[1], argv._[0], verbose);
 
     return fs.read(helpPath).then(print);
 };

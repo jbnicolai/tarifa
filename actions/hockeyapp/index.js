@@ -13,7 +13,7 @@ function printHelp() {
     return fs.read(path.join(__dirname, 'usage.txt')).then(print);
 }
 
-function platformTask(taskƒ, config, platform, argv, verbose) {
+function platformTask(taskƒ, platform, config, argv, verbose) {
     return tarifaFile.parse(pathHelper.root(), platform, config)
     .then(function (localSettings) {
         return taskƒ({
@@ -32,15 +32,15 @@ function allPlatformsTask(taskƒ, config, argv, verbose) {
         .reduce(function(promise, platform) {
             return promise.then(function () {
                 print.outline('Run task for ' + platform + ' platform.');
-                return platformTask(taskƒ, config, platform, argv, verbose);
+                return platformTask(taskƒ, platform, config, argv, verbose);
             });
         }, Q());
     });
 }
 
-function runTask(taskƒ, config, platform, argv, verbose) {
-    if (platform) return platformTask(taskƒ, config, platform, argv, verbose);
-    else return allPlatformsTask(taskƒ, config, argv, verbose);
+function runTask(taskƒ, platform, config, argv, verbose) {
+    if (platform === '{*}') return allPlatformsTask(taskƒ, config, argv, verbose);
+    else return platformTask(taskƒ, platform, config, argv, verbose);
 }
 
 function clean(nbToKeep, verbose) {
@@ -55,13 +55,13 @@ var action = function (argv) {
     if(argsHelper.matchOption(argv, 'V', 'verbose'))
         verbose = true;
 
-    if(match(argv._, ['version', 'list', '+', '*']))
+    if(match(argv._, ['version', 'list', '+', '+']))
         return runTask(tasks.list, argv._[2], argv._[3], argv, verbose);
 
-    if(match(argv._, ['version', 'upload', '+', '*']))
+    if(match(argv._, ['version', 'upload', '+', '+']))
         return runTask(tasks.upload, argv._[2], argv._[3], argv, verbose);
 
-    if(match(argv._, ['version', 'update', '+', '*']))
+    if(match(argv._, ['version', 'update', '+', '+']))
         return runTask(tasks.updateLast, argv._[2], argv._[3], argv, verbose);
 
     if(match(argv._, ['version', 'clean', '*']))

@@ -9,7 +9,8 @@ var Q = require('q'),
     path = require('path'),
     fs = require('q-io/fs'),
     prepareAction = require('../prepare'),
-    platformsLib = require('../../lib/cordova/platforms');
+    platformsLib = require('../../lib/cordova/platforms'),
+    match = require('../../lib/helper/args').matchCmd;
 
 // set android build to gradle!!!
 process.env.ANDROID_BUILD = 'gradle';
@@ -192,19 +193,20 @@ var action = function (argv) {
         keepFileChanges = false,
         helpPath = path.join(__dirname, 'usage.txt');
 
-    if(argsHelper.matchArgumentsCount(argv, [1,2]) &&
-    argsHelper.checkValidOptions(argv, ['V', 'verbose', 'keep-file-changes'])) {
-        if(argsHelper.matchOption(argv, 'V', 'verbose')) {
-            verbose = true;
-        }
-        if(argsHelper.matchOption(argv, null, 'keep-file-changes')) {
-            keepFileChanges = true;
-        }
-        if (argv._[1])
-            return build(argv._[1], argv._[0], keepFileChanges, verbose);
-        else
-            return buildAll(argv._[0], keepFileChanges, verbose);
-    }
+    // match options
+    if (argsHelper.matchOption(argv, 'V', 'verbose'))
+        verbose = true;
+
+    if (argsHelper.matchOption(argv, null, 'keep-file-changes'))
+        keepFileChanges = true;
+
+    // match args
+    if (match(argv._, ['__all__', '*']))
+        return buildAll(argv._[1], keepFileChanges, verbose);
+
+    if(match(argv._, ['+', '*']))
+        return build(argv._[0], argv._[1], keepFileChanges, verbose);
+
 
     return fs.read(helpPath).then(print);
 };

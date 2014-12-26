@@ -1,7 +1,12 @@
-Usage: tarifa build <configuration> [platform]
+Usage: tarifa build <platform> [configuration]
 
-Build the project for the given configuration. With no platform specified, it 
-will build all installed platforms available on your operating system.
+Build the project for the given platforms and configurations. You can either
+specify names or wildcards. Ex:
+    $ tarifa build android        # will build default conf for android platform
+    $ tarifa build android dev    # will build dev conf for android platform
+    $ tarifa build {*} dev        # will build dev conf for all platforms
+    $ tarifa build {*} {*}        # will build all confs for all platforms
+    
 
 Options:
 

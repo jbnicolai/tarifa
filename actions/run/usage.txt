@@ -1,7 +1,11 @@
-Usage: tarifa run <configuration> [platform]
+Usage: tarifa run <platform> [configuration]
 
-Run the project on your device for the given platform. With no platform
-specified, it will run all installed platforms available on your operating system.
+Run the project on your device for the given platform. You can either
+specify names or wildcards. Ex:
+    $ tarifa run android        # will run default conf for android platform
+    $ tarifa run android dev    # will run dev conf for android platform
+    $ tarifa run {*} dev        # will run dev conf for all platforms
+    $ tarifa run {*} {*}        # will run all confs for all platforms
 
 Options:
 
