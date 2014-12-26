@@ -11,13 +11,13 @@ var Q = require('q'),
     addDevice = require('../../../lib/ios/nomad/device/add'),
     provisioningManager = require('../../../lib/ios/nomad/provisioning/device'),
     askDeviceName = require('./ask_device_name'),
-    askPassword = require('./ask_password');
+    askPassword = require('../../../lib/helper/question').password;
 
 function listDevice(verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         if(!localSettings.deploy || !localSettings.deploy.apple_id)
             return Q.reject("No deploy informations are available in the current tarifa.json file.");
-        return askPassword()
+        return askPassword('What is your apple developer password?')
             .then(function (password) {
                 spinner();
                 return getDevices(
@@ -44,7 +44,7 @@ function listDeviceInProvisioningWithInfo(config, verbose) {
             var provisioning_path = localConf.provisioning_profile_path;
             return parseProvisionFile(provisioning_path).then(function (provision) {
                 var devices = provision.uuids.map(function (uuid){
-                    return { name: null, uuid: uuid, enabled: true };
+                    return { name: '', uuid: uuid, enabled: true };
                 });
                 return {
                     type: provision.type,
@@ -93,7 +93,7 @@ function add(name, uuid, verbose) {
         var id = localSettings.deploy.apple_id,
             team = localSettings.deploy.apple_developer_team;
 
-        return askPassword().then(function (password) {
+        return askPassword('What is your apple developer password?').then(function (password) {
             spinner();
             return addDevice(id, team, password, name, uuid, verbose)
                 .then(function (output) { if(verbose) print(output); });
@@ -109,7 +109,7 @@ function attach(uuid, config, verbose) {
             team = localSettings.deploy.apple_developer_team,
             conf = localSettings.configurations.ios[config];
 
-        return askPassword().then(function (password) {
+        return askPassword('What is your apple developer password?').then(function (password) {
             return getDevices(id, team, password, verbose).then(function (devices) {
                 var rslt = devices.filter(function (id) { return id === uuid; }),
                     profile_path = conf.provisioning_profile_path,
@@ -157,7 +157,7 @@ function detach(uuid, config, verbose) {
         if(!conf.provisioning_profile_name)
             return Q.reject('no provisioning_profile_name attribute in configuration');
 
-        return askPassword().then(function (password) {
+        return askPassword('What is your apple developer password?').then(function (password) {
             var profile_path = conf.provisioning_profile_path,
                 profile_name = conf.provisioning_profile_name,
                 id = localSettings.deploy.apple_id,

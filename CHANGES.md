@@ -1,3 +1,25 @@
+## 0.4.0 (12/18/2014)
+
+### upgrade a project from 0.3.x to 0.4.0
+
+run `tarifa update --verbose` command.
+
+### changes
+
+- `tarifa watch`: live reload for all platforms (inspired from https://github.com/driftyco/ionic-cli)
+- [wp8 company app distribution] replace `sign_mode` in `tarifa.json` with `certificate_path`
+- now, we have a buildbot!: http://ci.tarifa.tools watching all repo branches
+- test android, ios(ad-hoc) and wp8 signing process
+- upgrade to cordova 4.1.2 (which upgrade cordova-ios@3.7.0 and cordova-wp8@3.7.0)
+- updade default plugins to latest cordova plugins release: http://cordova.apache.org/news/2014/12/09/plugins-release.html
+- `~` style path are now correctly handled in `tarifa create`
+- allow parentheses in product name
+- create a tarifa project in the current directory
+- support `commit_sha`, `build_server_url` and `repository_url` options in `tarifa hockeyapp`
+- do not impose what is private in tarifa.json/private.json files only on `tarifa create`
+- create an `hockeyapp_id` when upload new configuration
+- `tarifa create` creates android keystore if wanted
+
 ## 0.3.1 10/28/2014
 
 - something went wrong while publishing 0.3.0 on npm: republish on npm.

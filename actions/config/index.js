@@ -2,6 +2,7 @@ var Q = require('q'),
     fs = require('q-io/fs'),
     path = require('path'),
     argsHelper = require('../../lib/helper/args'),
+    pathHelper = require('../../lib/helper/path'),
     print = require('../../lib/helper/print'),
     match = require('../../lib/helper/args').matchCmd;
 
@@ -24,7 +25,7 @@ var action = function (argv) {
         if(match(argv._, ['provisioning', 'list'])) return require('./ios/provisioning').list(verbose);
 
         if(match(argv._, ['icons', 'generate', '+', '*'])) return action.generateIcons(argv._[2], argv._[3], verbose);
-        if(match(argv._, ['icons', 'file', '+', '*'])) return action.generateIconsFromFile(path.resolve(argv._[2]), argv._[3], verbose);
+        if(match(argv._, ['icons', 'file', '+', '*'])) return action.generateIconsFromFile(pathHelper.resolve(argv._[2]), argv._[3], verbose);
         if(match(argv._, ['splashscreens', '+', '*'])) return action.generateSplashscreens(argv._[1], argv._[2], verbose);
 
         return printHelp();

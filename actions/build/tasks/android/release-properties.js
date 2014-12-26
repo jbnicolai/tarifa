@@ -1,23 +1,24 @@
 var Q = require('q'),
-    fs = require('q-io/fs'),
     print = require('../../../../lib/helper/print'),
-    settings = require('../../../../lib/settings'),
-    askPassword = require('./ask_password'),
+    askPassword = require('../../../../lib/helper/question').password,
     releaseProperties = require('../../../../lib/android/release-properties');
 
 module.exports = function (msg) {
     var root = process.cwd(),
         localConf = msg.localSettings.configurations.android[msg.configuration],
-        keystore_path = localConf['keystore_path'],
-        keystore_alias = localConf['keystore_alias'];
+        ks_path = localConf['keystore_path'],
+        storepass = msg.keystore_pass,
+        ks_alias = localConf['keystore_alias'],
+        aliaspass = msg.keystore_alias_pass;
 
-    if(keystore_path && keystore_alias) {
-        return askPassword().then(function (password) {
-            return releaseProperties.create(root, keystore_path, keystore_alias, password)
-                .then(function () {
-                    if(msg.verbose) print.success('release.properties created');
-                    return msg;
-                });
+    if (ks_path && ks_alias) {
+        return (storepass ? Q(storepass) : askPassword('What is the keystore password?')).then(function (s) {
+            return (aliaspass ? Q(aliaspass) : askPassword('What is the alias password?')).then(function (a) {
+                return releaseProperties.create(root, ks_path, ks_alias, s, a);
+            });
+        }).then(function () {
+            if (msg.verbose) print.success('release.properties created');
+            return msg;
         });
     }
     return msg;

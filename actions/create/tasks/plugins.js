@@ -3,10 +3,10 @@
  */
 
 var Q = require('q'),
-    path = require('path'),
     plugins = require('../../../lib/cordova/plugins'),
     pluginList = require('../../../lib/plugins.json'),
     print = require('../../../lib/helper/print'),
+    pathHelper = require('../../../lib/helper/path'),
     tarifaFile = require('../../../lib/tarifa-file');
 
 function add_cordova_plugin (root, name, uri) {
@@ -31,7 +31,7 @@ module.exports = function (response) {
 
     return response.plugins.reduce(function (promise, plugin) {
         return promise.then(function () {
-            return add_cordova_plugin(path.resolve(process.cwd(), response.path), plugin.value, plugin.uri).then(function () {
+            return add_cordova_plugin(pathHelper.resolve(response.path), plugin.value, plugin.uri).then(function () {
                 if (response.options.verbose)
                     print.success('cordova plugin %s added', plugin.value);
                 return Q.resolve(response);

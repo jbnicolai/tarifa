@@ -80,4 +80,5 @@ var action = function (argv) {
 
 action.run = run;
 action.runAll = runAll;
+action.runƒ = runƒ;
 module.exports = action;

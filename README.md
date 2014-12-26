@@ -59,6 +59,7 @@ Commands:
     clean          Clean the given platform
     hockeyapp      Interface with hockeyapp beta testing platform
     update         Update current project cordova platforms and core plugins
+    watch          Watch current project
 
 Options:
 
@@ -75,19 +76,40 @@ git clone https://github.com/TarifaTools/tarifa.git && cd tarifa && npm link .
 
 ### Tests
 
-run
+running all tests without devices:
 
 ```
 npm test
 ```
 
-test with devices:
+The stdio of `npm test` can be found on our buildbot [ci.tarifa.tools](http://ci.tarifa.tools/)
+
+test with attached devices:
 
 ```
-npm run all
+npm run test-with-devices
 ```
 
-You need to attach one device of each available platforms on your os.
+you can run single tests from `test/actions` or `xml/**` by calling `npm run mocha -- path/to/test/file`.
+For example, calling `tarifa prepare` action tests:
+
+```
+npm run mocha -- test/actions/prepare
+```
+
+To test the siging process for ad-hoc distribution on ios you need to provide a developer identity, a provisioning file and a bundleid:
+
+```
+npm run mocha -- test/actions/sign_ios.js --identity="iPhone Distribution: xxxxxxxxxxxxxxxxxxxxx (xxxxxxxxxx)" --provision="/my/path/to/project.mobileprovision" --id="com.42loops.test"
+```
+
+To test the signing process for company app distribution on wp8, you need to provide the path of your certificate and the password:
+
+```
+npm run mocha -- test\actions\sign_wp8.js --certificat_path="c:\certificate.pfx" --password="xxxxxx"
+```
+
+npm >= 2.0 is needed!
 
 ## License
 
@@ -96,3 +118,5 @@ tarifa is licensed under Apache version 2.0
 ## Sponsors
 
 * [zengularity](http://zengularity.com)
+
+[![Analytics](https://ga-beacon.appspot.com/UA-35740178-1/tarifa/readme?pixel)](https://github.com/igrigorik/ga-beacon)

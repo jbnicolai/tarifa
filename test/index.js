@@ -1,11 +1,7 @@
-switch(process.platform) {
-    case 'linux':
-        require('./linux')({ run: false });
-        break;
-    case 'win32':
-        require('./win32')({ run: false });
-        break;
-    case 'darwin':
-        require('./darwin')({ run: false });
-        break;
-}
+require('./xml/config.xml');
+require('./xml/android/string.xml');
+require('./xml/android/project');
+require('./xml/android/AndroidManifest.xml');
+require('./xml/wp8/csproj');
+require('./xml/wp8/WMAppManifest.xml');
+require('./test')({ run: false });

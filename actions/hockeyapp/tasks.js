@@ -9,18 +9,15 @@ argsHelper = require('../../lib/helper/args'),
 hockeyapp = require('../../lib/hockeyapp/hockeyapp'),
 print = require('../../lib/helper/print');
 
-function upload(msg) {
+var upload = function (msg) {
     var config = msg.config,
-    platform = msg.platform,
-    argv = msg.argv,
-    verbose = msg.verbose,
-    localSettings = msg.localSettings;
+        platform = msg.platform,
+        argv = msg.argv,
+        verbose = msg.verbose,
+        localSettings = msg.localSettings;
 
     var envSettings = localSettings.configurations[platform][config];
     var hockeyapp_id = envSettings.hockeyapp_id;
-
-    if (!hockeyapp_id)
-        return Q.reject('No hockeyapp_id key is available in ' + config + 'for platform ' + platform);
 
     if (!localSettings.hockeyapp || !localSettings.hockeyapp.api_url ||
     !localSettings.hockeyapp.token) {
@@ -58,7 +55,6 @@ function upload(msg) {
 
     var conf = {
         localSettings: localSettings,
-        hockeyapp_id: hockeyapp_id,
         uploadParams: params,
         verbose: verbose
     };
@@ -68,21 +64,31 @@ function upload(msg) {
         getMode(platform, config, localSettings)
     );
 
-    return hockeyapp.uploadVersion(productFileName, conf).then(function () {
-        print.success('Uploaded new version successfully for ' + platform + ' ' + config + '.');
+    return hockeyapp.uploadVersion(productFileName, conf, hockeyapp_id).then(function (data) {
+        // in case of app creation, add 'hockeyapp_id' to configuration
+        if (data.public_identifier) {
+            tarifaFile.addHockeyappId(pathHelper.root(), platform, config, data.public_identifier).then(function() {
+                print.success('Created hockeyapp application and uploaded new package "' + path.basename(productFileName) + '" successfully.\nSee new version at ' + data.public_url);
+            }, function(error) {
+                print.error(error);
+            });
+        } else {
+            print.success('Uploaded new package "' + path.basename(productFileName) + '" successfully.\nSee new version at ' + data.public_url);
+        }
     });
-}
+};
 
-function clean(msg, nbToKeep) {
+var clean = function (msg, nbToKeep) {
     var localSettings = msg.localSettings,
         verbose = msg.verbose;
+
     var appIds = collsHelper.findByKey(localSettings, 'hockeyapp_id');
     return hockeyapp.clean(appIds, localSettings, nbToKeep).then(function (total) {
         print.success('Successfully deleted ' + total + ' version(s). Notice: deletion is asynchronous and version may still appear in listings for a while.');
     });
-}
+};
 
-function updateLast(msg) {
+var updateLast = function (msg) {
     var config = msg.config,
         platform = msg.platform,
         argv = msg.argv,
@@ -119,9 +125,9 @@ function updateLast(msg) {
             });
         });
     });
-}
+};
 
-function list(msg) {
+var list = function(msg) {
     var config = msg.config,
         platform = msg.platform,
         verbose = msg.verbose;
@@ -146,7 +152,7 @@ function list(msg) {
 
         return hockeyapp.listVersions(conf, true);
     });
-}
+};
 
 module.exports.list = list;
 module.exports.upload = upload;

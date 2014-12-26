@@ -75,4 +75,5 @@ var action = function (argv) {
 
 action.prepare = prepare;
 action.prepareƒ = prepareƒ;
+action.copy_method = method[settings.www_link_method[os.platform()]];
 module.exports = action;

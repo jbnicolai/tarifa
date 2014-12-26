@@ -21,12 +21,24 @@ module.exports = function (msg) {
     if (conf.cordova && conf.cordova.preferences)
         preferences = mergeObject(preferences, conf.cordova.preferences);
 
-    return ConfigBuilder.set(config_xml_path, id, version, author, author_email, author_href, description, preferences, accessOrigin).then(function () {
+    return ConfigBuilder.set(
+        config_xml_path,
+        id,
+        version,
+        author,
+        author_email,
+        author_href,
+        description,
+        preferences,
+        accessOrigin,
+        msg.watch || null
+    ).then(function () {
         if(msg.verbose)
             print.success('modifying config.xml');
         return msg;
     }, function(err) {
-        if(msg.verbose) print.error('Error when trying to modify config.xml: ' + err);
+        if(msg.verbose)
+            print.error('Error when trying to modify config.xml: ' + err);
         return Q.reject(err);
     });
 };

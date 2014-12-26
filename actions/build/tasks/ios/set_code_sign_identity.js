@@ -7,10 +7,12 @@ var Q = require('q'),
 
 module.exports = function (msg) {
     var identity = msg.localSettings.configurations.ios[msg.configuration]['apple_developer_identity'];
-    var newIdentity = 'CODE_SIGN_IDENTITY = ' + identity;
+    var newIdentity = 'CODE_SIGN_IDENTITY = ' + identity + '\n';
     if(identity) {
-        var xcconfigPath = path.join(pathHelper.app(), 'platforms', 'ios', 'cordova', 'build.xcconfig');
-        fs.writeFileSync(xcconfigPath, fs.readFileSync(xcconfigPath, 'utf-8').replace(/CODE_SIGN_IDENTITY =.*$/, newIdentity));
+        var xcconfigPath = path.join(pathHelper.app(), 'platforms', 'ios', 'cordova', 'build-release.xcconfig'),
+            content = fs.readFileSync(xcconfigPath, 'utf-8').replace(/CODE_SIGN_IDENTITY =.*\n/, newIdentity);
+
+        fs.writeFileSync(xcconfigPath, content);
         if(msg.verbose)
             print.success('change apple developer identity to %s', identity);
     }

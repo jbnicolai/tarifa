@@ -3,10 +3,10 @@
  */
 
 var Q = require('q'),
-    path = require('path'),
     mkdirp = require('mkdirp'),
     settings = require('../../../lib/settings'),
     print = require('../../../lib/helper/print'),
+    pathHelper = require('../../../lib/helper/path'),
     copyDefaultIcons = require('../../../lib/cordova/icon').copyDefault,
     copyDefaultSplashscreens = require('../../../lib/cordova/splashscreen').copyDefault,
     generateDefaultIcons = require('../../../lib/cordova/icon').generate,
@@ -30,7 +30,7 @@ function copyDefaultAssets(root, platforms, verbose) {
 }
 
 module.exports = function (response) {
-    var root = response.path,
+    var root = pathHelper.resolve(response.path),
         verbose = response.options.verbose;
 
     return Q.all(createFolders(root, response.platforms, 'default', true))

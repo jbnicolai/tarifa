@@ -3,64 +3,81 @@
  */
 
 var browserify = require('browserify'),
+    watchify = require('watchify'),
     Q = require('q'),
-    preprocess = require('preprocess'),
     path = require('path'),
     fs = require('fs'),
-    tmp = require('tmp');
+    chokidar = require('chokidar'),
 
-function mapSettings(settings, platform, configurationName) {
-    var mapping = require('./mapping');
-    var result = {};
-    var flatSettings = {};
+    w, // watchify instance
+    watcher, // chokidar watcher instance
 
-    for (var k in settings) {
-        if (k !== "configurations") {
-            flatSettings[k] = settings[k];
-        } else {
-            for (var l in settings[k][platform][configurationName]) {
-                flatSettings[l] = settings[k][platform][configurationName][l];
-            }
-        }
-    }
+    src = path.join(__dirname, '../src/app.js'),
+    out = path.join(__dirname, '../www/main.js'),
+    www = path.join(__dirname, '../www');
 
-    for (var j in flatSettings) {
-        if (mapping[j] !== undefined) {
-            result[mapping[j]] = flatSettings[j];
-        }
-    }
+function log(o) { if(o) console.log('- browserify - ' + o); }
 
-    return result;
+function rejectOnError(d) {
+    return function (err) { log(err); if(err) d.reject(err); };
 }
 
-module.exports.build = function build(platform, settings, configurationName) {
-    var b = browserify();
-    var defer = Q.defer();
-    var output = path.join(__dirname, '../www/main.js');
+function bundle(conf) {
+    var defer = Q.defer(),
+        settings = path.join(__dirname, 'settings.json'),
+        b = browserify({ cache: {}, packageCache: {}, fullPaths: true });
 
-    if(fs.existsSync(output)) fs.unlinkSync(output);
+    if(fs.existsSync(settings)) fs.unlinkSync(settings);
+    if(fs.existsSync(out)) fs.unlinkSync(out);
 
-    var ws = fs.createWriteStream(path.join(__dirname, '..', '..', settings.project_output, 'main.js'));
+    fs.writeFileSync(settings, JSON.stringify(conf), null, 2);
 
-    tmp.file({ prefix: 'settings-', postfix: '.json' },function (err, tmpFilePath) {
-        if (err) defer.reject(err);
-        fs.writeFileSync(tmpFilePath, JSON.stringify(mapSettings(settings, platform, configurationName), null, 2));
-        b.add(path.join(__dirname, '../src/app.js'))
-            .on('error', function (err) { defer.reject(err); })
-            .require(tmpFilePath, { expose : 'settings' })
-            .bundle()
-            .pipe(ws);
+    var ws = fs.createWriteStream(out);
 
-        ws.on('finish', function() {
-            tmp.setGracefulCleanup();
-            var htmlSrc = path.join(__dirname, '../html/index.html');
-            var htmlDest = path.join(__dirname, '..', '..', settings.project_output, 'index.html');
-            preprocess.preprocessFileSync(htmlSrc, htmlDest, {
-                PLATFORM : platform
-            });
+    b.add(src)
+        .require(settings, { expose : 'settings' })
+        .bundle(rejectOnError(defer))
+        .pipe(ws);
 
-            defer.resolve();
-        });
-    });
+    ws.on('finish', function() { ws.end(); defer.resolve(b); });
+
     return defer.promise;
+}
+
+function run(conf, f){
+    return bundle(conf).then(function (b) {
+        var w = watchify(b);
+
+        b.bundle(function () { w.on('log', log); });
+
+        w.on('update', function () {
+            var ws = fs.createWriteStream(out);
+
+            w.bundle(log).pipe(ws);
+
+            ws.on('finish', function() { ws.end(); f(out); });
+        });
+        return w;
+    });
+}
+
+module.exports.build = function build(platform, settings, config) {
+    return bundle(settings.configurations[platform][config]);
+};
+
+module.exports.watch = function watch(f, settings, platform, config) {
+
+    run(settings.configurations[platform][config], f).then(function (bw) {
+        w = bw;
+        watcher = chokidar.watch(www, { ignored: /main\.js/, persistent: true });
+
+        setTimeout(function () {
+            watcher.on('all', function (evt, p) { f(p); });
+        }, 4000);
+    });
+};
+
+module.exports.close = function () {
+    if(w) w.close();
+    if(watcher) watcher.close();
 };

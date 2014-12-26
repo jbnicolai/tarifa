@@ -29,8 +29,22 @@ var Q = require('q'),
         require('./questions/deploy/has_apple_developer_team'),
         require('./questions/deploy/apple_developer_identity'),
         require('./questions/deploy/provisioning_profile_name'),
-        require('./questions/deploy/keystore_path'),
-        require('./questions/deploy/keystore_alias')
+        require('./questions/deploy/wp8_certificate_path')
+    ],
+
+    shallReuseKeystore = [
+        require('./questions/deploy/keystore_reuse')
+    ],
+    reuseKeystoreQuestions = [
+        require('./questions/deploy/keystore_path_existing'),
+        require('./questions/deploy/keystore_storepass'),
+        require('./questions/deploy/keystore_alias_list')
+    ],
+    createKeystoreQuestions = [
+        require('./questions/deploy/keystore_path_non_existing'),
+        require('./questions/deploy/keystore_storepass'),
+        require('./questions/deploy/keystore_alias'),
+        require('./questions/deploy/keystore_keypass')
     ],
 
     isHockeyApp = [
@@ -46,6 +60,7 @@ var Q = require('q'),
         require('./tasks/cordova'),
         require('./tasks/platforms'),
         require('./tasks/fetch-provisioning-file'),
+        require('./tasks/create-keystore'),
         require('./tasks/tarifa-file'),
         require('./tasks/git'),
         require('./tasks/plugins'),
@@ -67,16 +82,18 @@ function ask(defer, question, type, value, verbose) {
         inquirer.prompt([question], function (answer) {
             value[question.name] = answer[question.name];
             // linked question
-            if(question.question && value[question.name]){
-                return ask(
-                    defer,
-                    require(path.join(__dirname, question.question)),
-                    type,
-                    value,
-                    verbose
-                );
-            }
-            else {
+            if (question.question && value[question.name]) {
+                var linked = require(path.join(__dirname, question.question)),
+                    // if the linked question is a function it must return a promise
+                    // that means, the question needs to do some async tasks in
+                    // order to populate the choices
+                    p = (typeof linked === 'function') ? linked(value, verbose) : Q.resolve(linked);
+                p.then(function (qst) {
+                    ask(defer, qst, type, value, verbose);
+                }, function (err) {
+                    defer.reject(err);
+                });
+            } else {
                 defer.resolve(value);
             }
         });
@@ -95,7 +112,7 @@ function askQuestions(questions, type) {
                     d.resolve(val);
                 }
                 else {
-                    // if the question is a function it must retrun a promise
+                    // if the question is a function it must return a promise
                     // that means, the question needs to do some async tasks
                     // in order to populate the choices
                     if(typeof question === 'function') {
@@ -123,8 +140,14 @@ function create(verbose) {
     if(verbose) print.banner();
     return askQuestions(mainQuestions, '')({ options : { verbose : verbose } })
         .then(function (resp) {
-            if(resp.deploy) return askQuestions(deployQuestions, 'deploy')(resp);
-            else return resp;
+            if (!resp.deploy) return resp;
+            return askQuestions(deployQuestions, 'deploy')(resp)
+                    .then(askQuestions(shallReuseKeystore, 'deploy'))
+                    .then(function (resp) {
+                        var nextQuestions = resp.keystore_reuse ? reuseKeystoreQuestions :
+                                                                  createKeystoreQuestions;
+                        return askQuestions(nextQuestions, 'deploy')(resp);
+                    });
         })
         .then(function (resp) {
             return askQuestions(isHockeyApp, '')(resp);
