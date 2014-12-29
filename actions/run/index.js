@@ -64,8 +64,8 @@ var runMoreConfs = function(platform, configs, verbose) {
 var runMorePlatforms = function (platforms, config, verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         platforms = platforms || localSettings.platforms;
-        platforms = platforms.filter(platformsLib.isAvailableOnHostSync);
-        return platforms.reduce(function(promise, platform) {
+        return platforms.filter(platformsLib.isAvailableOnHostSync)
+        .reduce(function(promise, platform) {
             return promise.then(function () {
                 print.outline('Launch run for ' + platform + ' platform!');
                 if (config === '*')

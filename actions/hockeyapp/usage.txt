@@ -1,7 +1,8 @@
 Usage: tarifa hockeyapp <command>
 
 <platform> argument in each command can also be a wildcard:
-- {*} match all platforms
+- '*' match all platforms availables on system
+- 'ios,android' match ios and android platforms
 
 Commands:
 
