@@ -5,33 +5,19 @@ var should = require('should'),
     tmp = require('tmp'),
     setupHelper = require('../helper/setup'),
     isAvailableOnHostSync = require('../../lib/cordova/platforms').isAvailableOnHostSync,
-    settings = require('../../lib/settings'),
     runAction = require('../../actions/run');
 
 function testRun(projectDefer) {
 
     describe('tarifa run', function() {
 
-        settings.platforms.forEach(function (p) {
-
-            if(isAvailableOnHostSync(p)) {
-
-                it(format('tarifa run %s dev', p), function () {
-                    this.timeout(0);
-                    return projectDefer.promise.then(function (rslt) {
-                        return runAction.run(p, 'dev', false);
-                    });
-                });
-
-                it(format('tarifa run %s stage', p), function () {
-                    this.timeout(0);
-                    return projectDefer.promise.then(function (rslt) {
-                        return runAction.run(p, 'stage', false);
-                    });
-                });
-
-            }
+        it(format("tarifa run '*' 'dev,stage'"), function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return runAction.runMorePlatforms(null, 'dev,stage', false);
+            });
         });
+
     });
 }
 
