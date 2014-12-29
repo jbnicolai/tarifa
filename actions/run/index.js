@@ -12,7 +12,7 @@ var Q = require('q'),
     platformsLib = require('../../lib/cordova/platforms'),
     buildAction = require('../build'),
     askDevice = require('./ask_device'),
-    match = require('../../lib/helper/args').matchCmd,
+    argsHelper = require('../../lib/helper/args'),
 
     tasks = {
         android : [
@@ -49,9 +49,10 @@ var run = function (platform, config, verbose) {
         });
 };
 
-var runAllConfs = function(platform, verbose) {
+var runMoreConfs = function(platform, configs, verbose) {
     return tarifaFile.parse(pathHelper.root(), platform).then(function (localSettings) {
-        return tarifaFile.getPlatformConfigs(localSettings, platform).reduce(function(promise, conf) {
+        configs = configs || tarifaFile.getPlatformConfigs(localSettings, platform);
+        return configs.reduce(function(promise, conf) {
             return promise.then(function () {
                 print.outline('Run ' + conf + ' configuration!');
                 return run(platform, conf, verbose);
@@ -60,14 +61,17 @@ var runAllConfs = function(platform, verbose) {
     });
 };
 
-var runAllPlatforms = function (config, verbose) {
+var runMorePlatforms = function (platforms, config, verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
-        return localSettings.platforms.filter(platformsLib.isAvailableOnHostSync)
-        .reduce(function(promise, platform) {
+        platforms = platforms || localSettings.platforms;
+        platforms = platforms.filter(platformsLib.isAvailableOnHostSync);
+        return platforms.reduce(function(promise, platform) {
             return promise.then(function () {
                 print.outline('Launch run for ' + platform + ' platform!');
-                if (config === '{*}')
-                    return runAllConfs(platform, verbose);
+                if (config === '*')
+                    return runMoreConfs(platform, null, verbose);
+                else if (argsHelper.matchWildcard(config))
+                    return runMoreConfs(platform, argsHelper.getFromWildcard(config), verbose);
                 else
                     return run(platform, config, verbose);
             });
@@ -83,20 +87,25 @@ var action = function (argv) {
         verbose = true;
     }
 
-    // match args
-    if(match(argv._, ['__all__', '*']))
-        return runAllPlatforms(argv._[1] || 'default', verbose);
+    if(argsHelper.matchCmd(argv._, ['__all__', '*']))
+        return runMorePlatforms(null, argv._[1] || 'default', verbose);
 
-    if (match(argv._, ['+', '__all__']))
-        return runAllConfs(argv._[0], verbose);
+    if (argsHelper.matchCmd(argv._, ['__some__', '*']))
+        return runMorePlatforms(argsHelper.getFromWildcard(argv._[0]), argv._[1] || 'default', verbose);
 
-    if(match(argv._, ['+', '*']))
+    if (argsHelper.matchCmd(argv._, ['+', '__all__']))
+        return runMoreConfs(argv._[0], null, verbose);
+
+    if (argsHelper.matchCmd(argv._, ['+', '__some']))
+        return runMoreConfs(argv._[0], argsHelper.getFromWildcard(argv._[1], verbose));
+
+    if(argsHelper.matchCmd(argv._, ['+', '*']))
         return run(argv._[1], argv._[0] || 'default', verbose);
 
     return fs.read(helpPath).then(print);
 };
 
 action.run = run;
-action.runAllPlatforms = runAllPlatforms;
+action.runMorePlatforms = runMorePlatforms;
 action.runƒ = runƒ;
 module.exports = action;

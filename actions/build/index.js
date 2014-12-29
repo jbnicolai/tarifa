@@ -10,7 +10,7 @@ var Q = require('q'),
     fs = require('q-io/fs'),
     prepareAction = require('../prepare'),
     platformsLib = require('../../lib/cordova/platforms'),
-    match = require('../../lib/helper/args').matchCmd;
+    argsHelper = require('../../lib/helper/args');
 
 // set android build to gradle!!!
 process.env.ANDROID_BUILD = 'gradle';
@@ -176,9 +176,10 @@ var build = function (platform, config, keepFileChanges, verbose) {
     });
 };
 
-var buildAllConfs = function(platform, keepFileChanges, verbose) {
+var buildMoreConfs = function(platform, configs, keepFileChanges, verbose) {
     return tarifaFile.parse(pathHelper.root(), platform).then(function (localSettings) {
-        return tarifaFile.getPlatformConfigs(localSettings, platform).reduce(function(promise, conf) {
+        configs = configs || tarifaFile.getPlatformConfigs(localSettings, platform);
+        return configs.reduce(function(promise, conf) {
             return promise.then(function () {
                 print.outline('Build ' + conf + ' configuration!');
                 return build(platform, conf, keepFileChanges, verbose);
@@ -187,14 +188,17 @@ var buildAllConfs = function(platform, keepFileChanges, verbose) {
     });
 };
 
-var buildAllPlatforms = function (config, keepFileChanges, verbose) {
+var buildMorePlatforms = function (platforms, config, keepFileChanges, verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
-        return localSettings.platforms.filter(platformsLib.isAvailableOnHostSync)
-        .reduce(function(promise, platform) {
+        platforms = platforms || localSettings.platforms;
+        platforms = platforms.filter(platformsLib.isAvailableOnHostSync);
+        return platforms.reduce(function(promise, platform) {
             return promise.then(function () {
                 print.outline('Launch build for ' + platform + ' platform!');
-                if (config === '{*}')
-                    return buildAllConfs(platform, keepFileChanges, verbose);
+                if (config === '*')
+                    return buildMoreConfs(platform, null, keepFileChanges, verbose);
+                else if (argsHelper.matchWildcard(config))
+                    return buildMoreConfs(platform, argsHelper.getFromWildcard(config), keepFileChanges, verbose);
                 else
                     return build(platform, config, keepFileChanges, verbose);
             });
@@ -215,20 +219,26 @@ var action = function (argv) {
         keepFileChanges = true;
 
     // match args
-    if (match(argv._, ['__all__', '*']))
-        return buildAllPlatforms(argv._[1] || 'default', keepFileChanges, verbose);
+    if (argsHelper.matchCmd(argv._, ['__all__', '*']))
+        return buildMorePlatforms(null, argv._[1] || 'default', keepFileChanges, verbose);
 
-    if (match(argv._, ['+', '__all__']))
-        return buildAllConfs(argv._[0], keepFileChanges, verbose);
+    if (argsHelper.matchCmd(argv._, ['__some__', '*']))
+        return buildMorePlatforms(argsHelper.getFromWildcard(argv._[0]), argv._[1] || 'default', keepFileChanges, verbose);
 
-    if (match(argv._, ['+', '*']))
+    if (argsHelper.matchCmd(argv._, ['+', '__all__']))
+        return buildMoreConfs(argv._[0], null, keepFileChanges, verbose);
+
+    if (argsHelper.matchCmd(argv._, ['+', '__some__']))
+        return buildMoreConfs(argv._[0], argsHelper.getFromWildcard(argv._[1]), keepFileChanges, verbose);
+
+    if (argsHelper.matchCmd(argv._, ['+', '*']))
         return build(argv._[0], argv._[1] || 'default', keepFileChanges, verbose);
 
     return fs.read(helpPath).then(print);
 };
 
 action.build = build;
-action.buildAllPlatforms = buildAllPlatforms;
+action.buildMorePlatforms = buildMorePlatforms;
 action.buildƒ = buildƒ;
 action.prepare = prepare;
 module.exports = action;
