@@ -176,7 +176,7 @@ var build = function (platform, config, keepFileChanges, verbose) {
     });
 };
 
-var buildMoreConfs = function(platform, configs, keepFileChanges, verbose) {
+var buildMultipleConfs = function(platform, configs, keepFileChanges, verbose) {
     return tarifaFile.parse(pathHelper.root(), platform).then(function (localSettings) {
         configs = configs || tarifaFile.getPlatformConfigs(localSettings, platform);
         return configs.reduce(function(promise, conf) {
@@ -188,7 +188,7 @@ var buildMoreConfs = function(platform, configs, keepFileChanges, verbose) {
     });
 };
 
-var buildMorePlatforms = function (platforms, config, keepFileChanges, verbose) {
+var buildMultiplePlatforms = function (platforms, config, keepFileChanges, verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         platforms = platforms || localSettings.platforms;
         return platforms.filter(platformsLib.isAvailableOnHostSync)
@@ -196,9 +196,9 @@ var buildMorePlatforms = function (platforms, config, keepFileChanges, verbose) 
             return promise.then(function () {
                 print.outline('Launch build for ' + platform + ' platform!');
                 if (config === 'all')
-                    return buildMoreConfs(platform, null, keepFileChanges, verbose);
+                    return buildMultipleConfs(platform, null, keepFileChanges, verbose);
                 else if (argsHelper.matchWildcard(config))
-                    return buildMoreConfs(platform, argsHelper.getFromWildcard(config), keepFileChanges, verbose);
+                    return buildMultipleConfs(platform, argsHelper.getFromWildcard(config), keepFileChanges, verbose);
                 else
                     return build(platform, config, keepFileChanges, verbose);
             });
@@ -220,16 +220,16 @@ var action = function (argv) {
 
     // match args
     if (argsHelper.matchCmd(argv._, ['__all__', '*']))
-        return buildMorePlatforms(null, argv._[1] || 'default', keepFileChanges, verbose);
+        return buildMultiplePlatforms(null, argv._[1] || 'default', keepFileChanges, verbose);
 
     if (argsHelper.matchCmd(argv._, ['__some__', '*']))
-        return buildMorePlatforms(argsHelper.getFromWildcard(argv._[0]), argv._[1] || 'default', keepFileChanges, verbose);
+        return buildMultiplePlatforms(argsHelper.getFromWildcard(argv._[0]), argv._[1] || 'default', keepFileChanges, verbose);
 
     if (argsHelper.matchCmd(argv._, ['+', '__all__']))
-        return buildMoreConfs(argv._[0], null, keepFileChanges, verbose);
+        return buildMultipleConfs(argv._[0], null, keepFileChanges, verbose);
 
     if (argsHelper.matchCmd(argv._, ['+', '__some__']))
-        return buildMoreConfs(argv._[0], argsHelper.getFromWildcard(argv._[1]), keepFileChanges, verbose);
+        return buildMultipleConfs(argv._[0], argsHelper.getFromWildcard(argv._[1]), keepFileChanges, verbose);
 
     if (argsHelper.matchCmd(argv._, ['+', '*']))
         return build(argv._[0], argv._[1] || 'default', keepFileChanges, verbose);
@@ -238,7 +238,7 @@ var action = function (argv) {
 };
 
 action.build = build;
-action.buildMorePlatforms = buildMorePlatforms;
+action.buildMultiplePlatforms = buildMultiplePlatforms;
 action.buildƒ = buildƒ;
 action.prepare = prepare;
 module.exports = action;

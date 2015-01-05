@@ -16,7 +16,7 @@ function testBuild(projectDefer) {
         it(format("tarifa build all default,dev"), function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
-                return buildAction.buildMorePlatforms(null, 'default,dev', false, false);
+                return buildAction.buildMultiplePlatforms(null, 'default,dev', false, false);
             });
         });
     });

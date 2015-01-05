@@ -49,7 +49,7 @@ var run = function (platform, config, verbose) {
         });
 };
 
-var runMoreConfs = function(platform, configs, verbose) {
+var runMultipleConfs = function(platform, configs, verbose) {
     return tarifaFile.parse(pathHelper.root(), platform).then(function (localSettings) {
         configs = configs || tarifaFile.getPlatformConfigs(localSettings, platform);
         return configs.reduce(function(promise, conf) {
@@ -61,7 +61,7 @@ var runMoreConfs = function(platform, configs, verbose) {
     });
 };
 
-var runMorePlatforms = function (platforms, config, verbose) {
+var runMultiplePlatforms = function (platforms, config, verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         platforms = platforms || localSettings.platforms;
         return platforms.filter(platformsLib.isAvailableOnHostSync)
@@ -69,9 +69,9 @@ var runMorePlatforms = function (platforms, config, verbose) {
             return promise.then(function () {
                 print.outline('Launch run for ' + platform + ' platform!');
                 if (config === 'all')
-                    return runMoreConfs(platform, null, verbose);
+                    return runMultipleConfs(platform, null, verbose);
                 else if (argsHelper.matchWildcard(config))
-                    return runMoreConfs(platform, argsHelper.getFromWildcard(config), verbose);
+                    return runMultipleConfs(platform, argsHelper.getFromWildcard(config), verbose);
                 else
                     return run(platform, config, verbose);
             });
@@ -88,16 +88,16 @@ var action = function (argv) {
     }
 
     if(argsHelper.matchCmd(argv._, ['__all__', '*']))
-        return runMorePlatforms(null, argv._[1] || 'default', verbose);
+        return runMultiplePlatforms(null, argv._[1] || 'default', verbose);
 
     if (argsHelper.matchCmd(argv._, ['__some__', '*']))
-        return runMorePlatforms(argsHelper.getFromWildcard(argv._[0]), argv._[1] || 'default', verbose);
+        return runMultiplePlatforms(argsHelper.getFromWildcard(argv._[0]), argv._[1] || 'default', verbose);
 
     if (argsHelper.matchCmd(argv._, ['+', '__all__']))
-        return runMoreConfs(argv._[0], null, verbose);
+        return runMultipleConfs(argv._[0], null, verbose);
 
     if (argsHelper.matchCmd(argv._, ['+', '__some']))
-        return runMoreConfs(argv._[0], argsHelper.getFromWildcard(argv._[1], verbose));
+        return runMultipleConfs(argv._[0], argsHelper.getFromWildcard(argv._[1], verbose));
 
     if(argsHelper.matchCmd(argv._, ['+', '*']))
         return run(argv._[1], argv._[0] || 'default', verbose);
@@ -106,6 +106,6 @@ var action = function (argv) {
 };
 
 action.run = run;
-action.runMorePlatforms = runMorePlatforms;
+action.runMultiplePlatforms = runMultiplePlatforms;
 action.runƒ = runƒ;
 module.exports = action;
