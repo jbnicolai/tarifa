@@ -68,7 +68,7 @@ var runMorePlatforms = function (platforms, config, verbose) {
         .reduce(function(promise, platform) {
             return promise.then(function () {
                 print.outline('Launch run for ' + platform + ' platform!');
-                if (config === '*')
+                if (config === 'all')
                     return runMoreConfs(platform, null, verbose);
                 else if (argsHelper.matchWildcard(config))
                     return runMoreConfs(platform, argsHelper.getFromWildcard(config), verbose);

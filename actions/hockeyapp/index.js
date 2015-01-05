@@ -40,7 +40,7 @@ function morePlatformsTask(taskƒ, platforms, config, argv, verbose) {
 }
 
 function runTask(taskƒ, platform, config, argv, verbose) {
-    if (platform === '*')
+    if (platform === 'all')
         return morePlatformsTask(taskƒ, null, config, argv, verbose);
     else if (argsHelper.matchWildcard(platform))
         return morePlatformsTask(taskƒ, argsHelper.getFromWildcard(platform), config, argv, verbose);

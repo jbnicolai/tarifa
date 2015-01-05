@@ -11,7 +11,7 @@ function testRun(projectDefer) {
 
     describe('tarifa run', function() {
 
-        it(format("tarifa run '*' 'dev,stage'"), function () {
+        it(format("tarifa run all dev,stage"), function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
                 return runAction.runMorePlatforms(null, 'dev,stage', false);

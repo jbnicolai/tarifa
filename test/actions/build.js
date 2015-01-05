@@ -13,7 +13,7 @@ function testBuild(projectDefer) {
 
     describe('tarifa build', function() {
 
-        it(format("tarifa build '*' 'default,dev'"), function () {
+        it(format("tarifa build all default,dev"), function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
                 return buildAction.buildMorePlatforms(null, 'default,dev', false, false);

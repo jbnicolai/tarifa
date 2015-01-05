@@ -195,7 +195,7 @@ var buildMorePlatforms = function (platforms, config, keepFileChanges, verbose) 
         .reduce(function(promise, platform) {
             return promise.then(function () {
                 print.outline('Launch build for ' + platform + ' platform!');
-                if (config === '*')
+                if (config === 'all')
                     return buildMoreConfs(platform, null, keepFileChanges, verbose);
                 else if (argsHelper.matchWildcard(config))
                     return buildMoreConfs(platform, argsHelper.getFromWildcard(config), keepFileChanges, verbose);
