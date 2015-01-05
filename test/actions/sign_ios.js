@@ -24,7 +24,7 @@ function build(root, id, identity, profile_path) {
 
 function testSign(projectDefer, identity, profile_path, id) {
 
-    describe('sign ios app for ad-hoc distribution', function() {
+    describe('sign ios app for ad-hoc distribution: ', function() {
 
         it('build ios stage and resolve', function () {
             this.timeout(0);
