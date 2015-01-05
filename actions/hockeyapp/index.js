@@ -26,7 +26,7 @@ function platformTask(taskƒ, platform, config, argv, verbose) {
     });
 }
 
-function morePlatformsTask(taskƒ, platforms, config, argv, verbose) {
+function multiplePlatformsTask(taskƒ, platforms, config, argv, verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         platforms = platforms || localSettings.platforms;
         return platforms.filter(platformsLib.isAvailableOnHostSync)
@@ -41,9 +41,9 @@ function morePlatformsTask(taskƒ, platforms, config, argv, verbose) {
 
 function runTask(taskƒ, platform, config, argv, verbose) {
     if (platform === 'all')
-        return morePlatformsTask(taskƒ, null, config, argv, verbose);
+        return multiplePlatformsTask(taskƒ, null, config, argv, verbose);
     else if (argsHelper.matchWildcard(platform))
-        return morePlatformsTask(taskƒ, argsHelper.getFromWildcard(platform), config, argv, verbose);
+        return multiplePlatformsTask(taskƒ, argsHelper.getFromWildcard(platform), config, argv, verbose);
     else
         return platformTask(taskƒ, platform, config, argv, verbose);
 }
