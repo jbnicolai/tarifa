@@ -7,7 +7,7 @@ var Q = require('q'),
 
 module.exports = function (msg) {
     var manifestPath = path.join(pathHelper.app(), 'platforms', 'android'),
-        cmd = "android -s update project -p " + manifestPath + " -s",
+        cmd = "android -s update project -p '" + manifestPath + "' -s",
         options = {
             timeout : 0,
             maxBuffer: 1024 * 400
