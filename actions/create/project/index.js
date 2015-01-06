@@ -4,18 +4,18 @@ var Q = require('q'),
     print = require('../../../lib/helper/print'),
 
     mainQuestions = [
-        'path',
-        'id',
-        'name',
-        'description',
-        'author_name',
-        'author_email',
-        'author_href',
-        'platforms',
-        'plugins',
-        'www',
-        'color',
-        'deploy'
+        'project/path',
+        'project/id',
+        'project/name',
+        'project/description',
+        'project/author_name',
+        'project/author_email',
+        'project/author_href',
+        'project/platforms',
+        'project/plugins',
+        'project/www',
+        'project/color',
+        'deploy/deploy'
     ],
 
     deployQuestions = [
@@ -43,7 +43,7 @@ var Q = require('q'),
     ],
 
     isHockeyApp = [
-        'hockeyapp'
+        'hockeyapp/hockeyapp'
     ],
 
     hockeyAppQuestions = [
