@@ -5,16 +5,16 @@
 var path = require('path'),
     cordova = require('cordova-lib/src/cordova/cordova'),
     Q = require('q'),
-    print = require('../../../lib/helper/print'),
-    pathHelper = require('../../../lib/helper/path'),
-    settings = require('../../../lib/settings'),
+    print = require('../../../../lib/helper/print'),
+    pathHelper = require('../../../../lib/helper/path'),
+    settings = require('../../../../lib/settings'),
     // setting an empty folder as the default www template
     cfg = {
         lib : {
             www : {
                 id : "tarifa",
                 version : "0.0.0",
-                uri : path.join(__dirname, '../../../template/empty')
+                uri : path.join(__dirname, '../../../../template/empty')
             }
         }
     };

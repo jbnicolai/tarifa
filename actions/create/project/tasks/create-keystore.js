@@ -1,6 +1,6 @@
 var Q = require('q'),
-    create = require('../../../lib/android/keystore').create,
-    print = require('../../../lib/helper/print');
+    create = require('../../../../lib/android/keystore').create,
+    print = require('../../../../lib/helper/print');
 
 module.exports = function (resp) {
     if (resp.keystore_reuse === undefined || resp.keystore_reuse === true)

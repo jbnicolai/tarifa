@@ -1,6 +1,12 @@
-Usage: tarifa create
+Usage: tarifa create <tasks>
 
-Answer some questions to get a new tarifa project
+Commands:
+
+    project
+        Answer some questions to create a new tarifa project
+
+    plugin
+        Answer some questions to create a new cordova plugin
 
 Options:
 

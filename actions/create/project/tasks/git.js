@@ -1,9 +1,9 @@
 var Q = require('q'),
     fs = require('q-io/fs'),
     path = require('path'),
-    print = require('../../../lib/helper/print'),
-    pathHelper = require('../../../lib/helper/path'),
-    settings = require('../../../lib/settings');
+    print = require('../../../../lib/helper/print'),
+    pathHelper = require('../../../../lib/helper/path'),
+    settings = require('../../../../lib/settings');
 
 function createGitIgnoreFiles(response) {
     var gitIgnoreBuilders = [

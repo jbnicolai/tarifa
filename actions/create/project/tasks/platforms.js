@@ -5,9 +5,9 @@
 var Q = require('q'),
     fs = require('q-io/fs'),
     path = require('path'),
-    settings = require('../../../lib/settings'),
-    pathHelper = require('../../../lib/helper/path'),
-    platformsLib = require('../../../lib/cordova/platforms');
+    settings = require('../../../../lib/settings'),
+    pathHelper = require('../../../../lib/helper/path'),
+    platformsLib = require('../../../../lib/cordova/platforms');
 
 module.exports = function (response) {
     if (!response.platforms.length) return response;

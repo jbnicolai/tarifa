@@ -4,14 +4,14 @@
 
 var Q = require('q'),
     mkdirp = require('mkdirp'),
-    settings = require('../../../lib/settings'),
-    print = require('../../../lib/helper/print'),
-    pathHelper = require('../../../lib/helper/path'),
-    copyDefaultIcons = require('../../../lib/cordova/icon').copyDefault,
-    copyDefaultSplashscreens = require('../../../lib/cordova/splashscreen').copyDefault,
-    generateDefaultIcons = require('../../../lib/cordova/icon').generate,
-    generateDefaultSplashscreens = require('../../../lib/cordova/splashscreen').generate,
-    createFolders = require('../../../lib/cordova/assets').createFolders;
+    settings = require('../../../../lib/settings'),
+    print = require('../../../../lib/helper/print'),
+    pathHelper = require('../../../../lib/helper/path'),
+    copyDefaultIcons = require('../../../../lib/cordova/icon').copyDefault,
+    copyDefaultSplashscreens = require('../../../../lib/cordova/splashscreen').copyDefault,
+    generateDefaultIcons = require('../../../../lib/cordova/icon').generate,
+    generateDefaultSplashscreens = require('../../../../lib/cordova/splashscreen').generate,
+    createFolders = require('../../../../lib/cordova/assets').createFolders;
 
 function log(msg, verbose) { return function () { if(verbose) print.success(msg); }; }
 

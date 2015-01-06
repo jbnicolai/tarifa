@@ -1,9 +1,9 @@
 var Q = require('q'),
     path = require('path'),
-    print = require('../../../lib/helper/print'),
-    pathHelper = require('../../../lib/helper/path'),
-    download = require('../../../lib/ios/nomad/provisioning/download'),
-    install = require('../../../lib/ios/nomad/provisioning/install');
+    print = require('../../../../lib/helper/print'),
+    pathHelper = require('../../../../lib/helper/path'),
+    download = require('../../../../lib/ios/nomad/provisioning/download'),
+    install = require('../../../../lib/ios/nomad/provisioning/install');
 
 module.exports = function (r) {
     if (!r.provisioning_profile_name) return Q.resolve(r);

@@ -3,11 +3,11 @@
  */
 
 var Q = require('q'),
-    plugins = require('../../../lib/cordova/plugins'),
-    pluginList = require('../../../lib/plugins.json'),
-    print = require('../../../lib/helper/print'),
-    pathHelper = require('../../../lib/helper/path'),
-    tarifaFile = require('../../../lib/tarifa-file');
+    plugins = require('../../../../lib/cordova/plugins'),
+    pluginList = require('../../../../lib/plugins.json'),
+    print = require('../../../../lib/helper/print'),
+    pathHelper = require('../../../../lib/helper/path'),
+    tarifaFile = require('../../../../lib/tarifa-file');
 
 function add_cordova_plugin (root, name, uri) {
     return plugins.add(root, uri).then(function () {

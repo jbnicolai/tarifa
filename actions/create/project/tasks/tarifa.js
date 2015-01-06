@@ -2,11 +2,11 @@ var Q = require('q'),
     fs = require('q-io/fs'),
     path = require('path'),
     format = require('util').format,
-    print = require('../../../lib/helper/print'),
-    pathHelper = require('../../../lib/helper/path'),
-    settings = require('../../../lib/settings'),
-    pkg = require('../../../package.json'),
-    builder = require('../../../lib/builder');
+    print = require('../../../../lib/helper/print'),
+    pathHelper = require('../../../../lib/helper/path'),
+    settings = require('../../../../lib/settings'),
+    pkg = require('../../../../package.json'),
+    builder = require('../../../../lib/builder');
 
 function makeRootDirectory(response) {
     return fs
