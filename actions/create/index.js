@@ -1,58 +1,56 @@
 var Q = require('q'),
-    spinner = require("char-spinner"),
-    inquirer = require('inquirer'),
-    chalk = require('chalk'),
-    cordova = require('cordova-lib/src/cordova/cordova'),
+    spinner = require('char-spinner'),
     fs = require('q-io/fs'),
     path = require('path'),
+    ask = require('../../lib/questions/ask'),
     argsHelper = require('../../lib/helper/args'),
     print = require('../../lib/helper/print'),
 
     mainQuestions = [
-        require('./questions/path'),
-        require('./questions/id'),
-        require('./questions/name'),
-        require('./questions/description'),
-        require('./questions/author_name'),
-        require('./questions/author_email'),
-        require('./questions/author_href'),
-        require('./questions/platforms'),
-        require('./questions/plugins'),
-        require('./questions/www'),
-        require('./questions/color'),
-        require('./questions/deploy')
+        'path',
+        'id',
+        'name',
+        'description',
+        'author_name',
+        'author_email',
+        'author_href',
+        'platforms',
+        'plugins',
+        'www',
+        'color',
+        'deploy'
     ],
 
     deployQuestions = [
-        require('./questions/deploy/apple_id'),
-        require('./questions/deploy/apple_password'),
-        require('./questions/deploy/has_apple_developer_team'),
-        require('./questions/deploy/apple_developer_identity'),
-        require('./questions/deploy/provisioning_profile_name'),
-        require('./questions/deploy/wp8_certificate_path')
+        'deploy/apple_id',
+        'deploy/apple_password',
+        'deploy/has_apple_developer_team',
+        'deploy/apple_developer_identity',
+        'deploy/provisioning_profile_name',
+        'deploy/wp8_certificate_path'
     ],
 
     shallReuseKeystore = [
-        require('./questions/deploy/keystore_reuse')
+        'deploy/keystore_reuse'
     ],
     reuseKeystoreQuestions = [
-        require('./questions/deploy/keystore_path_existing'),
-        require('./questions/deploy/keystore_storepass'),
-        require('./questions/deploy/keystore_alias_list')
+        'deploy/keystore_path_existing',
+        'deploy/keystore_storepass',
+        'deploy/keystore_alias_list'
     ],
     createKeystoreQuestions = [
-        require('./questions/deploy/keystore_path_non_existing'),
-        require('./questions/deploy/keystore_storepass'),
-        require('./questions/deploy/keystore_alias'),
-        require('./questions/deploy/keystore_keypass')
+        'deploy/keystore_path_non_existing',
+        'deploy/keystore_storepass',
+        'deploy/keystore_alias',
+        'deploy/keystore_keypass'
     ],
 
     isHockeyApp = [
-        require('./questions/hockeyapp')
+        'hockeyapp'
     ],
 
     hockeyAppQuestions = [
-        require('./questions/hockeyapp/token')
+        'hockeyapp/token'
     ],
 
     tasks = [
@@ -67,93 +65,30 @@ var Q = require('q'),
         require('./tasks/assets')
     ];
 
-function help(questionName, questionType, verbose) {
-    if(!verbose) return Q.resolve();
-    var helpFile = questionName + '.txt',
-        helpPath =  path.join(__dirname, 'help', questionType, helpFile);
-
-    return fs.isFile(helpPath).then(function (exists) {
-        if(exists) return fs.read(helpPath).then(print);
-    });
-}
-
-function ask(defer, question, type, value, verbose) {
-    help(question.name, type, verbose).then(function () {
-        inquirer.prompt([question], function (answer) {
-            value[question.name] = answer[question.name];
-            // linked question
-            if (question.question && value[question.name]) {
-                var linked = require(path.join(__dirname, question.question)),
-                    // if the linked question is a function it must return a promise
-                    // that means, the question needs to do some async tasks in
-                    // order to populate the choices
-                    p = (typeof linked === 'function') ? linked(value, verbose) : Q.resolve(linked);
-                p.then(function (qst) {
-                    ask(defer, qst, type, value, verbose);
-                }, function (err) {
-                    defer.reject(err);
-                });
-            } else {
-                defer.resolve(value);
-            }
-        });
-    });
-}
-
-function askQuestions(questions, type) {
-    return function (answers) {
-        return questions.reduce(function (promise, question) {
-            var d = Q.defer();
-            promise.then(function (val) {
-                if (val.platforms
-                    && question.dependency
-                    && val.platforms.indexOf(question.dependency) < 0) {
-                    // pass to the next question
-                    d.resolve(val);
-                }
-                else {
-                    // if the question is a function it must return a promise
-                    // that means, the question needs to do some async tasks
-                    // in order to populate the choices
-                    if(typeof question === 'function') {
-                        question(val, val.options.verbose).then(function (qst) {
-                            ask(d, qst, type, val, val.options.verbose);
-                        }, function (err) { print.error(err); });
-                    }
-                    else {
-                        ask(d, question, type, val, val.options.verbose);
-                    }
-                }
-            });
-            return d.promise;
-        }, Q.resolve(answers));
-    };
-}
-
 function launchTasks(resp) {
-    return tasks.reduce(function (val, task){
+    return tasks.reduce(function (val, task) {
         return Q.when(val, task);
     }, resp);
 }
 
 function create(verbose) {
-    if(verbose) print.banner();
-    return askQuestions(mainQuestions, '')({ options : { verbose : verbose } })
+    if (verbose) print.banner();
+    return ask(mainQuestions)({ options : { verbose : verbose } })
         .then(function (resp) {
             if (!resp.deploy) return resp;
-            return askQuestions(deployQuestions, 'deploy')(resp)
-                    .then(askQuestions(shallReuseKeystore, 'deploy'))
+            return ask(deployQuestions)(resp)
+                    .then(ask(shallReuseKeystore))
                     .then(function (resp) {
                         var nextQuestions = resp.keystore_reuse ? reuseKeystoreQuestions :
                                                                   createKeystoreQuestions;
-                        return askQuestions(nextQuestions, 'deploy')(resp);
+                        return ask(nextQuestions)(resp);
                     });
         })
         .then(function (resp) {
-            return askQuestions(isHockeyApp, '')(resp);
+            return ask(isHockeyApp)(resp);
         })
         .then(function (resp) {
-            if (resp.hockeyapp) return askQuestions(hockeyAppQuestions, 'hockeyapp')(resp);
+            if (resp.hockeyapp) return ask(hockeyAppQuestions)(resp);
             else return resp;
         })
         .then(function (resp) {
@@ -166,8 +101,8 @@ function create(verbose) {
 function action(argv) {
     var helpPath = path.join(__dirname, 'usage.txt');
 
-    if(argsHelper.matchArgumentsCount(argv, [0])
-            && argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
+    if (argsHelper.matchArgumentsCount(argv, [0]) &&
+        argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
         return create(argsHelper.matchOption(argv, 'V', 'verbose'));
     }
 
