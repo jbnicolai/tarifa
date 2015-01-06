@@ -75,29 +75,27 @@ function launchTasks(resp) {
 
 function create(verbose) {
     if (verbose) print.banner();
-    return ask(mainQuestions)({ options : { verbose : verbose } })
-        .then(function (resp) {
-            if (!resp.deploy) return resp;
-            return ask(deployQuestions)(resp)
-                    .then(ask(shallReuseKeystore))
-                    .then(function (resp) {
-                        var nextQuestions = resp.keystore_reuse ? reuseKeystoreQuestions :
-                                                                  createKeystoreQuestions;
-                        return ask(nextQuestions)(resp);
-                    });
-        })
-        .then(function (resp) {
-            return ask(isHockeyApp)(resp);
-        })
-        .then(function (resp) {
-            if (resp.hockeyapp) return ask(hockeyAppQuestions)(resp);
-            else return resp;
-        })
-        .then(function (resp) {
-            print();
-            spinner();
-            return launchTasks(resp);
-        });
+    var response = { options : { verbose : verbose } };
+    return ask(mainQuestions)(response).then(function (resp) {
+        if (!resp.deploy) return resp;
+        return ask(deployQuestions)(resp)
+            .then(ask(shallReuseKeystore))
+            .then(function (resp) {
+                var nextQuestions = resp.keystore_reuse ? reuseKeystoreQuestions :
+                                                          createKeystoreQuestions;
+                return ask(nextQuestions)(resp);
+            });
+    })
+    .then(ask(isHockeyApp))
+    .then(function (resp) {
+        if (resp.hockeyapp) return ask(hockeyAppQuestions)(resp);
+        else return resp;
+    })
+    .then(function (resp) {
+        print();
+        spinner();
+        return launchTasks(resp);
+    });
 }
 
 function action(argv) {
