@@ -54,19 +54,21 @@ var Q = require('q'),
     ],
 
     tasks = [
-        require('./tasks/tarifa'),
-        require('./tasks/cordova'),
-        require('./tasks/platforms'),
-        require('./tasks/fetch-provisioning-file'),
-        require('./tasks/create-keystore'),
-        require('./tasks/tarifa-file'),
-        require('./tasks/git'),
-        require('./tasks/plugins'),
-        require('./tasks/assets')
+        './tasks/tarifa',
+        './tasks/cordova',
+        './tasks/platforms',
+        './tasks/fetch-provisioning-file',
+        './tasks/create-keystore',
+        './tasks/tarifa-file',
+        './tasks/git',
+        './tasks/plugins',
+        './tasks/assets'
     ];
 
 function launchTasks(resp) {
-    return tasks.reduce(function (val, task) {
+    return tasks.map(function (task) {
+        return require(task);
+    }).reduce(function (val, task) {
         return Q.when(val, task);
     }, resp);
 }
