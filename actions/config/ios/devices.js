@@ -31,17 +31,12 @@ function listDevice(verbose) {
 }
 
 function listDeviceInProvisioningWithInfo(config, verbose) {
-    return tarifaFile.parse(pathHelper.root())
+    return tarifaFile.parse(pathHelper.root(), 'ios', config)
         .then(function (localSettings) {
-            var localConf = localSettings.configurations.ios[config];
-            if(!localConf) {
-                return Q.reject('configuration not available!');
-            }
-            if (!localConf.provisioning_profile_name
-                || !localConf.provisioning_profile_path) {
-                return Q.reject('no provisioning profile in configuration!');
-            }
-            var provisioning_path = localConf.provisioning_profile_path;
+            var localConf = localSettings.configurations.ios[config],
+                label = localConf.sign,
+                provisioning_path = localSettings.signing.ios[label].provisioning_path;
+
             return parseProvisionFile(provisioning_path).then(function (provision) {
                 var devices = provision.uuids.map(function (uuid){
                     return { name: '', uuid: uuid, enabled: true };
@@ -75,10 +70,10 @@ function printDevices(title, msg) {
 function list(config, verbose) {
     var cwd = process.cwd(),
         p = config ? listDeviceInProvisioningWithInfo(config, verbose).then(function (provision) {
-                var title = format("Provisioning Profile %s with Type: %s", provision.name, provision.type),
-                    msg = format("\nDevices in configuration: %s", config);
-                printDevices(title, msg)(provision.devices);
-            }) : listDevice(verbose).then(printDevices("\nAll Devices :"));
+            var title = format("Provisioning Profile %s with Type: %s", provision.name, provision.type),
+                msg = format("\nDevices in configuration: %s", config);
+            printDevices(title, msg)(provision.devices);
+        }) : listDevice(verbose).then(printDevices("\nAll Devices :"));
     return p.then(function (val) {
         process.chdir(cwd);
         return val;
@@ -104,16 +99,18 @@ function add(name, uuid, verbose) {
 function attach(uuid, config, verbose) {
     var cwd = process.cwd();
     process.chdir(pathHelper.root());
-    return tarifaFile.parse(pathHelper.root()).then(function(localSettings) {
+    return tarifaFile.parse(pathHelper.root(), 'ios', config).then(function(localSettings) {
         var id = localSettings.deploy.apple_id,
             team = localSettings.deploy.apple_developer_team,
-            conf = localSettings.configurations.ios[config];
+            conf = localSettings.configurations.ios[config],
+            label = conf.sign,
+            signing = localSettings.signing.ios[label];
 
         return askPassword('What is your apple developer password?').then(function (password) {
             return getDevices(id, team, password, verbose).then(function (devices) {
                 var rslt = devices.filter(function (id) { return id === uuid; }),
-                    profile_path = conf.provisioning_profile_path,
-                    profile_name = conf.provisioning_profile_name;
+                    profile_path = signing.provisioning_path,
+                    profile_name = signing.provisioning_name;
 
                 if(rslt.length) {
                     if(verbose) print.success('device already in developer center');
@@ -148,18 +145,17 @@ function attach(uuid, config, verbose) {
 function detach(uuid, config, verbose) {
     var cwd = process.cwd();
     process.chdir(pathHelper.root());
-    return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
+    return tarifaFile.parse(pathHelper.root(), 'ios', config).then(function (localSettings) {
         var conf = localSettings.configurations.ios[config];
-        if(!conf)
-            return Q.reject('configuration not found');
-        if(!conf.provisioning_profile_path)
-            return Q.reject('no provisioning_profile_path attribute in configuration');
-        if(!conf.provisioning_profile_name)
-            return Q.reject('no provisioning_profile_name attribute in configuration');
+        if(!conf.sign)
+            return Q.reject(format("no sign attribute on configuration `%s`", config));
+
+        var label = conf.sign,
+            signing  = localSettings.signing.ios[label];
 
         return askPassword('What is your apple developer password?').then(function (password) {
-            var profile_path = conf.provisioning_profile_path,
-                profile_name = conf.provisioning_profile_name,
+            var profile_path = signing.provisioning_path,
+                profile_name = signing.provisioning_name,
                 id = localSettings.deploy.apple_id,
                 team = localSettings.deploy.apple_developer_team;
             return parseProvisionFile(profile_path)

@@ -7,7 +7,7 @@ var Q = require('q'),
 
 module.exports = function (msg) {
     var app_label = msg.localSettings.name,
-        strings_xml_file_path = path.join(pathHelper.app(), 'platforms', 'android', 'res', 'values', 'strings.xml');
+        strings_xml_file_path = path.join(pathHelper.app(), 'platforms/android/res/values/strings.xml');
 
     return builder.changeAppName(strings_xml_file_path, app_label).then(function () {
         if(msg.verbose)

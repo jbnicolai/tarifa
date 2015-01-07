@@ -7,9 +7,11 @@ var Q = require('q'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
-    var product_name = msg.localSettings.configurations.android[msg.configuration]['product_file_name'],
+    var conf = msg.localSettings.configurations.android[msg.configuration],
+        product_name = conf['product_file_name'],
         out_dir = path.join(pathHelper.app(), 'platforms', 'android', 'build', 'apk'),
-        apk_name = msg.localSettings.mode ? 'android-release.apk' : 'android-debug-unaligned.apk';
+        signed = msg.localSettings.mode && conf.sign,
+        apk_name = signed ? 'android-release.apk' : (msg.localSettings.mode ? 'android-release-unsigned.apk' : 'android-debug-unaligned.apk');
 
     return fs.list(out_dir).then(function (files) {
         var apks = files.filter(function (file) { return file.match(/\.apk/); });

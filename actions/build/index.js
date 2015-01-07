@@ -3,7 +3,6 @@ var Q = require('q'),
     argsHelper = require('../../lib/helper/args'),
     print = require('../../lib/helper/print'),
     pathHelper = require('../../lib/helper/path'),
-    getMode = require('../../lib/helper/getReleaseMode'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
     path = require('path'),
@@ -137,11 +136,13 @@ var runTasks = function (type) {
 };
 
 var buildƒ = function (conf){
-    conf.localSettings.mode = getMode(conf.platform, conf.configuration, conf.localSettings);
+    var confObj = conf.localSettings.configurations[conf.platform][conf.configuration],
+        cwd = process.cwd();
+
+    conf.localSettings.mode = confObj.release ? '--release' : null;
 
     if(conf.verbose) print.success('start to build the www project');
 
-    var cwd = process.cwd();
     process.chdir(pathHelper.root());
     return prepareAction.prepareƒ(conf)
         .then(runTasks('pre-cordova-prepare'))

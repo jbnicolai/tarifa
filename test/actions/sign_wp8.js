@@ -13,8 +13,12 @@ function testSign(projectDefer, certif_path, password) {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
                 return tarifaFile.parse(rslt.response.path, 'wp8', 'prod').then(function (localSettings) {
-                    localSettings.configurations.wp8.prod.release_mode = true;
-                    localSettings.configurations.wp8.prod.certificate_path = certif_path;
+                    localSettings.signing.wp8.toto = {
+                        certificate_path: certif_path
+                    };
+                    localSettings.configurations.wp8.prod.release = true;
+                    localSettings.configurations.wp8.prod.sign = 'toto';
+
                     return buildAction.buildƒ({
                         platform: 'wp8',
                         configuration: 'prod',
