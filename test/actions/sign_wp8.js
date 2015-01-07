@@ -13,6 +13,7 @@ function testSign(projectDefer, certif_path, password) {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
                 return tarifaFile.parse(rslt.response.path, 'wp8', 'prod').then(function (localSettings) {
+                    localSettings.signing = { wp8 : { toto : { } } };
                     localSettings.signing.wp8.toto = {
                         certificate_path: certif_path
                     };
