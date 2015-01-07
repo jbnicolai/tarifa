@@ -58,7 +58,7 @@ function testBuild(projectDefer) {
 
 if(module.parent.id.indexOf("mocha.js") > 0) {
     var projectDefer = Q.defer();
-    before('create a empty project', setupHelper(tmp, projectDefer, format('create_response_%s.json', os.platform())));
+    before('create a empty project', setupHelper.createProject(tmp, projectDefer, format('create_project_response_%s.json', os.platform())));
     testBuild(projectDefer);
 }
 

@@ -30,7 +30,7 @@ function testSign(projectDefer) {
 
 if(module.parent.id.indexOf("mocha.js") > 0) {
     var projectDefer = Q.defer();
-    before('create tarifa project', setupHelper(tmp, projectDefer, 'create_response_android_sign.json'));
+    before('create tarifa project', setupHelper.createProject(tmp, projectDefer, 'create_project_response_android_sign.json'));
     testSign(projectDefer);
 }
 

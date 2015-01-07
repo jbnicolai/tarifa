@@ -33,5 +33,5 @@ function testSign(projectDefer, certif_path, password) {
 // npm run mocha -- test\actions\sign_wp8.js --certificate_path="c:\my.pfx" --password="xxxxxx"
 
 var projectDefer = Q.defer();
-before('create tarifa project', setupHelper(tmp, projectDefer, 'create_response_wp8_sign.json'));
+before('create tarifa project', setupHelper.createProject(tmp, projectDefer, 'create_project_response_wp8_sign.json'));
 testSign(projectDefer, process.argv[3].split('=')[1], process.argv[4].split('=')[1]);
