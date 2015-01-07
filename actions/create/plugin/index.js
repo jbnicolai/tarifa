@@ -1,9 +1,11 @@
 var Q = require('q'),
     fs = require('q-io/fs'),
     path = require('path'),
+    difference = require('interset/difference'),
     intersection = require('interset/intersection'),
     spinner = require('char-spinner'),
     ask = require('../../../lib/questions/ask'),
+    PluginBuilder = require('../../../lib/xml/plugin.xml'),
     pathHelper = require('../../../lib/helper/path'),
     print = require('../../../lib/helper/print'),
 
@@ -55,6 +57,9 @@ function copyPluginXml(resp) {
                                      .replace(/\$KEYWORDS/g, resp.keywords)
                                      .replace(/\$LICENSE/g, resp.license);
         return fs.write(destPath, destContent);
+    }).then(function () {
+        var platformsToRemove = difference(Object.keys(platformToFiles), resp.platforms.concat('www'));
+        return PluginBuilder.removePlatforms(destPath, platformsToRemove);
     }).then(function () { return resp; });
 }
 
