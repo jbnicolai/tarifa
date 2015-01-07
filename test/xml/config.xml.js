@@ -17,6 +17,8 @@ describe('[shared] read/write cordova\'s config.xml', function() {
             result.author_email.should.equal('paul@42loops.com');
             result.author_href.should.equal('http://42loops.com');
             result.description.should.equal('toto');
+            result.access[0].should.equal('*');
+            result.access[1].should.have.properties({ origin: 'tel:', external: true });
 
             result.preference.DisallowOverscroll.should.equal('true');
             result.preference.KeyboardDisplayRequiresUserAction.should.equal('false');
@@ -69,7 +71,7 @@ describe('[shared] read/write cordova\'s config.xml', function() {
                 'http://tarifa.tools',
                 'this is a test',
                 pref,
-                ['tarifa.tools', 'zengularity.com']
+                ['tarifa.tools', 'zengularity.com', { origin: 'tel:', external: true }]
             ).then(function () {
                 return ConfigXml.get(p).then(function (result) {
                     result.id.should.equal('tools.tarifa.oops');
@@ -78,8 +80,10 @@ describe('[shared] read/write cordova\'s config.xml', function() {
                     result.author_email.should.equal('pp@42loops.com');
                     result.author_href.should.equal('http://tarifa.tools');
                     result.description.should.equal('this is a test');
-                    result.access[0].should.equal('tarifa.tools');
-                    result.access[1].should.equal('zengularity.com');
+                    result.access.should.containEql('tarifa.tools');
+                    result.access.should.containEql('zengularity.com');
+                    result.access.should.containEql({ origin: 'tel:', external: true });
+                    result.access.should.have.length(3);
                     result.preference.DisallowOverscroll.should.equal('false');
                     result.preference.KeyboardDisplayRequiresUserAction.should.equal('false');
                     result.preference.newpreference.should.equal('what you want...');
