@@ -11,6 +11,7 @@ var should = require('should'),
 function build(root, id, identity, profile_path, profile_name, dist) {
     return tarifaFile.parse(root, 'ios', 'stage').then(function (localSettings) {
 
+        localSettings.signing = { ios: { } };
         localSettings.signing.ios[dist] = {
             identity: identity,
             provisioning_path: profile_path,
