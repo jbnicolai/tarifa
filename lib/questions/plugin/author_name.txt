@@ -1,0 +1,2 @@
+
+> Your name is only stored in the plugin.xml file of the plugin.

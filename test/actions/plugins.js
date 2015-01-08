@@ -10,7 +10,7 @@ var should = require('should'),
 
 var emptyPluginPath = path.join(__dirname, '../fixtures/emptyplugin');
 
-function testPlugins(projectDefer) {
+function testPlugins(projectDefer, pluginDefer) {
 
     describe('tarifa plugin', function() {
         it('tarifa plugin add ../fixtures/emptyplugin', function () {
@@ -61,6 +61,15 @@ function testPlugins(projectDefer) {
                 return pluginAction.plugin('remove', 'org.apache.cordova.vibration');
             });
         });
+
+        it('be able to add a plugin created with tarifa', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (projectRslt) {
+                return pluginDefer.promise.then(function (pluginRslt) {
+                    return pluginAction.plugin('add', pluginRslt.response.path, false);
+                });
+            });
+        });
     });
 
     describe('be able to add and remove any default plugins', function () {
@@ -94,9 +103,11 @@ function testPlugins(projectDefer) {
 }
 
 if(module.parent.id.indexOf("mocha.js") > 0) {
-    var projectDefer = Q.defer();
-    before('create a empty project', setupHelper(tmp, projectDefer, format('create_response_%s.json', os.platform())));
-    testPlugins(projectDefer);
+    var projectDefer = Q.defer(),
+        pluginDefer = Q.defer();
+    before('create an empty project', setupHelper.createProject(tmp, projectDefer, format('create_project_response_%s.json', os.platform())));
+    before('create an empty plugin', setupHelper.createPlugin(tmp, pluginDefer, 'create_plugin_response.json'));
+    testPlugins(projectDefer, pluginDefer);
 }
 
 module.exports = testPlugins;

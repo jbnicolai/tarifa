@@ -1,0 +1,3 @@
+
+> The location to create the new cordova plugin. It must be a non-existing or
+> empty folder.
