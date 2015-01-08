@@ -2,7 +2,7 @@ Usage: tarifa [command] [options]
 
 Commands:
 
-    create         Create a tarifa project
+    create         Create a tarifa project (or a cordova plugin)
     prepare        Prepare the www project with a given platform and configuration
     platform       Manage current project platforms
     plugin         Add, remove or list cordova plugins in your project
