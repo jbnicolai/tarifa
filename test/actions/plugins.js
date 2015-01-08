@@ -6,7 +6,10 @@ var should = require('should'),
     path = require('path'),
     setupHelper = require('../helper/setup'),
     plugins = require('../../lib/plugins'),
-    pluginAction = require('../../actions/plugin');
+    pluginAction = require('../../actions/plugin'),
+    isAvailableOnHostSync = require('../../lib/cordova/platforms').isAvailableOnHostSync,
+    settings = require('../../lib/settings'),
+    buildAction = require('../../actions/build');
 
 var emptyPluginPath = path.join(__dirname, '../fixtures/emptyplugin');
 
@@ -61,15 +64,6 @@ function testPlugins(projectDefer, pluginDefer) {
                 return pluginAction.plugin('remove', 'org.apache.cordova.vibration');
             });
         });
-
-        it('be able to add a plugin created with tarifa', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (projectRslt) {
-                return pluginDefer.promise.then(function (pluginRslt) {
-                    return pluginAction.plugin('add', pluginRslt.response.path, false);
-                });
-            });
-        });
     });
 
     describe('be able to add and remove any default plugins', function () {
@@ -94,6 +88,45 @@ function testPlugins(projectDefer, pluginDefer) {
                     return pluginAction.plugin('remove', plugin.value, false).then(function () {
                         return pluginAction.list(false).then(function (rslt) {
                             rslt.indexOf(plugin.value).should.be.below(0);
+                        });
+                    });
+                });
+            });
+        });
+    });
+
+    describe('be able to add and remove a plugin created with tarifa', function () {
+        it('tarifa plugin add', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (projectRslt) {
+                return pluginDefer.promise.then(function (pluginRslt) {
+                    return pluginAction.plugin('add', pluginRslt.response.path, false).then(function () {
+                        return pluginAction.list(false).then(function (rslt) {
+                            rslt.indexOf(pluginRslt.response.id).should.be.above(-1);
+                        });
+                    });
+                });
+            });
+        });
+
+        settings.platforms.forEach(function (p) {
+            if(isAvailableOnHostSync(p)) {
+                it(format('tarifa build %s', p), function () {
+                    this.timeout(0);
+                    return projectDefer.promise.then(function (rslt) {
+                        return buildAction.build(p, 'default', false, false);
+                    });
+                });
+            }
+        });
+
+        it('tarifa plugin remove', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (projectRslt) {
+                return pluginDefer.promise.then(function (pluginRslt) {
+                    return pluginAction.plugin('remove', pluginRslt.response.id, false).then(function () {
+                        return pluginAction.list(false).then(function (rslt) {
+                            rslt.indexOf(pluginRslt.response.id).should.be.below(0);
                         });
                     });
                 });
