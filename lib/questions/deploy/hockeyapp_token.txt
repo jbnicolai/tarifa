@@ -1,2 +1,0 @@
-
-> This is needed in order to be able to talk to hockeyapp

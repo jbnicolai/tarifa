@@ -9,12 +9,13 @@ var Q = require('q'),
 
 module.exports = function (msg) {
     var conf = msg.localSettings.configurations.wp8[msg.configuration],
-        release_mode = conf['release_mode'],
-        certificate_path = conf['certificate_path'];
+        release = conf['release'],
+        label = conf['signing'];
 
-    if(!release_mode || !certificate_path) return Q.resolve(msg);
+    if(!release || !label) return Q.resolve(msg);
 
-    var product_file_name = conf['product_file_name'] + '.xap',
+    var certificate_path = msg.localSettings.signing.wp8[label].certificate_path,
+        product_file_name = conf['product_file_name'] + '.xap',
         output = path.join(pathHelper.app(), 'platforms', 'wp8', 'bin', 'Release', product_file_name),
         bin = settings.external.xapsigntool.name,
         defer = Q.defer(),
@@ -30,7 +31,7 @@ module.exports = function (msg) {
         var cmd = format("\"%s\" sign /v /f %s /p %s %s", bin, certificate_path, password, output);
         exec(cmd, options, function (err, stdout, stderr) {
             if(err) {
-                defer.reject(cmd + ' ' + err);
+                defer.reject(format('%s %s', cmd, err));
                 return;
             }
             if(msg.verbose){

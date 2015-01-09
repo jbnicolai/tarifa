@@ -6,12 +6,15 @@ var Q = require('q'),
 module.exports = function (msg) {
     var root = process.cwd(),
         localConf = msg.localSettings.configurations.android[msg.configuration],
-        ks_path = localConf['keystore_path'],
-        storepass = msg.keystore_pass,
-        ks_alias = localConf['keystore_alias'],
-        aliaspass = msg.keystore_alias_pass;
+        label = localConf.sign;
 
-    if (ks_path && ks_alias) {
+    if (label) {
+        var signing = msg.localSettings.signing.android[label],
+            ks_path = signing.keystore_path,
+            storepass = msg.keystore_pass,
+            ks_alias = signing.keystore_alias,
+            aliaspass = msg.keystore_alias_pass;
+
         return (storepass ? Q(storepass) : askPassword('What is the keystore password?')).then(function (s) {
             return (aliaspass ? Q(aliaspass) : askPassword('What is the alias password?')).then(function (a) {
                 return releaseProperties.create(root, ks_path, ks_alias, s, a);

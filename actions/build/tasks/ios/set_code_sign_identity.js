@@ -6,10 +6,12 @@ var Q = require('q'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
-    var identity = msg.localSettings.configurations.ios[msg.configuration]['apple_developer_identity'];
-    var newIdentity = 'CODE_SIGN_IDENTITY = ' + identity + '\n';
-    if(identity) {
-        var xcconfigPath = path.join(pathHelper.app(), 'platforms', 'ios', 'cordova', 'build-release.xcconfig'),
+    var label = msg.localSettings.configurations.ios[msg.configuration].signing;
+
+    if(label) {
+        var identity = msg.localSettings.signing.ios[label]['identity'],
+            newIdentity = 'CODE_SIGN_IDENTITY = ' + identity + '\n';
+            xcconfigPath = path.join(pathHelper.app(), 'platforms/ios/cordova/build-release.xcconfig'),
             content = fs.readFileSync(xcconfigPath, 'utf-8').replace(/CODE_SIGN_IDENTITY =.*\n/, newIdentity);
 
         fs.writeFileSync(xcconfigPath, content);

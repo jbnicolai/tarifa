@@ -19,27 +19,31 @@ var Q = require('q'),
     ],
 
     deployQuestions = [
-        'deploy/apple_id',
-        'deploy/apple_password',
-        'deploy/has_apple_developer_team',
-        'deploy/apple_developer_identity',
-        'deploy/provisioning_profile_name',
-        'deploy/wp8_certificate_path'
+        'deploy/ios/apple_id',
+        'deploy/ios/apple_password',
+        'deploy/ios/has_apple_developer_team',
+        'deploy/ios/adhoc_apple_developer_identity',
+        'deploy/ios/adhoc_provisioning_profile_name',
+        'deploy/ios/store_apple_developer_identity',
+        'deploy/ios/store_provisioning_profile_name',
+        'deploy/wp8/wp8_certificate_path'
     ],
 
     shallReuseKeystore = [
-        'deploy/keystore_reuse'
+        'deploy/android/keystore_reuse'
     ],
+
     reuseKeystoreQuestions = [
-        'deploy/keystore_path_existing',
-        'deploy/keystore_storepass',
-        'deploy/keystore_alias_list'
+        'deploy/android/keystore_path_existing',
+        'deploy/android/keystore_storepass',
+        'deploy/android/keystore_alias_list'
     ],
+
     createKeystoreQuestions = [
-        'deploy/keystore_path_non_existing',
-        'deploy/keystore_storepass',
-        'deploy/keystore_alias',
-        'deploy/keystore_keypass'
+        'deploy/android/keystore_path_non_existing',
+        'deploy/android/keystore_storepass',
+        'deploy/android/keystore_alias',
+        'deploy/android/keystore_keypass'
     ],
 
     isHockeyApp = [
@@ -51,48 +55,46 @@ var Q = require('q'),
     ],
 
     tasks = [
-        require('./tasks/tarifa'),
-        require('./tasks/cordova'),
-        require('./tasks/platforms'),
-        require('./tasks/fetch-provisioning-file'),
-        require('./tasks/create-keystore'),
-        require('./tasks/tarifa-file'),
-        require('./tasks/git'),
-        require('./tasks/plugins'),
-        require('./tasks/assets')
+        './tasks/tarifa',
+        './tasks/cordova',
+        './tasks/platforms',
+        './tasks/fetch-provisioning-file',
+        './tasks/create-keystore',
+        './tasks/tarifa-file',
+        './tasks/git',
+        './tasks/plugins',
+        './tasks/assets'
     ];
 
 function launchTasks(resp) {
-    return tasks.reduce(function (val, task) {
+    return tasks.map(function (task) {
+        return require(task);
+    }).reduce(function (val, task) {
         return Q.when(val, task);
     }, resp);
 }
 
 function create(verbose) {
     if (verbose) print.banner();
-    return ask(mainQuestions)({ options : { verbose : verbose } })
-        .then(function (resp) {
-            if (!resp.deploy) return resp;
-            return ask(deployQuestions)(resp)
-                    .then(ask(shallReuseKeystore))
-                    .then(function (resp) {
-                        var nextQuestions = resp.keystore_reuse ? reuseKeystoreQuestions :
-                                                                  createKeystoreQuestions;
-                        return ask(nextQuestions)(resp);
-                    });
-        })
-        .then(function (resp) {
-            return ask(isHockeyApp)(resp);
-        })
-        .then(function (resp) {
-            if (resp.hockeyapp) return ask(hockeyAppQuestions)(resp);
-            else return resp;
-        })
-        .then(function (resp) {
-            print();
-            spinner();
-            return launchTasks(resp);
+    var response = { options : { verbose : verbose } };
+    return ask(mainQuestions)(response).then(function (resp) {
+        if (!resp.deploy) return resp;
+        return ask(deployQuestions)(resp).then(ask(shallReuseKeystore)).then(function (resp) {
+            var nextQuestions = resp.keystore_reuse ? reuseKeystoreQuestions :
+                                                      createKeystoreQuestions;
+            return ask(nextQuestions)(resp);
         });
+    })
+    .then(ask(isHockeyApp))
+    .then(function (resp) {
+        if (resp.hockeyapp) return ask(hockeyAppQuestions)(resp);
+        else return resp;
+    })
+    .then(function (resp) {
+        print();
+        spinner();
+        return launchTasks(resp);
+    });
 }
 
 create.launchTasks = launchTasks;

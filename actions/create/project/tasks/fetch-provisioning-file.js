@@ -1,19 +1,18 @@
 var Q = require('q'),
     path = require('path'),
+    format = require('util').format,
     print = require('../../../../lib/helper/print'),
     pathHelper = require('../../../../lib/helper/path'),
     download = require('../../../../lib/ios/nomad/provisioning/download'),
     install = require('../../../../lib/ios/nomad/provisioning/install');
 
-module.exports = function (r) {
-    if (!r.provisioning_profile_name) return Q.resolve(r);
-
-    var downloadDest = pathHelper.resolve(r.path, 'downloaded.mobileprovision');
+function fetch(t, r) {
+    var downloadDest = pathHelper.resolve(r.path, format('%s_downloaded.mobileprovision', t));
     return download(
         r.apple_id,
         r.apple_developer_team,
         r.password,
-        r.provisioning_profile_name,
+        r[format('%s_provisioning_profile_name', t)],
         downloadDest,
         r.options.verbose
     ).then(function () {
@@ -23,7 +22,13 @@ module.exports = function (r) {
             r.options.verbose
         );
     }).then(function () {
-        r.provisioning_profile_path = downloadDest;
+        r[format('%s_provisioning_profile_path', t)] = downloadDest;
         return r;
     });
+}
+
+module.exports = function (response) {
+    if (!response.adhoc_provisioning_profile_name && !response.store_provisioning_profile_name)
+        return Q.resolve(response);
+    return fetch('adhoc', response).then(function (resp) { return fetch('store', resp); });
 };

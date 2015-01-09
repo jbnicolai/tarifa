@@ -15,7 +15,7 @@
   "plugins": [],
   "www": "template/project",
   "color": "blue",
-  "deploy": false,
+  "deploy": true,
   "keystore_reuse": true,
   "keystore_path": "demo.keystore",
   "keystore_storepass": "123456",
