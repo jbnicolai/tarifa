@@ -8,7 +8,9 @@ var Q = require('q'),
     tarifaFile = require('../../lib/tarifa-file'),
     path = require('path'),
     fs = require('q-io/fs'),
-    prepareAction = require('../prepare');
+    prepareAction = require('../prepare'),
+    platformsLib = require('../../lib/cordova/platforms'),
+    argsHelper = require('../../lib/helper/args');
 
 // set android build to gradle!!!
 process.env.ANDROID_BUILD = 'gradle';
@@ -174,26 +176,69 @@ var build = function (platform, config, keepFileChanges, verbose) {
     });
 };
 
+var buildMultipleConfs = function(platform, configs, keepFileChanges, verbose) {
+    return tarifaFile.parse(pathHelper.root(), platform).then(function (localSettings) {
+        configs = configs || tarifaFile.getPlatformConfigs(localSettings, platform);
+        return configs.reduce(function(promise, conf) {
+            return promise.then(function () {
+                print.outline('Build ' + conf + ' configuration!');
+                return build(platform, conf, keepFileChanges, verbose);
+            });
+        }, Q());
+    });
+};
+
+var buildMultiplePlatforms = function (platforms, config, keepFileChanges, verbose) {
+    return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
+        platforms = platforms || localSettings.platforms;
+        return platforms.filter(platformsLib.isAvailableOnHostSync)
+        .reduce(function(promise, platform) {
+            return promise.then(function () {
+                print.outline('Launch build for ' + platform + ' platform!');
+                if (config === 'all')
+                    return buildMultipleConfs(platform, null, keepFileChanges, verbose);
+                else if (argsHelper.matchWildcard(config))
+                    return buildMultipleConfs(platform, argsHelper.getFromWildcard(config), keepFileChanges, verbose);
+                else
+                    return build(platform, config, keepFileChanges, verbose);
+            });
+        }, Q());
+    });
+};
+
 var action = function (argv) {
     var verbose = false,
         keepFileChanges = false,
         helpPath = path.join(__dirname, 'usage.txt');
 
-    if(argsHelper.matchArgumentsCount(argv, [1,2])
-            && argsHelper.checkValidOptions(argv, ['V', 'verbose', 'keep-file-changes'])) {
-        if(argsHelper.matchOption(argv, 'V', 'verbose')) {
-            verbose = true;
-        }
-        if(argsHelper.matchOption(argv, null, 'keep-file-changes')) {
-            keepFileChanges = true;
-        }
+    // match options
+    if (argsHelper.matchOption(argv, 'V', 'verbose'))
+        verbose = true;
+
+    if (argsHelper.matchOption(argv, null, 'keep-file-changes'))
+        keepFileChanges = true;
+
+    // match args
+    if (argsHelper.matchCmd(argv._, ['__all__', '*']))
+        return buildMultiplePlatforms(null, argv._[1] || 'default', keepFileChanges, verbose);
+
+    if (argsHelper.matchCmd(argv._, ['__some__', '*']))
+        return buildMultiplePlatforms(argsHelper.getFromWildcard(argv._[0]), argv._[1] || 'default', keepFileChanges, verbose);
+
+    if (argsHelper.matchCmd(argv._, ['+', '__all__']))
+        return buildMultipleConfs(argv._[0], null, keepFileChanges, verbose);
+
+    if (argsHelper.matchCmd(argv._, ['+', '__some__']))
+        return buildMultipleConfs(argv._[0], argsHelper.getFromWildcard(argv._[1]), keepFileChanges, verbose);
+
+    if (argsHelper.matchCmd(argv._, ['+', '*']))
         return build(argv._[0], argv._[1] || 'default', keepFileChanges, verbose);
-    }
 
     return fs.read(helpPath).then(print);
 };
 
 action.build = build;
+action.buildMultiplePlatforms = buildMultiplePlatforms;
 action.buildƒ = buildƒ;
 action.prepare = prepare;
 module.exports = action;

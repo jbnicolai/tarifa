@@ -63,12 +63,12 @@ var action = function (argv) {
     var verbose = false,
         helpPath = path.join(__dirname, 'usage.txt');
 
-    if(argsHelper.matchArgumentsCount(argv, [1,2])
-            && argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
+    if(argsHelper.matchArgumentsCount(argv, [1,2]) &&
+    argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
         if(argsHelper.matchOption(argv, 'V', 'verbose')) {
             verbose = true;
         }
-        return prepare(argv._[0], argv._[1] || 'default', verbose);
+        return prepare(argv._[0], argv._[1], verbose);
     }
     return fs.read(helpPath).then(print);
 };

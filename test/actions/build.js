@@ -13,17 +13,11 @@ function testBuild(projectDefer) {
 
     describe('tarifa build', function() {
 
-        settings.platforms.forEach(function (p) {
-
-            if(isAvailableOnHostSync(p)) {
-                it(format('tarifa build %s', p), function () {
-                    this.timeout(0);
-                    return projectDefer.promise.then(function (rslt) {
-                        return buildAction.build(p, 'default', false, false);
-                    });
-                });
-            }
-
+        it(format("tarifa build all default,dev"), function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return buildAction.buildMultiplePlatforms(null, 'default,dev', false, false);
+            });
         });
     });
 

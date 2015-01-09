@@ -1,89 +1,98 @@
 var Q = require('q'),
-    fs = require('q-io/fs'),
-    path = require('path'),
-    tarifaFile = require('../../lib/tarifa-file'),
-    pathHelper = require('../../lib/helper/path'),
-    collsHelper = require('../../lib/helper/collections'),
-    getMode = require('../../lib/helper/getReleaseMode'),
-    argsHelper = require('../../lib/helper/args'),
-    hockeyapp = require('../../lib/hockeyapp/hockeyapp'),
-    print = require('../../lib/helper/print');
+fs = require('q-io/fs'),
+path = require('path'),
+tarifaFile = require('../../lib/tarifa-file'),
+pathHelper = require('../../lib/helper/path'),
+collsHelper = require('../../lib/helper/collections'),
+getMode = require('../../lib/helper/getReleaseMode'),
+argsHelper = require('../../lib/helper/args'),
+hockeyapp = require('../../lib/hockeyapp/hockeyapp'),
+print = require('../../lib/helper/print');
 
-var upload = function (platform, config, argv, verbose) {
+var upload = function (msg) {
+    var config = msg.config,
+        platform = msg.platform,
+        argv = msg.argv,
+        verbose = msg.verbose,
+        localSettings = msg.localSettings;
 
-    return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
-        var envSettings = localSettings.configurations[platform][config];
-        var hockeyapp_id = envSettings.hockeyapp_id;
+    var envSettings = localSettings.configurations[platform][config];
+    var hockeyapp_id = envSettings.hockeyapp_id;
 
-        if (!localSettings.hockeyapp || !localSettings.hockeyapp.api_url ||
-        !localSettings.hockeyapp.token) {
-            return Q.reject('No hockeyapp informations are available in the current tarifa.json' +
-            'file.');
-        }
+    if (!localSettings.hockeyapp || !localSettings.hockeyapp.api_url ||
+    !localSettings.hockeyapp.token) {
+        return Q.reject('No hockeyapp informations are available in the current tarifa.json' +
+        'file.');
+    }
 
-        // check for hockeyapp options in conf
-        var params = {};
-        if (localSettings.hockeyapp instanceof Object) {
-            params = collsHelper.filterKeys(localSettings.hockeyapp, function (e) {
-                return [
-                    'versions_notify',
-                    'versions_status',
-                    'versions_tags',
-                    'versions_teams',
-                    'versions_users',
-                    'versions_commit_sha',
-                    'versions_build_server_url',
-                    'versions_repository_url'
+    // check for hockeyapp options in conf
+    var params = {};
+    if (localSettings.hockeyapp instanceof Object) {
+        params = collsHelper.filterKeys(localSettings.hockeyapp, function (e) {
+            return [
+                'versions_notify',
+                'versions_status',
+                'versions_tags',
+                'versions_teams',
+                'versions_users',
+                'versions_commit_sha',
+                'versions_build_server_url',
+                'versions_repository_url'
                 ].indexOf(e) > -1;
+        });
+        params = collsHelper.mapKeys(params, function (e) {
+            return e.replace(/^versions_/, '');
+        });
+    }
+
+    // get relevant options in cmd args
+    var opts = collsHelper.filterKeys(argv, function(e) {
+        return ['notes', 'notify', 'status', 'tags', 'teams', 'users',
+            'commit_sha', 'build_server_url', 'repository_url'].indexOf(e) > -1;
+    });
+
+    params = collsHelper.mergeObject(params, opts);
+
+    var conf = {
+        localSettings: localSettings,
+        uploadParams: params,
+        verbose: verbose
+    };
+    var productFileName = pathHelper.productFile(
+        platform,
+        envSettings.product_file_name,
+        getMode(platform, config, localSettings)
+    );
+
+    return hockeyapp.uploadVersion(productFileName, conf, hockeyapp_id).then(function (data) {
+        // in case of app creation, add 'hockeyapp_id' to configuration
+        if (data.public_identifier) {
+            tarifaFile.addHockeyappId(pathHelper.root(), platform, config, data.public_identifier).then(function() {
+                print.success('Created hockeyapp application and uploaded new package "' + path.basename(productFileName) + '" successfully.\nSee new version at ' + data.public_url);
+            }, function(error) {
+                print.error(error);
             });
-            params = collsHelper.mapKeys(params, function (e) {
-                return e.replace(/^versions_/, '');
-            });
+        } else {
+            print.success('Uploaded new package "' + path.basename(productFileName) + '" successfully.\nSee new version at ' + data.public_url);
         }
-
-        // get relevant options in cmd args
-        var opts = collsHelper.filterKeys(argv, function(e) {
-            return ['notes', 'notify', 'status', 'tags', 'teams', 'users',
-                'commit_sha', 'build_server_url', 'repository_url'].indexOf(e) > -1;
-        });
-
-        params = collsHelper.mergeObject(params, opts);
-
-        var conf = {
-            localSettings: localSettings,
-            uploadParams: params,
-            verbose: verbose
-        };
-        var productFileName = pathHelper.productFile(
-            platform,
-            envSettings.product_file_name,
-            getMode(platform, config, localSettings)
-        );
-
-        return hockeyapp.uploadVersion(productFileName, conf, hockeyapp_id).then(function (data) {
-            // in case of app creation, add 'hockeyapp_id' to configuration
-            if (data.public_identifier)
-                tarifaFile.addHockeyappId(pathHelper.root(), platform, config, data.public_identifier).then(function() {
-                    print.success('Created hockeyapp application and uploaded new package "' + path.basename(productFileName) + '" successfully.\nSee new version at ' + data.public_url);
-                }, function(error) {
-                    print.error(error);
-                });
-            else
-                print.success('Uploaded new package "' + path.basename(productFileName) + '" successfully.\nSee new version at ' + data.public_url);
-        });
     });
 };
 
-var clean = function (nbToKeep, argv, verbose) {
-    return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
-        var appIds = collsHelper.findByKey(localSettings, 'hockeyapp_id');
-        return hockeyapp.clean(appIds, localSettings, nbToKeep).then(function (total) {
-            print.success('Successfully deleted ' + total + ' version(s). Notice: deletion is asynchronous and version may still appear in listings for a while.');
-        });
+var clean = function (msg, nbToKeep) {
+    var localSettings = msg.localSettings,
+        verbose = msg.verbose;
+
+    var appIds = collsHelper.findByKey(localSettings, 'hockeyapp_id');
+    return hockeyapp.clean(appIds, localSettings, nbToKeep).then(function (total) {
+        print.success('Successfully deleted ' + total + ' version(s). Notice: deletion is asynchronous and version may still appear in listings for a while.');
     });
 };
 
-var updateLast = function (platform, config, argv, verbose) {
+var updateLast = function (msg) {
+    var config = msg.config,
+        platform = msg.platform,
+        argv = msg.argv,
+        verbose = msg.verbose;
 
     return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
         var envSettings = localSettings.configurations[platform][config];
@@ -118,7 +127,10 @@ var updateLast = function (platform, config, argv, verbose) {
     });
 };
 
-var list = function(platform, config, verbose) {
+var list = function(msg) {
+    var config = msg.config,
+        platform = msg.platform,
+        verbose = msg.verbose;
 
     return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
         var envSettings = localSettings.configurations[platform][config];

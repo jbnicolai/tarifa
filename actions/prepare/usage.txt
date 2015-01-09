@@ -1,7 +1,6 @@
-Usage: tarifa prepare <platform> [configuration]
+Usage: tarifa prepare <platform> <configuration> 
 
-Build the output of the www project of your tarifa project, with no
-configuration 'default' will be used.
+Build the output of the www project of your tarifa project.
 
 Options:
     --help, -h     Show this message
@@ -9,4 +8,4 @@ Options:
 
 Examples:
 
-    tarifa prepare android prod
+    tarifa prepare prod android
