@@ -11,8 +11,10 @@ specify names or wildcards. Ex:
 
 Options:
 
-    --help, -h     Show this message
-    --verbose, -V  Be more verbose on everything
+    --help, -h              Show this message
+    --verbose, -V           Be more verbose on everything
+    --clean-resources       Clean cached resources (icons and splashscreens) before build.
+                            Only for android platform.
 
 Examples:
 
