@@ -13,9 +13,11 @@ var Q = require('q'),
 
 var tasks = {
     android : [
-        require('./tasks/android/update_project')
+        './tasks/android/update_project'
     ],
-    ios : [],
+    ios : [
+        './tasks/ios/check_provisioning'
+    ],
     wp8 : [],
     browser : []
 };
@@ -39,19 +41,21 @@ var check = function (verbose) {
             }).map(function (p) { return p.name; });
             var userTasks = getUserTasks(platformNames.filter(isAvailableOnHostSync), localSettings);
             return localSettings.platforms.reduce(function (promiseP, platform) {
-                if(platformNames.indexOf(platform) < 0) {
-                    if(settings.os_platforms[platform].indexOf(os.platform()) > -1)
-                        print.error("platform %s is not installed on os, skipping checks...", platform);
-                    return promiseP;
-                }
-                if (verbose) print.success("start checking %s platform", platform);
-                return tasks[platform].reduce(function (promiseT, task) {
-                    return promiseT.then(task);
-                }, promiseP).then(function (msg) {
-                    if (verbose) print.success("start user check %s", platform);
-                    return userTasks[platform].reduce(function (promiseUT, usertask) {
-                        return promiseUT.then(usertask);
-                    }, Q(msg));
+                return promiseP.then(function (msg) {
+                    if(platformNames.indexOf(platform) < 0) {
+                        if(settings.os_platforms[platform].indexOf(os.platform()) > -1)
+                            print.error("platform %s is not installed on os, skipping checks...", platform);
+                        return msg;
+                    }
+                    if (verbose) print.success("start checking %s platform", platform);
+                    return tasks[platform].reduce(function (promiseT, task) {
+                        return promiseT.then(require(task));
+                    }, Q(msg)).then(function (m) {
+                        if (verbose) print.success("start user check %s", platform);
+                        return userTasks[platform].reduce(function (promiseUT, usertask) {
+                            return promiseUT.then(usertask);
+                        }, Q(m));
+                    });
                 });
             }, Q.resolve({
                 settings: localSettings,
