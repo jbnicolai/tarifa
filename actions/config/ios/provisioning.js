@@ -1,11 +1,16 @@
 var Q = require('q'),
     chalk = require('chalk'),
     spinner = require("char-spinner"),
+    format = require('util').format,
     print = require('../../../lib/helper/print'),
     tarifaFile = require('../../../lib/tarifa-file'),
     pathHelper = require('../../../lib/helper/path'),
+    ask = require('../../../lib/questions/ask'),
     provisioningList = require('../../../lib/ios/nomad/provisioning/list'),
-    askPassword = require('../../../lib/helper/question').password;
+    askPassword = require('../../../lib/helper/question').password,
+    parseProvision = require('../../../lib/ios/parse-mobileprovision'),
+    download = require('../../../lib/ios/nomad/provisioning/download'),
+    install = require('../../../lib/ios/nomad/provisioning/install');
 
 function list(verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
@@ -32,6 +37,78 @@ function printList(verbose) {
     });
 }
 
+function info(config, verbose) {
+    var root = pathHelper.root();
+    config = config || 'default';
+    return tarifaFile.parse(root, 'ios', config).then(function (localSettings) {
+        if(!localSettings.configurations.ios[config].sign)
+            return Q.reject(format('no signing settings in configuration %s', config));
+        return {
+            local: localSettings,
+            label: localSettings.configurations.ios[config].sign
+        };
+    }).then(function (msg) {
+        return parseProvision(msg.local.signing.ios[msg.label].provisioning_path);
+    }).then(function (provision) {
+        print('%s %s', chalk.underline('name:'), provision.name);
+        print('%s %s', chalk.underline('chalk:'), provision.type);
+        print('%s \n\t%s', chalk.underline('uuids:'), provision.uuids.join('\n\t'));
+    });
+}
+
+function fetch(verbose) {
+    var root = pathHelper.root();
+    return tarifaFile.parse(root, 'ios').then(function (localSettings) {
+        if(!localSettings.deploy)
+            return Q.reject('no deploy settings');
+        return localSettings;
+    }).then(function (local) {
+        var questions = [
+                'deploy/ios/apple_password',
+                'deploy/ios/label',
+                'deploy/ios/default_apple_developer_identity',
+                'deploy/ios/default_provisioning_profile_name'
+            ],
+            response = {
+                apple_id: local.deploy.apple_id,
+                apple_developer_team: local.deploy.apple_developer_team,
+                options : {
+                    verbose : verbose,
+                    local: local
+                }
+            };
+        return ask(questions)(response);
+    }).then(function (resp) {
+        var downloadDest = pathHelper.resolve(root, format('%s_downloaded.mobileprovision', resp.label));
+        resp.downloadDest = downloadDest;
+        return download(
+            resp.apple_id,
+            resp.apple_developer_team,
+            resp.password,
+            resp.default_provisioning_profile_name,
+            downloadDest,
+            resp.options.verbose
+        ).then(function () {
+            return install(
+                downloadDest,
+                false,
+                resp.options.verbose
+            );
+        }).then(function () { return resp; });
+    }).then(function (resp) {
+        resp.options.local.signing = resp.options.local.signing || {};
+        resp.options.local.signing.ios = resp.options.local.signing.ios || {};
+        resp.options.local.signing.ios[resp.label] = {
+            identity: resp.default_apple_developer_identity,
+            provisioning_path: resp.downloadDest,
+            provisioning_name: resp.default_provisioning_profile_name
+        };
+        return tarifaFile.write(root, resp.options.local);
+    });
+}
+
 module.exports = {
-    list : printList
+    list : printList,
+    fetch: fetch,
+    info: info
 };

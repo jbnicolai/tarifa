@@ -23,6 +23,8 @@ var action = function (argv) {
         if(match(argv._, ['ios', 'devices', 'detach', '+', '+'])) return require('./ios/devices').detach(argv._[3], argv._[4], verbose);
 
         if(match(argv._, ['provisioning', 'list'])) return require('./ios/provisioning').list(verbose);
+        if(match(argv._, ['provisioning', 'fetch', '*'])) return require('./ios/provisioning').fetch(verbose);
+        if(match(argv._, ['provisioning', 'info', '*'])) return require('./ios/provisioning').info(argv._[2], verbose);
 
         if(match(argv._, ['icons', 'generate', '+', '*'])) return action.generateIcons(argv._[2], argv._[3], verbose);
         if(match(argv._, ['icons', 'file', '+', '*'])) return action.generateIconsFromFile(pathHelper.resolve(argv._[2]), argv._[3], verbose);
