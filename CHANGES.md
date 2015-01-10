@@ -7,16 +7,16 @@ TODO
 ### changes
 
 - allow `all` keyword and configuration enumeration like `stage,prod` as command line arguments to build
-or run any combination of the tuple (configuration, platform) #103
-- group all signing properties under the `signing` attribute #115
-- add `tarifa create plugin`: create a cordova plugin skeleton. #139
-- handling of `access origin` `launch-external` attribute #158
-- [ios] copy `build.xcconfig` on platform add ios #153
-- [ios] add `tarifa config provisioning info <configuration>`: extract informations from a provisioning file #148
-- [ios] add `tarifa config provisioning fetch`: fetch and install a provisioning file #148
-- [ios] handle ios store distribution siging process #135
-- [ios] check if all provisioning files defined exist on `tarifa check` #147
-- [android] add `--clean-resources` option on `tarifa build` and `tarifa run`: clean android assets (`res` folder and generated apks) #162
+or run any combination of the tuple (configuration, platform) [#103](https://github.com/TarifaTools/tarifa/issues/103)
+- group all signing properties under the `signing` attribute [#115](https://github.com/TarifaTools/tarifa/issues/115)
+- add `tarifa create plugin`: create a cordova plugin skeleton. [#139](https://github.com/TarifaTools/tarifa/issues/139)
+- handling of `access origin` `launch-external` attribute [#158](https://github.com/TarifaTools/tarifa/issues/158)
+- [ios] copy `build.xcconfig` on platform add ios [#153](https://github.com/TarifaTools/tarifa/issues/153)
+- [ios] add `tarifa config provisioning info <configuration>`: extract informations from a provisioning file [#148](https://github.com/TarifaTools/tarifa/issues/148)
+- [ios] add `tarifa config provisioning fetch`: fetch and install a provisioning file [#148](https://github.com/TarifaTools/tarifa/issues/148)
+- [ios] handle ios store distribution siging process [#135](https://github.com/TarifaTools/tarifa/issues/135)
+- [ios] check if all provisioning files defined exist on `tarifa check` [#147](https://github.com/TarifaTools/tarifa/issues/147)
+- [android] add `--clean-resources` option on `tarifa build` and `tarifa run`: clean android assets (`res` folder and generated apks) [#162](https://github.com/TarifaTools/tarifa/issues/162)
 
 ## 0.4.0 (12/18/2014)
 
