@@ -1,3 +1,20 @@
+## 0.5.0 (not released yet)
+
+### upgrade a project from 0.4.0 to 0.5.0
+
+TODO
+
+### changes
+
+- allow `all` keyword and configuration enumeration like `stage,prod` as command line arguments to build
+or run any combination of the tuple (configuration, platform) (#103)
+- group all signing properties under the `signing` attribute (#115)
+- copy `build.xcconfig` on platform add ios (bug fix #153)
+- add `tarifa config provisioning info <configuration>`: extract informations from a provisioning file (#148)
+- add `tarifa config provisioning fetch`: fetch and install a provisioning file (#148)
+- add `tarifa create plugin`: create a cordova plugin skeleton. (#139)
+- handle ios store distribution siging process (#135)
+
 ## 0.4.0 (12/18/2014)
 
 ### upgrade a project from 0.3.x to 0.4.0
