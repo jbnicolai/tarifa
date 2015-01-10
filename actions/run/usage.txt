@@ -13,8 +13,8 @@ Options:
 
     --help, -h              Show this message
     --verbose, -V           Be more verbose on everything
-    --clean-resources       Clean cached resources (icons and splashscreens) before build.
-                            Only for android platform.
+    --clean-resources       Clean cached resources (icons and splashscreens) before build,
+                            only for android platform
 
 Examples:
 
