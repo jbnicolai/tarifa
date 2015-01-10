@@ -16,12 +16,14 @@ process.env.ANDROID_BUILD = 'gradle';
 
 var tasks = {
     browser: {
+        'clean-resources': [],
         'pre-cordova-prepare' : ['shared/populate_config_xml'],
         'pre-cordova-compile' : [],
         'post-cordova-compile' : [],
         'undo':['shared/reset_config_xml']
     },
     wp8: {
+        'clean-resources': [],
         'pre-cordova-prepare' : [
             'shared/clean',
             'shared/populate_config_xml',
@@ -41,6 +43,7 @@ var tasks = {
         ]
     },
     ios: {
+        'clean-resources': [],
         'pre-cordova-prepare' : [
             'shared/populate_config_xml',
             'shared/copy_icons',
@@ -61,8 +64,10 @@ var tasks = {
         ]
     },
     android: {
-        'pre-cordova-prepare' : [
+        'clean-resources': [
             'android/clean_output_dir',
+        ],
+        'pre-cordova-prepare' : [
             'shared/populate_config_xml',
             'shared/copy_icons',
             'shared/copy_splashscreens',
@@ -147,6 +152,11 @@ var buildƒ = function (conf){
 
     process.chdir(pathHelper.root());
     return prepareAction.prepareƒ(conf)
+        .then(function() {
+            process.chdir(cwd);
+            if (conf.cleanResources) return runTasks('clean-resources')(conf);
+            else return Q.resolve(conf);
+        })
         .then(runTasks('pre-cordova-prepare'))
         .then(prepare)
         .then(runTasks('pre-cordova-compile'))
@@ -165,31 +175,32 @@ var buildƒ = function (conf){
         });
 };
 
-var build = function (platform, config, keepFileChanges, verbose) {
+var build = function (platform, config, keepFileChanges, cleanResources, verbose) {
     return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
         return buildƒ({
             platform: platform,
             configuration: config,
             localSettings: localSettings,
             keepFileChanges: keepFileChanges,
+            cleanResources: cleanResources,
             verbose: verbose
         });
     });
 };
 
-var buildMultipleConfs = function(platform, configs, keepFileChanges, verbose) {
+var buildMultipleConfs = function(platform, configs, keepFileChanges, cleanResources, verbose) {
     return tarifaFile.parse(pathHelper.root(), platform).then(function (localSettings) {
         configs = configs || tarifaFile.getPlatformConfigs(localSettings, platform);
         return configs.reduce(function(promise, conf) {
             return promise.then(function () {
                 print.outline('Build ' + conf + ' configuration!');
-                return build(platform, conf, keepFileChanges, verbose);
+                return build(platform, conf, keepFileChanges, cleanResources, verbose);
             });
         }, Q());
     });
 };
 
-var buildMultiplePlatforms = function (platforms, config, keepFileChanges, verbose) {
+var buildMultiplePlatforms = function (platforms, config, keepFileChanges, cleanResources, verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         platforms = platforms || localSettings.platforms;
         return platforms.filter(platformsLib.isAvailableOnHostSync)
@@ -197,11 +208,11 @@ var buildMultiplePlatforms = function (platforms, config, keepFileChanges, verbo
             return promise.then(function () {
                 print.outline('Launch build for ' + platform + ' platform!');
                 if (config === 'all')
-                    return buildMultipleConfs(platform, null, keepFileChanges, verbose);
+                    return buildMultipleConfs(platform, null, keepFileChanges, cleanResources, verbose);
                 else if (argsHelper.matchWildcard(config))
-                    return buildMultipleConfs(platform, argsHelper.getFromWildcard(config), keepFileChanges, verbose);
+                    return buildMultipleConfs(platform, argsHelper.getFromWildcard(config), keepFileChanges, cleanResources, verbose);
                 else
-                    return build(platform, config, keepFileChanges, verbose);
+                    return build(platform, config, keepFileChanges, cleanResources, verbose);
             });
         }, Q());
     });
@@ -210,6 +221,7 @@ var buildMultiplePlatforms = function (platforms, config, keepFileChanges, verbo
 var action = function (argv) {
     var verbose = false,
         keepFileChanges = false,
+        cleanResources = false,
         helpPath = path.join(__dirname, 'usage.txt');
 
     // match options
@@ -219,21 +231,24 @@ var action = function (argv) {
     if (argsHelper.matchOption(argv, null, 'keep-file-changes'))
         keepFileChanges = true;
 
+    if (argsHelper.matchOption(argv, null, 'clean-resources'))
+        cleanResources = true;
+
     // match args
     if (argsHelper.matchCmd(argv._, ['__all__', '*']))
-        return buildMultiplePlatforms(null, argv._[1] || 'default', keepFileChanges, verbose);
+        return buildMultiplePlatforms(null, argv._[1] || 'default', keepFileChanges, cleanResources, verbose);
 
     if (argsHelper.matchCmd(argv._, ['__some__', '*']))
-        return buildMultiplePlatforms(argsHelper.getFromWildcard(argv._[0]), argv._[1] || 'default', keepFileChanges, verbose);
+        return buildMultiplePlatforms(argsHelper.getFromWildcard(argv._[0]), argv._[1] || 'default', keepFileChanges, cleanResources, verbose);
 
     if (argsHelper.matchCmd(argv._, ['+', '__all__']))
-        return buildMultipleConfs(argv._[0], null, keepFileChanges, verbose);
+        return buildMultipleConfs(argv._[0], null, keepFileChanges, cleanResources, verbose);
 
     if (argsHelper.matchCmd(argv._, ['+', '__some__']))
-        return buildMultipleConfs(argv._[0], argsHelper.getFromWildcard(argv._[1]), keepFileChanges, verbose);
+        return buildMultipleConfs(argv._[0], argsHelper.getFromWildcard(argv._[1]), keepFileChanges, cleanResources, verbose);
 
     if (argsHelper.matchCmd(argv._, ['+', '*']))
-        return build(argv._[0], argv._[1] || 'default', keepFileChanges, verbose);
+        return build(argv._[0], argv._[1] || 'default', keepFileChanges, cleanResources, verbose);
 
     return fs.read(helpPath).then(print);
 };

@@ -34,7 +34,7 @@ var runƒ = function (conf) {
         });
 };
 
-var run = function (platform, config, verbose) {
+var run = function (platform, config, cleanResources, verbose) {
     spinner();
     return Q.all([
             tarifaFile.parse(pathHelper.root(), platform, config),
@@ -44,24 +44,25 @@ var run = function (platform, config, verbose) {
                 localSettings: localSettings,
                 platform: platform,
                 configuration: config,
+                cleanResources: cleanResources,
                 verbose: verbose
             });
         });
 };
 
-var runMultipleConfs = function(platform, configs, verbose) {
+var runMultipleConfs = function(platform, configs, cleanResources, verbose) {
     return tarifaFile.parse(pathHelper.root(), platform).then(function (localSettings) {
         configs = configs || tarifaFile.getPlatformConfigs(localSettings, platform);
         return configs.reduce(function(promise, conf) {
             return promise.then(function () {
                 print.outline('Run ' + conf + ' configuration!');
-                return run(platform, conf, verbose);
+                return run(platform, conf, cleanResources, verbose);
             });
         }, Q());
     });
 };
 
-var runMultiplePlatforms = function (platforms, config, verbose) {
+var runMultiplePlatforms = function (platforms, config, cleanResources, verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         platforms = platforms || localSettings.platforms;
         return platforms.filter(platformsLib.isAvailableOnHostSync)
@@ -69,11 +70,11 @@ var runMultiplePlatforms = function (platforms, config, verbose) {
             return promise.then(function () {
                 print.outline('Launch run for ' + platform + ' platform!');
                 if (config === 'all')
-                    return runMultipleConfs(platform, null, verbose);
+                    return runMultipleConfs(platform, null, cleanResources, verbose);
                 else if (argsHelper.matchWildcard(config))
-                    return runMultipleConfs(platform, argsHelper.getFromWildcard(config), verbose);
+                    return runMultipleConfs(platform, argsHelper.getFromWildcard(config), cleanResources, verbose);
                 else
-                    return run(platform, config, verbose);
+                    return run(platform, config, cleanResources, verbose);
             });
         }, Q());
     });
@@ -81,26 +82,30 @@ var runMultiplePlatforms = function (platforms, config, verbose) {
 
 var action = function (argv) {
     var verbose = false,
+    cleanResources = false,
     helpPath = path.join(__dirname, 'usage.txt');
 
     if(argsHelper.matchOption(argv, 'V', 'verbose')) {
         verbose = true;
     }
 
+    if (argsHelper.matchOption(argv, null, 'clean-resources'))
+        cleanResources = true;
+
     if(argsHelper.matchCmd(argv._, ['__all__', '*']))
-        return runMultiplePlatforms(null, argv._[1] || 'default', verbose);
+        return runMultiplePlatforms(null, argv._[1] || 'default', cleanResources, verbose);
 
     if (argsHelper.matchCmd(argv._, ['__some__', '*']))
-        return runMultiplePlatforms(argsHelper.getFromWildcard(argv._[0]), argv._[1] || 'default', verbose);
+        return runMultiplePlatforms(argsHelper.getFromWildcard(argv._[0]), argv._[1] || 'default', cleanResources, verbose);
 
     if (argsHelper.matchCmd(argv._, ['+', '__all__']))
-        return runMultipleConfs(argv._[0], null, verbose);
+        return runMultipleConfs(argv._[0], null, cleanResources, verbose);
 
     if (argsHelper.matchCmd(argv._, ['+', '__some']))
-        return runMultipleConfs(argv._[0], argsHelper.getFromWildcard(argv._[1], verbose));
+        return runMultipleConfs(argv._[0], argsHelper.getFromWildcard(argv._[1], cleanResources, verbose));
 
     if(argsHelper.matchCmd(argv._, ['+', '*']))
-        return run(argv._[1], argv._[0] || 'default', verbose);
+        return run(argv._[1], argv._[0] || 'default', cleanResources, verbose);
 
     return fs.read(helpPath).then(print);
 };
