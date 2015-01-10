@@ -16,7 +16,7 @@ function testBuild(projectDefer) {
         it(format("tarifa build all default,dev"), function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
-                return buildAction.buildMultiplePlatforms(null, 'default,dev', false, false);
+                return buildAction.buildMultiplePlatforms(null, 'default,dev', false, false, false);
             });
         });
     });
@@ -30,7 +30,7 @@ function testBuild(projectDefer) {
             return projectDefer.promise.then(function (rslt) {
                 process.chdir(path.join(rslt.dirPath, 're', settings.images));
             }).then(function (rslt) {
-                return buildAction.build('browser', 'default', false, false);
+                return buildAction.build('browser', 'default', false, false, false);
             });
         });
 
@@ -39,7 +39,7 @@ function testBuild(projectDefer) {
             return projectDefer.promise.then(function (rslt) {
                 process.chdir('..');
             }).then(function (rslt) {
-                return buildAction.build('browser', 'default', false, false).then(function (p) {
+                return buildAction.build('browser', 'default', false, false, false).then(function (p) {
                     return p;
                 }, function (err) {
                     process.chdir(cwd);
