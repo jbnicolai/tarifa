@@ -175,6 +175,7 @@ var buildƒ = function (conf){
 };
 
 var build = function (platform, config, keepFileChanges, cleanResources, verbose) {
+    print.outline('Launch build for %s platform and configuration %s !', platform, config);
     return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
         return buildƒ({
             platform: platform,
@@ -190,30 +191,31 @@ var build = function (platform, config, keepFileChanges, cleanResources, verbose
 var buildMultipleConfs = function(platform, configs, keepFileChanges, cleanResources, verbose) {
     return tarifaFile.parse(pathHelper.root(), platform).then(function (localSettings) {
         configs = configs || tarifaFile.getPlatformConfigs(localSettings, platform);
-        return configs.reduce(function(promise, conf) {
-            return promise.then(function () {
-                print.outline('Build ' + conf + ' configuration!');
-                return build(platform, conf, keepFileChanges, cleanResources, verbose);
-            });
-        }, Q());
+        return tarifaFile.checkConfigurations(configs, platform, localSettings).then(function () {
+            return configs.reduce(function(promise, conf) {
+                return promise.then(function () {
+                    return build(platform, conf, keepFileChanges, cleanResources, verbose);
+                });
+            }, Q());
+        });
     });
 };
 
 var buildMultiplePlatforms = function (platforms, config, keepFileChanges, cleanResources, verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         platforms = platforms || localSettings.platforms;
-        return platforms.filter(platformsLib.isAvailableOnHostSync)
-        .reduce(function(promise, platform) {
-            return promise.then(function () {
-                print.outline('Launch build for ' + platform + ' platform!');
-                if (config === 'all')
-                    return buildMultipleConfs(platform, null, keepFileChanges, cleanResources, verbose);
-                else if (argsHelper.matchWildcard(config))
-                    return buildMultipleConfs(platform, argsHelper.getFromWildcard(config), keepFileChanges, cleanResources, verbose);
-                else
-                    return build(platform, config, keepFileChanges, cleanResources, verbose);
-            });
-        }, Q());
+        return tarifaFile.checkPlatforms(platforms, settings.platforms).then(function () {
+            return platforms.filter(platformsLib.isAvailableOnHostSync).reduce(function(promise, platform) {
+                return promise.then(function () {
+                    if (config === 'all') {
+                        config = null;
+                    } else if (argsHelper.matchWildcard(config)) {
+                        config = argsHelper.getFromWildcard(config);
+                    }
+                    return buildMultipleConfs(platform, config, keepFileChanges, cleanResources, verbose);
+                });
+            }, Q());
+        });
     });
 };
 
