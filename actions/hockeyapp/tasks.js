@@ -4,7 +4,6 @@ path = require('path'),
 tarifaFile = require('../../lib/tarifa-file'),
 pathHelper = require('../../lib/helper/path'),
 collsHelper = require('../../lib/helper/collections'),
-getMode = require('../../lib/helper/getReleaseMode'),
 argsHelper = require('../../lib/helper/args'),
 hockeyapp = require('../../lib/hockeyapp/hockeyapp'),
 print = require('../../lib/helper/print');
@@ -61,7 +60,7 @@ var upload = function (msg) {
     var productFileName = pathHelper.productFile(
         platform,
         envSettings.product_file_name,
-        getMode(platform, config, localSettings)
+        envSettings.release
     );
 
     return hockeyapp.uploadVersion(productFileName, conf, hockeyapp_id).then(function (data) {
