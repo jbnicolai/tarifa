@@ -10,7 +10,7 @@ var Q = require('q'),
 module.exports = function (msg) {
     var conf = msg.localSettings.configurations.wp8[msg.configuration],
         release = conf['release'],
-        label = conf['signing'];
+        label = conf['sign'];
 
     if(!release || !label) return Q.resolve(msg);
 
