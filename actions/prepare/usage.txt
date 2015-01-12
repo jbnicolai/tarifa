@@ -1,4 +1,4 @@
-Usage: tarifa prepare <platform> <configuration> 
+Usage: tarifa prepare <platform> <configuration>
 
 Build the output of the www project of your tarifa project.
 
