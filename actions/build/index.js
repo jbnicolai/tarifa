@@ -153,7 +153,6 @@ var buildƒ = function (conf){
     process.chdir(pathHelper.root());
     return prepareAction.prepareƒ(conf)
         .then(function() {
-            process.chdir(cwd);
             if (conf.cleanResources) return runTasks('clean-resources')(conf);
             else return Q.resolve(conf);
         })
