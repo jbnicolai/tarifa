@@ -1,8 +1,11 @@
-## 0.5.0 (not released yet)
+## 0.5.0 (01/14/2015)
 
 ### upgrade a project from 0.4.0 to 0.5.0
 
-TODO
+You need to upgrade the `tarifa.json` and `private.json` files and move all signing
+attributes to the new `signing` root attribute, see
+[signing documentation](http://42loops.gitbooks.io/tarifa/content/configurations/index.html#signing)
+for more informations.
 
 ### changes
 
