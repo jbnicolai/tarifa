@@ -35,6 +35,7 @@ var runƒ = function (conf) {
 };
 
 var run = function (platform, config, cleanResources, verbose) {
+    print.outline('Launch run for %s platform and configuration %s !', platform, config);
     spinner();
     return Q.all([
             tarifaFile.parse(pathHelper.root(), platform, config),
@@ -53,30 +54,31 @@ var run = function (platform, config, cleanResources, verbose) {
 var runMultipleConfs = function(platform, configs, cleanResources, verbose) {
     return tarifaFile.parse(pathHelper.root(), platform).then(function (localSettings) {
         configs = configs || tarifaFile.getPlatformConfigs(localSettings, platform);
-        return configs.reduce(function(promise, conf) {
-            return promise.then(function () {
-                print.outline('Run ' + conf + ' configuration!');
-                return run(platform, conf, cleanResources, verbose);
-            });
-        }, Q());
+        return tarifaFile.checkConfigurations(configs, platform, localSettings).then(function () {
+            return configs.reduce(function(promise, conf) {
+                return promise.then(function () {
+                    return run(platform, conf, cleanResources, verbose);
+                });
+            }, Q());
+        });
     });
 };
 
 var runMultiplePlatforms = function (platforms, config, cleanResources, verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         platforms = platforms || localSettings.platforms;
-        return platforms.filter(platformsLib.isAvailableOnHostSync)
-        .reduce(function(promise, platform) {
-            return promise.then(function () {
-                print.outline('Launch run for ' + platform + ' platform!');
-                if (config === 'all')
-                    return runMultipleConfs(platform, null, cleanResources, verbose);
-                else if (argsHelper.matchWildcard(config))
-                    return runMultipleConfs(platform, argsHelper.getFromWildcard(config), cleanResources, verbose);
-                else
-                    return run(platform, config, cleanResources, verbose);
-            });
-        }, Q());
+        return tarifaFile.checkPlatforms(platforms, settings.platforms).then(function () {
+            return platforms.filter(platformsLib.isAvailableOnHostSync).reduce(function(promise, platform) {
+                return promise.then(function () {
+                    if (config === 'all') {
+                        config = null;
+                    } else if (argsHelper.matchWildcard(config)) {
+                        config = argsHelper.getFromWildcard(config);
+                    }
+                    return runMultipleConfs(platform, config, cleanResources, verbose);
+                });
+            }, Q());
+        });
     });
 };
 
