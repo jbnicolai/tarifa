@@ -8,7 +8,7 @@ var Q = require('q'),
 
 module.exports = function (msg) {
     var conf = msg.localSettings.configurations.ios[msg.configuration],
-        label = conf.signing;
+        label = conf.sign;
 
     if(!label || !conf['product_file_name'] || !conf['product_name']){
         return Q.resolve(msg);
