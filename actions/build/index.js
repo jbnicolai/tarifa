@@ -37,12 +37,13 @@ var prepare = function (conf) {
 
 var compile = function (conf) {
     var cwd = process.cwd(),
-        options = conf.localSettings.mode ? [ conf.localSettings.mode ] : [];
+        options = conf.localSettings.mode ? [ conf.localSettings.mode ] : [],
+        beforeCompile = tasks[conf.platform].beforeCompile;
 
     if(conf.verbose) print.success('start cordova build');
     process.chdir(pathHelper.app());
 
-    options = tasks[conf.platform].beforeCompile(conf, options);
+    options = beforeCompile ? beforeCompile(conf, options) : options;
 
     return cordova.raw.compile({
         verbose: conf.verbose,
