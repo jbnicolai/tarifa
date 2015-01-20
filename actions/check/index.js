@@ -1,67 +1,63 @@
 var Q = require('q'),
     os = require('os'),
+    path = require('path'),
+    fs = require('q-io/fs'),
+    intersection = require('interset/intersection'),
     argsHelper = require('../../lib/helper/args'),
     print = require('../../lib/helper/print'),
     pathHelper = require('../../lib/helper/path'),
+    tasksHelper = require('../../lib/helper/tasks'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
     builder = require('../../lib/builder'),
-    installedPlatforms = require('../../lib/cordova/platforms').installedPlatforms,
-    isAvailableOnHostSync = require('../../lib/cordova/platforms').isAvailableOnHostSync,
-    path = require('path'),
-    fs = require('q-io/fs');
+    listAvailableOnHost = require('../../lib/cordova/platforms').listAvailableOnHost,
+    platformTasks = {};
 
-var tasks = {
-    android : [
-        './tasks/android/update_project'
-    ],
-    ios : [
-        './tasks/ios/check_provisioning'
-    ],
-    wp8 : [],
-    browser : []
-};
-
-function getUserTasks (availablePlatforms, localSettings) {
-    var usertasks = {};
-    availablePlatforms.forEach(function (p) {
-        usertasks[p] = localSettings.check && localSettings.check[p]
-            ? [require(pathHelper.resolve(localSettings.check[p]))] : [];
+settings.platforms.forEach(function (p) {
+    var mod = path.resolve(__dirname, '../../lib/platforms', p, 'actions/check');
+    platformTasks[p] = require(mod).tasks.map(function (p) {
+        return path.resolve(__dirname, '../..', p);
     });
-    return usertasks;
+});
+
+function loadUserTasks(platforms, localSettings) {
+    var tasks = {},
+        checkDef = localSettings.check;
+    platforms.forEach(function (p) {
+        tasks[p] = checkDef && checkDef[p]
+            ? [require(pathHelper.resolve(checkDef[p]))] : [ ];
+    });
+    return tasks;
+}
+
+function launchTasks(message, platforms, tasks, userTasks) {
+    return platforms.reduce(function (messg, platform) {
+        return Q.when(messg, function (msg) {
+            if (msg.verbose)
+                print.success("start checking %s platform", platform);
+            return tasksHelper.execSequence(tasks[platform].map(require))(msg);
+        }).then(function (m) {
+            if (m.verbose)
+                print.success("start user check %s", platform);
+            return tasksHelper.execSequence(userTasks[platform])(m);
+        });
+    }, message);
 }
 
 var check = function (verbose) {
-    var cwd = process.cwd();
-    process.chdir(pathHelper.root());
-    return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
-        return installedPlatforms().then(function (platforms) {
-            var platformNames = platforms.filter(function (p) {
-                return !p.disabled;
-            }).map(function (p) { return p.name; });
-            var userTasks = getUserTasks(platformNames.filter(isAvailableOnHostSync), localSettings);
-            return localSettings.platforms.reduce(function (promiseP, platform) {
-                return promiseP.then(function (msg) {
-                    if(platformNames.indexOf(platform) < 0) {
-                        if(settings.os_platforms[platform].indexOf(os.platform()) > -1)
-                            print.error("platform %s is not installed on os, skipping checks...", platform);
-                        return msg;
-                    }
-                    if (verbose) print.success("start checking %s platform", platform);
-                    return tasks[platform].reduce(function (promiseT, task) {
-                        return promiseT.then(require(task));
-                    }, Q(msg)).then(function (m) {
-                        if (verbose) print.success("start user check %s", platform);
-                        return userTasks[platform].reduce(function (promiseUT, usertask) {
-                            return promiseUT.then(usertask);
-                        }, Q(m));
-                    });
-                });
-            }, Q.resolve({
+    var cwd = process.cwd(),
+        conf = [tarifaFile.parse(pathHelper.root()), listAvailableOnHost()];
+
+    return Q.all(conf).spread(function (localSettings, platforms) {
+        process.chdir(pathHelper.root());
+        return launchTasks({
                 settings: localSettings,
                 verbose: verbose
-            }));
-        });
+            },
+            intersection(platforms, localSettings.platforms),
+            platformTasks,
+            loadUserTasks(platforms, localSettings)
+        );
     }).then(function (msg) {
         return builder.init(pathHelper.root(), msg.verbose);
     }).then(function (val) {
@@ -69,7 +65,7 @@ var check = function (verbose) {
         return val;
     }, function (err) {
         process.chdir(cwd);
-        throw err;
+        return Q.reject(err);
     });
 };
 
