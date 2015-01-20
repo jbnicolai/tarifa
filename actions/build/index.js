@@ -59,7 +59,7 @@ var compile = function (conf) {
 };
 
 var runTasks = function (type) {
-    return tasksHelper.execSequence(tasks, 'tasks', type);
+    return tasksHelper.execTaskSequence(tasks, 'tasks', type);
 };
 
 var buildƒ = function (conf){
