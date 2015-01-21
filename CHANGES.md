@@ -1,8 +1,8 @@
 ## 0.5.1 (01/21/2015)
 
-- fix inquier version to 0.8.0
 - fix `tarifa plugin add` when used with plugins having dependencies
 - fix lib/cordova/version when using project path with white spaces
+- fix inquirer usage in lib/questions/ to support 0.8.1
 
 ## 0.5.0 (01/14/2015)
 
