@@ -4,7 +4,7 @@ var Q = require('q'),
     format = require('util').format,
     pathHelper = require('../../../../lib/helper/path'),
     print = require('../../../../lib/helper/print'),
-    askPassword = require('../../../../lib/helper/question').password,
+    askPassword = require('../../../../lib/questions/password'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {

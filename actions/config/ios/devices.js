@@ -11,7 +11,7 @@ var Q = require('q'),
     addDevice = require('../../../lib/ios/nomad/device/add'),
     provisioningManager = require('../../../lib/ios/nomad/provisioning/device'),
     askDeviceName = require('./ask_device_name'),
-    askPassword = require('../../../lib/helper/question').password;
+    askPassword = require('../../../lib/questions/password');
 
 function listDevice(verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
