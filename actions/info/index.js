@@ -198,16 +198,31 @@ function info(verbose) {
         });
 }
 
+function dump_configuration() {
+    return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
+        print("%s\n%s",
+            chalk.green('tarifa configuration after the parsing:'),
+            JSON.stringify(localSettings, null, 2)
+        );
+    });
+}
+
 module.exports = function (argv) {
     var verbose = false,
         helpPath = path.join(__dirname, 'usage.txt');
 
-    if(argsHelper.matchArgumentsCount(argv, [0])
-            && argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
+    var validArguments = argsHelper.matchArgumentsCount(argv, [0]) &&
+                            argsHelper.checkValidOptions(argv, ['V', 'verbose', 'dump-configuration']);
+
+    if(validArguments) {
         if(argsHelper.matchOption(argv, 'V', 'verbose')) {
             verbose = true;
         }
-        return info(verbose);
+        if (argsHelper.matchOption(argv, null, 'dump-configuration')) {
+            return dump_configuration();
+        } else {
+            return info(verbose);
+        }
     }
     return fs.read(helpPath).then(print);
 };
