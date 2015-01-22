@@ -3,7 +3,6 @@ var Q = require('q'),
     os = require('os'),
     fs = require('fs'),
     chalk = require('chalk'),
-    inquirer = require('inquirer'),
     argsHelper = require('../../lib/helper/args'),
     pathHelper = require('../../lib/helper/path'),
     tarifaFile = require('../../lib/tarifa-file'),
@@ -15,7 +14,8 @@ var Q = require('q'),
     print = require('../../lib/helper/print'),
     plugins = require('../../lib/cordova/plugins'),
     pluginXML = require('../../lib/xml/plugin.xml'),
-    pluginAction = require('../plugin').plugin;
+    pluginAction = require('../plugin').plugin,
+    ask = require('../../lib/questions/ask');
 
 function _addInstalledPlatforms(app, platforms, msg) {
     return cordovaVersion.getCordovaPlatformsVersion(app,platforms).then(function (plts) {
@@ -144,19 +144,13 @@ function askUserForUpdate(root) {
     return function (msg) {
         if(!msg.platformsToUpdate.length && !msg.pluginToUpdate.length) {
             print.success('nothing to update');
-            return Q.resolve(msg);
+            process.exit(0);
         }
 
-        var defer = Q.defer();
-        inquirer.prompt([{
-            type:'confirm',
-            name:'update',
-            message:'Do you want to update the current project?'
-        }], function (response) {
-            if(response.update) defer.resolve(msg);
+        return ask.question('Do you want to update the current project?', 'confirm').then(function (resp) {
+            if(resp) return msg;
             else process.exit(0);
         });
-        return defer.promise;
     };
 }
 

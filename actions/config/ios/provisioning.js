@@ -7,7 +7,7 @@ var Q = require('q'),
     pathHelper = require('../../../lib/helper/path'),
     ask = require('../../../lib/questions/ask'),
     provisioningList = require('../../../lib/ios/nomad/provisioning/list'),
-    askPassword = require('../../../lib/questions/password'),
+    ask = require('../../../lib/questions/ask'),
     parseProvision = require('../../../lib/ios/parse-mobileprovision'),
     download = require('../../../lib/ios/nomad/provisioning/download'),
     install = require('../../../lib/ios/nomad/provisioning/install');
@@ -21,7 +21,7 @@ function list(verbose) {
             id = deploy.apple_id,
             team = deploy.apple_developer_team;
 
-        return askPassword('What is your apple developer password?').then(function (password) {
+        return ask.password('What is your apple developer password?').then(function (password) {
             spinner();
             return provisioningList(id, team, password, verbose);
         });

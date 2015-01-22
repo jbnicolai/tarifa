@@ -10,14 +10,13 @@ var Q = require('q'),
     getDevices = require('../../../lib/ios/nomad/device/list'),
     addDevice = require('../../../lib/ios/nomad/device/add'),
     provisioningManager = require('../../../lib/ios/nomad/provisioning/device'),
-    askDeviceName = require('./ask_device_name'),
-    askPassword = require('../../../lib/questions/password');
+    ask = require('../../../lib/questions/ask');
 
 function listDevice(verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         if(!localSettings.deploy || !localSettings.deploy.apple_id)
             return Q.reject("No deploy informations are available in the current tarifa.json file.");
-        return askPassword('What is your apple developer password?')
+        return ask.password('What is your apple developer password?')
             .then(function (password) {
                 spinner();
                 return getDevices(
@@ -88,7 +87,7 @@ function add(name, uuid, verbose) {
         var id = localSettings.deploy.apple_id,
             team = localSettings.deploy.apple_developer_team;
 
-        return askPassword('What is your apple developer password?').then(function (password) {
+        return ask.password('What is your apple developer password?').then(function (password) {
             spinner();
             return addDevice(id, team, password, name, uuid, verbose)
                 .then(function (output) { if(verbose) print(output); });
@@ -106,7 +105,7 @@ function attach(uuid, config, verbose) {
             label = conf.sign,
             signing = localSettings.signing.ios[label];
 
-        return askPassword('What is your apple developer password?').then(function (password) {
+        return ask.password('What is your apple developer password?').then(function (password) {
             return getDevices(id, team, password, verbose).then(function (devices) {
                 var rslt = devices.filter(function (id) { return id === uuid; }),
                     profile_path = signing.provisioning_path,
@@ -120,7 +119,7 @@ function attach(uuid, config, verbose) {
                 }
                 else {
                     if(verbose) print.success('device not in developer center');
-                    return askDeviceName().then(function (name) {
+                    return ask.question('Choose your device label').then(function (name) {
                         return addDevice(id, team, password, name, uuid, verbose).then(function (output) {
                             devices.push({ name:name, uuid:uuid, enabled:true });
                             if(verbose) print(output);
@@ -153,7 +152,7 @@ function detach(uuid, config, verbose) {
         var label = conf.sign,
             signing  = localSettings.signing.ios[label];
 
-        return askPassword('What is your apple developer password?').then(function (password) {
+        return ask.password('What is your apple developer password?').then(function (password) {
             var profile_path = signing.provisioning_path,
                 profile_name = signing.provisioning_name,
                 id = localSettings.deploy.apple_id,

@@ -4,7 +4,7 @@ var Q = require('q'),
     format = require('util').format,
     pathHelper = require('../../../../lib/helper/path'),
     print = require('../../../../lib/helper/print'),
-    askPassword = require('../../../../lib/questions/password'),
+    ask = require('../../../../lib/questions/ask'),
     settings = require('../../../../lib/settings');
 
 module.exports = function (msg) {
@@ -25,7 +25,7 @@ module.exports = function (msg) {
         },
         passwordPromise = msg.wp8_certif_password
             ? Q(msg.wp8_certif_password)
-            : askPassword('What is the password of your certificate?');
+            : ask.password('What is the password of your certificate?');
 
     passwordPromise.then(function (password) {
         var cmd = format("\"%s\" sign /v /f %s /p %s %s", bin, certificate_path, password, output);

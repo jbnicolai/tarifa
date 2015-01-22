@@ -7,7 +7,6 @@ var Q = require('q'),
     serveStatic = require('serve-static'),
     tinylr = require('tiny-lr-fork'),
     findPort = require('find-port'),
-    inquirer = require('inquirer'),
     rimraf = require('rimraf'),
     lr = require('connect-livereload'),
     chalk = require('chalk'),
@@ -24,28 +23,19 @@ var Q = require('q'),
     buildAction = require('../build'),
     prepareAction = require('../prepare'),
     tarifaFile = require('../../lib/tarifa-file'),
-    settings = require('../../lib/settings');
+    settings = require('../../lib/settings'),
+    ask = require('../../lib/questions/ask');
 
 function askHostIp() {
-    var defer = Q.defer(),
-        interfaces = os.networkInterfaces(),
-        interfaceNames = Object.keys(interfaces),
-        ips = interfaceNames.map(function (i) {
-            return interfaces[i].filter(function (addr) {
-                return addr.family === 'IPv4';
-            }).map(function (i) { return i.address; });
-        }).reduce(function (acc, i) { return acc.concat(i); }, []);
+    var interfaces = os.networkInterfaces(),
+        ipv4Filter = function (addr) { return addr.family === 'IPv4'; },
+        addrFilter = function (i) { return i.address; },
+        concat = function (acc, i) { return acc.concat(i); },
+        ips = Object.keys(interfaces).map(function (i) {
+            return interfaces[i].filter(ipv4Filter).map(addrFilter);
+        }).reduce(concat, []);
 
-    inquirer.prompt([{
-        type:'list',
-        name:'ip',
-        choices:ips,
-        message:'Which ip should be used to serve the configuration?'
-    }], function (response) {
-        defer.resolve(response.ip);
-    });
-
-    return defer.promise;
+    return ask.question('Which ip should be used to serve the configuration?', 'list', ips);
 }
 
 function findLiveReloadPort() {

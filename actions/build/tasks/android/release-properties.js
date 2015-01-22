@@ -1,6 +1,6 @@
 var Q = require('q'),
     print = require('../../../../lib/helper/print'),
-    askPassword = require('../../../../lib/questions/password'),
+    ask = require('../../../../lib/questions/ask'),
     releaseProperties = require('../../../../lib/android/release-properties');
 
 module.exports = function (msg) {
@@ -15,8 +15,8 @@ module.exports = function (msg) {
             ks_alias = signing.keystore_alias,
             aliaspass = msg.keystore_alias_pass;
 
-        return (storepass ? Q(storepass) : askPassword('What is the keystore password?')).then(function (s) {
-            return (aliaspass ? Q(aliaspass) : askPassword('What is the alias password?')).then(function (a) {
+        return (storepass ? Q(storepass) : ask.password('What is the keystore password?')).then(function (s) {
+            return (aliaspass ? Q(aliaspass) : ask.password('What is the alias password?')).then(function (a) {
                 return releaseProperties.create(root, ks_path, ks_alias, s, a);
             });
         }).then(function () {
