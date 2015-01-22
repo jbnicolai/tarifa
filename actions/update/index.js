@@ -56,11 +56,11 @@ function _addAvailablePlatforms(platforms) {
 
             print.line(chalk.underline('platforms to update'));
             msg.platformsToUpdate = [];
-            inter.forEach(function (name) {
-                if(name === 'browser') {
-                    // !! do nothing currently no update script in cordova-browser
-                }
-                else if(versionGreater(availablePlatforms[name], msg.installedPlatforms[name])) {
+
+            inter.filter(function (p) {
+                return !require(path.resolve(__dirname, '../../lib/platforms', p, 'actions/update')).skip;
+            }).forEach(function (name) {
+                if(versionGreater(availablePlatforms[name], msg.installedPlatforms[name])) {
                     msg.platformsToUpdate.push(name);
                     print.line(
                         '  %s: %s -> %s',
@@ -167,6 +167,9 @@ function runUpdatePlatforms(root) {
             .then(function () {
                 if(msg.verbose) print.success('updated platforms');
                 return msg;
+            }, function (err) {
+                print.error('failed to update platforms');
+                throw err;
             });
     };
 }
