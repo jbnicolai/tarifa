@@ -1,45 +1,32 @@
 var Q = require('q'),
-    inquirer = require('inquirer'),
     format = require('util').format,
-    devices = require('../../lib/devices');
+    devices = require('../../lib/devices'),
+    ask = require('../../lib/questions/ask');
 
 module.exports = function (conf) {
 
-    if (conf.platform === 'browser') return Q(conf);
+    if (conf.platform === 'browser')
+        return Q(conf);
     if(!devices[conf.platform])
         return Q.reject(format("Get devices for platform %s not implemented!", conf.platform));
-    var defer = Q.defer();
-    devices[conf.platform]().then(function (items) {
+
+    return devices[conf.platform]().then(function (items) {
         if (items.length === 0)
-            return defer.reject("No device available!");
+            return Q.reject("No device available!");
 
         if (items.length === 1) {
-            conf.device = {
-                value: items[0],
-                index : 0
-            };
-            return defer.resolve(conf);
+            conf.device = { value: items[0], index : 0 };
+            return conf;
         }
 
-        var question = {
-            type:'list',
-            name:'device',
-            choices:['all'].concat(items),
-            message:'Which device do you want to use?'
-        };
-
-        inquirer.prompt([question], function (response) {
-            if(response.device !== 'all') {
-                conf.device = {
-                    value: response.device,
-                    index : items.indexOf(response.device)
-                };
-            } else {
-                conf.devices = items;
-            }
-            defer.resolve(conf);
+        return ask.question(
+            'Which device do you want to use?',
+            'list',
+            ['all'].concat(items)
+        ).then(function (resp) {
+            conf.device = (resp !== 'all')
+                ? { value: resp, index : items.indexOf(resp) }: items;
+            return conf;
         });
     });
-
-    return defer.promise;
 };
