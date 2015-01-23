@@ -73,47 +73,6 @@ function check_tools(verbose) {
     };
 }
 
-function printiOSDevices (verbose) {
-    return function (devicesList) {
-        print(
-            devicesList.length ? "%s\n\t%s" : "%s %s",
-            chalk.green('connected iOS devices:'),
-            devicesList.length ? devicesList.join('\n\t') : 'none'
-        );
-    };
-}
-
-function printWPDevices (verbose) {
-    return function (devicesList) {
-        print(
-            devicesList.length ? "%s\n\t%s" : "%s %s",
-            chalk.green('available wp devices:'),
-            devicesList.length ? devicesList.join('\n\t') : 'none'
-        );
-    };
-}
-
-function printAndroidDevices (verbose) {
-    return function (devicesList) {
-        if(!devicesList.length) {
-            print("%s %s", chalk.green('connected Android devices:'), 'none');
-        }
-        else if(verbose) {
-            print(chalk.green('connected Android devices:'));
-            devicesList.forEach(function (dev) {
-                print('\t%s', dev.join(' '));
-            });
-        }
-        else {
-            print(
-                "%s\n\t%s",
-                chalk.green('connected Android devices:'),
-                devicesList.join('\n\t')
-            );
-        }
-    }
-}
-
 function listAvailablePlatforms() {
     var host = os.platform(), r = [];
     for(var p in settings.os_platforms) {
@@ -175,6 +134,12 @@ function check_requirements(verbose) {
     };
 }
 
+function printDevices(verbose) {
+    return Object.keys(devices).reduce(function (p, device) {
+        return p.then(function () { return devices[device].print(verbose); });
+    }, Q());
+}
+
 function info(verbose) {
     print("%s %s", chalk.green('node version:'), process.versions.node);
     print("%s %s", chalk.green('cordova-lib version:'), pkg.dependencies['cordova-lib']);
@@ -186,15 +151,8 @@ function info(verbose) {
         .then(check_cordova_platform_version(platforms, verbose))
         .then(check_tools(verbose))
         .then(function (ok) {
-            if(!ok) return Q.reject("not all needed tools are available, first install them!");
-            return devices.ios().then(printiOSDevices(verbose))
-                .then(function () {
-                    if(verbose) return devices.androidVerbose();
-                    else return devices.android();
-                })
-                .then(printAndroidDevices(verbose))
-                .then(devices.wp8)
-                .then(printWPDevices(verbose));
+            if(!ok) print.warning("not all needed tools are available!");
+            return printDevices(verbose);
         });
 }
 

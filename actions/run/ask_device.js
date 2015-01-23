@@ -10,7 +10,7 @@ module.exports = function (conf) {
     if(!devices[conf.platform])
         return Q.reject(format("Get devices for platform %s not implemented!", conf.platform));
 
-    return devices[conf.platform]().then(function (items) {
+    return devices[conf.platform].info().then(function (items) {
         if (items.length === 0)
             return Q.reject("No device available!");
 
