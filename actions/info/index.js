@@ -121,15 +121,9 @@ function check_cordova_platform_version(platforms, verbose) {
 
 function check_requirements(verbose) {
     return function () {
-        return platformsLib.installedPlatforms(verbose).then(function (platforms) {
-            var installed = platforms.filter(function(platform) { return !platform.disabled; })
-                .map(function(platform) { return platform.name; });
-            if (installed.length)
-                print("%s %s", chalk.green("installed platforms on host:"), installed.join(', '));
-            var disabled = platforms.filter(function(platform) { return platform.disabled; })
-                .map(function(platform) { return platform.name; });
-            if (disabled.length)
-                print("%s %s", chalk.green("disabled platforms on host:"), disabled.join(', '));
+        return platformsLib.listAvailableOnHost(verbose).then(function (platforms) {
+            if (platforms.length)
+                print("%s %s", chalk.green("installed platforms on host:"), platforms.join(', '));
         });
     };
 }
@@ -167,12 +161,11 @@ function dump_configuration() {
 
 module.exports = function (argv) {
     var verbose = false,
-        helpPath = path.join(__dirname, 'usage.txt');
+        helpPath = path.join(__dirname, 'usage.txt'),
+        hasNoArgs = argsHelper.matchArgumentsCount(argv, [0]),
+        hasValidDumpOpt = argsHelper.checkValidOptions(argv, ['V', 'verbose', 'dump-configuration']);
 
-    var validArguments = argsHelper.matchArgumentsCount(argv, [0]) &&
-                            argsHelper.checkValidOptions(argv, ['V', 'verbose', 'dump-configuration']);
-
-    if(validArguments) {
+    if(hasNoArgs && hasValidDumpOpt) {
         if(argsHelper.matchOption(argv, 'V', 'verbose')) {
             verbose = true;
         }
