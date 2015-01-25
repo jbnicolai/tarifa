@@ -114,7 +114,7 @@ function testPlugins(projectDefer, pluginDefer) {
                 it(format('tarifa build %s', p), function () {
                     this.timeout(0);
                     return projectDefer.promise.then(function (rslt) {
-                        return buildAction.build(p, 'default', false, false);
+                        return buildAction.buildMultiplePlatforms([p], ['default'], false, false);
                     });
                 });
             }
