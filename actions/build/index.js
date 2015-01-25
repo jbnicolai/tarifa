@@ -91,37 +91,29 @@ var buildƒ = function (conf){
         });
 };
 
-var build = function (platform, config, keepFileChanges, cleanResources, verbose) {
-    print.outline('Launch build for %s platform and configuration %s !', platform, config);
-    return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
-        return buildƒ({
-            platform: platform,
-            configuration: config,
-            localSettings: localSettings,
-            keepFileChanges: keepFileChanges,
-            cleanResources: cleanResources,
-            verbose: verbose
-        });
-    });
-};
-
-var buildMultipleConfs = function(platform, configs, keepFileChanges, cleanResources, verbose) {
-    return tarifaFile.parse(pathHelper.root(), platform).then(function (localSettings) {
-        configs = configs || tarifaFile.getPlatformConfigs(localSettings, platform);
-        return tarifaFile.checkConfigurations(configs, platform, localSettings).then(function () {
-            return configs.reduce(function(promise, conf) {
-                return promise.then(function () {
-                    return build(platform, conf, keepFileChanges, cleanResources, verbose);
+var buildMultipleConfs = function(platform, configs, localSettings, keepFileChanges, cleanResources, verbose) {
+    configs = configs || tarifaFile.getPlatformConfigs(localSettings, platform);
+    return tarifaFile.checkConfigurations(configs, platform, localSettings).then(function () {
+        return configs.reduce(function(promise, conf) {
+            return promise.then(function () {
+                print.outline('Launch build for %s platform and configuration %s !', platform, conf);
+                return buildƒ({
+                    platform: platform,
+                    configuration: conf,
+                    localSettings: localSettings,
+                    keepFileChanges: keepFileChanges,
+                    cleanResources: cleanResources,
+                    verbose: verbose
                 });
-            }, Q());
-        });
+            });
+        }, Q());
     });
 };
 
 var buildMultiplePlatforms = function (platforms, config, keepFileChanges, cleanResources, verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         platforms = platforms || localSettings.platforms;
-        return tarifaFile.checkPlatforms(platforms, settings.platforms).then(function () {
+        return tarifaFile.checkPlatforms(platforms, localSettings).then(function () {
             return platforms.filter(platformsLib.isAvailableOnHostSync).reduce(function(promise, platform) {
                 return promise.then(function () {
                     if (config === 'all') {
@@ -129,7 +121,7 @@ var buildMultiplePlatforms = function (platforms, config, keepFileChanges, clean
                     } else if (argsHelper.matchWildcard(config)) {
                         config = argsHelper.getFromWildcard(config);
                     }
-                    return buildMultipleConfs(platform, config, keepFileChanges, cleanResources, verbose);
+                    return buildMultipleConfs(platform, config, localSettings, keepFileChanges, cleanResources, verbose);
                 });
             }, Q());
         });
@@ -161,7 +153,6 @@ var action = function (argv) {
     return fs.read(helpPath).then(print);
 };
 
-action.build = build;
 action.buildMultiplePlatforms = buildMultiplePlatforms;
 action.buildƒ = buildƒ;
 action.prepare = prepare;
