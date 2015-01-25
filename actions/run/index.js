@@ -10,29 +10,24 @@ var Q = require('q'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
     pathHelper = require('../../lib/helper/path'),
+    tasksHelper = require('../../lib/helper/tasks'),
     platformsLib = require('../../lib/cordova/platforms'),
     buildAction = require('../build'),
     askDevice = require('./ask_device'),
     argsHelper = require('../../lib/helper/args'),
+    platformTasks = {};
 
-    tasks = {
-        android : [
-            './tasks/android/install',
-            './tasks/android/open'
-        ],
-        ios : [ './tasks/ios/install' ],
-        wp8: [ './tasks/wp8/install' ],
-        browser: [ './tasks/browser/open' ]
-    };
+settings.platforms.forEach(function (p) {
+    var mod = path.resolve(__dirname, '../../lib/platforms', p, 'actions/run');
+    platformTasks[p] = require(mod).tasks.map(function (p) {
+        return path.resolve(__dirname, '../..', p);
+    });
+});
 
 var runƒ = function (conf) {
     return buildAction.buildƒ(conf)
         .then(askDevice)
-        .then(function (c) {
-            return tasks[c.platform].reduce(function (opt, task) {
-                return Q.when(opt, require(task));
-            }, c);
-        });
+        .then(tasksHelper.execSequence(platformTasks[conf.platform]));
 };
 
 var run = function (platform, config, localSettings, cleanResources, verbose) {
