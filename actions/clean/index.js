@@ -12,14 +12,7 @@ var Q = require('q'),
     listAvailableOnHost = require('../../lib/cordova/platforms').listAvailableOnHost,
     cordovaClean = require('../../lib/cordova/clean'),
     settings = require('../../lib/settings'),
-    platformTasks = {};
-
-settings.platforms.forEach(function (p) {
-    var mod = path.resolve(__dirname, '../../lib/platforms', p, 'actions/clean');
-    platformTasks[p] = require(mod).tasks.map(function (p) {
-        return path.resolve(__dirname, '../..', p);
-    });
-});
+    platformTasks = tasksHelper.load(settings.platforms, 'clean', 'tasks');
 
 var tryRemoveWWW = function (verbose) {
     var defer = Q.defer(),

@@ -15,14 +15,7 @@ var Q = require('q'),
     buildAction = require('../build'),
     askDevice = require('./ask_device'),
     argsHelper = require('../../lib/helper/args'),
-    platformTasks = {};
-
-settings.platforms.forEach(function (p) {
-    var mod = path.resolve(__dirname, '../../lib/platforms', p, 'actions/run');
-    platformTasks[p] = require(mod).tasks.map(function (p) {
-        return path.resolve(__dirname, '../..', p);
-    });
-});
+    platformTasks = tasksHelper.load(settings.platforms, 'run', 'tasks');
 
 var runƒ = function (conf) {
     return buildAction.buildƒ(conf)

@@ -11,14 +11,7 @@ var Q = require('q'),
     tarifaFile = require('../../lib/tarifa-file'),
     builder = require('../../lib/builder'),
     listAvailableOnHost = require('../../lib/cordova/platforms').listAvailableOnHost,
-    platformTasks = {};
-
-settings.platforms.forEach(function (p) {
-    var mod = path.resolve(__dirname, '../../lib/platforms', p, 'actions/check');
-    platformTasks[p] = require(mod).tasks.map(function (p) {
-        return path.resolve(__dirname, '../..', p);
-    });
-});
+    platformTasks = tasksHelper.load(settings.platforms, 'check', 'tasks');
 
 function loadUserTasks(platforms, localSettings) {
     var tasks = {},
