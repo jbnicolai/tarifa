@@ -37,8 +37,8 @@ function launchTasks(resp) {
 }
 
 function makeRootDirectory(resp) {
-    return fs.isDirectory(pathHelper.resolve(resp.path)).then(function (exists) {
-        return exists ? resp : fs.makeDirectory(pathHelper.resolve(resp.path)).then(function () {
+    return fs.isDirectory(resp.path).then(function (exists) {
+        return exists ? resp : fs.makeDirectory(resp.path).then(function () {
             return resp;
         });
     });
