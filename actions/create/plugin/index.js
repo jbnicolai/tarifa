@@ -9,18 +9,7 @@ var Q = require('q'),
     pathHelper = require('../../../lib/helper/path'),
     print = require('../../../lib/helper/print'),
     settings = require('../../../lib/settings'),
-
-    questions = [
-        'plugin/path',
-        'plugin/id',
-        'plugin/name',
-        'plugin/platforms',
-        'plugin/version',
-        'plugin/description',
-        'plugin/author_name',
-        'plugin/keywords',
-        'plugin/license'
-    ],
+    questions = require('../../../lib/questions/list').plugin,
 
     templates = {
         www: {
