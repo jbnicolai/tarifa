@@ -15,10 +15,7 @@ var Q = require('q'),
         'project/plugins',
         'project/www',
         'project/color',
-        'deploy/deploy'
-    ],
-
-    deployQuestions = [
+        'deploy/deploy',
         'deploy/ios/apple_id',
         'deploy/ios/apple_password',
         'deploy/ios/has_apple_developer_team',
@@ -26,31 +23,15 @@ var Q = require('q'),
         'deploy/ios/adhoc_provisioning_profile_name',
         'deploy/ios/store_apple_developer_identity',
         'deploy/ios/store_provisioning_profile_name',
-        'deploy/wp8/wp8_certificate_path'
-    ],
-
-    shallReuseKeystore = [
-        'deploy/android/keystore_reuse'
-    ],
-
-    reuseKeystoreQuestions = [
+        'deploy/wp8/wp8_certificate_path',
+        'deploy/android/keystore_reuse',
         'deploy/android/keystore_path_existing',
-        'deploy/android/keystore_storepass',
-        'deploy/android/keystore_alias_list'
-    ],
-
-    createKeystoreQuestions = [
         'deploy/android/keystore_path_non_existing',
         'deploy/android/keystore_storepass',
+        'deploy/android/keystore_alias_list',
         'deploy/android/keystore_alias',
-        'deploy/android/keystore_keypass'
-    ],
-
-    isHockeyApp = [
-        'hockeyapp/hockeyapp'
-    ],
-
-    hockeyAppQuestions = [
+        'deploy/android/keystore_keypass',
+        'hockeyapp/hockeyapp',
         'hockeyapp/token'
     ],
 
@@ -67,32 +48,14 @@ var Q = require('q'),
     ];
 
 function launchTasks(resp) {
-    return tasks.map(function (task) {
-        return require(task);
-    }).reduce(function (val, task) {
-        return Q.when(val, task);
-    }, resp);
+    return tasks.map(require).reduce(Q.when, resp);
 }
 
 function create(verbose) {
     if (verbose) print.banner();
     var response = { options : { verbose : verbose } };
     return ask(mainQuestions)(response).then(function (resp) {
-        if (!resp.deploy) return resp;
-        return ask(deployQuestions)(resp).then(ask(shallReuseKeystore)).then(function (resp) {
-            var nextQuestions = resp.keystore_reuse ? reuseKeystoreQuestions :
-                                                      createKeystoreQuestions;
-            return ask(nextQuestions)(resp);
-        });
-    })
-    .then(ask(isHockeyApp))
-    .then(function (resp) {
-        if (resp.hockeyapp) return ask(hockeyAppQuestions)(resp);
-        else return resp;
-    })
-    .then(function (resp) {
-        print();
-        spinner();
+        print(); spinner();
         return launchTasks(resp);
     });
 }
