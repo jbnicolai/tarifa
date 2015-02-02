@@ -5,5 +5,5 @@
             </feature>
         </config-file>
 
-        <source-file src="src/wp/$NAME.cs" />
+        <source-file src="src/wp8/$NAME.cs" />
     </platform>
