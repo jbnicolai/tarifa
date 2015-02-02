@@ -2,14 +2,14 @@ var Q = require('q'),
     rimraf = require('rimraf'),
     os = require('os'),
     ncp = require('ncp').ncp,
+    path = require('path'),
+    fs = require('q-io/fs'),
     argsHelper = require('../../lib/helper/args'),
     print = require('../../lib/helper/print'),
     tarifaFile = require('../../lib/tarifa-file'),
     pathHelper = require('../../lib/helper/path'),
     settings = require('../../lib/settings'),
-    builder = require('../../lib/builder'),
-    path = require('path'),
-    fs = require('q-io/fs');
+    builder = require('../../lib/builder');
 
 var method = {
     copy: function (cordovaWWW, projectWWW) {

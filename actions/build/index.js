@@ -92,21 +92,24 @@ var buildƒ = function (conf){
 };
 
 var buildMultipleConfs = function(platform, configs, localSettings, keepFileChanges, cleanResources, verbose) {
+    var message = {
+        platform: platform,
+        localSettings: localSettings,
+        keepFileChanges: keepFileChanges,
+        cleanResources: cleanResources,
+        verbose: verbose
+    };
+
     configs = configs || tarifaFile.getPlatformConfigs(localSettings, platform);
+
     return tarifaFile.checkConfigurations(configs, platform, localSettings).then(function () {
-        return configs.reduce(function(promise, conf) {
-            return promise.then(function () {
+        return configs.reduce(function(msg, conf) {
+            return Q.when(msg, function (m) {
                 print.outline('Launch build for %s platform and configuration %s !', platform, conf);
-                return buildƒ({
-                    platform: platform,
-                    configuration: conf,
-                    localSettings: localSettings,
-                    keepFileChanges: keepFileChanges,
-                    cleanResources: cleanResources,
-                    verbose: verbose
-                });
-            });
-        }, Q());
+                m.configuration = conf;
+                return m;
+            }).then(buildƒ);
+        }, message);
     });
 };
 
@@ -147,8 +150,15 @@ var action = function (argv) {
     if (argsHelper.matchCmd(argv._, ['__all__', '*']))
         return buildMultiplePlatforms(null, argv._[1] || 'default', keepFileChanges, cleanResources, verbose);
 
-    if (argsHelper.matchCmd(argv._, ['__some__', '*']))
-        return buildMultiplePlatforms(argsHelper.getFromWildcard(argv._[0]), argv._[1] || 'default', keepFileChanges, cleanResources, verbose);
+    if (argsHelper.matchCmd(argv._, ['__some__', '*'])) {
+        return buildMultiplePlatforms(
+            argsHelper.getFromWildcard(argv._[0]),
+            argv._[1] || 'default',
+            keepFileChanges,
+            cleanResources,
+            verbose
+        );
+    }
 
     return fs.read(helpPath).then(print);
 };

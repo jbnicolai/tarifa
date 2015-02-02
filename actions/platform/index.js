@@ -1,18 +1,18 @@
 var Q = require('q'),
     rimraf = require('rimraf'),
     format = require('util').format,
-    argsHelper = require('../../lib/helper/args'),
-    tarifaFile = require('../../lib/tarifa-file'),
+    fs = require('q-io/fs');
     path = require('path'),
     chalk = require('chalk'),
+    argsHelper = require('../../lib/helper/args'),
+    tarifaFile = require('../../lib/tarifa-file'),
     settings = require('../../lib/settings'),
     pathHelper = require('../../lib/helper/path'),
     print = require('../../lib/helper/print'),
     platformsLib = require('../../lib/cordova/platforms'),
     copyDefaultIcons = require('../../lib/cordova/icon').copyDefault,
     createDefaultAssetsFolders = require('../../lib/cordova/assets').createFolders,
-    copyDefaultSplash = require('../../lib/cordova/splashscreen').copyDefault,
-    fs = require('q-io/fs');
+    copyDefaultSplash = require('../../lib/cordova/splashscreen').copyDefault;
 
 function addAssets(platform, verbose) {
     var root = pathHelper.root();
