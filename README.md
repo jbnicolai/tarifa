@@ -1,4 +1,4 @@
-tarifa [![experimental](http://hughsk.github.io/stability-badges/dist/experimental.svg)](http://github.com/hughsk/stability-badges)
+tarifa [![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/hughsk/stability-badges)
 ======
 
 <a href="http://tarifa.tools">
