@@ -18,9 +18,9 @@ var Q = require('q'),
     platformTasks = tasksHelper.load(settings.platforms, 'run', 'tasks');
 
 var runƒ = function (conf) {
-    return buildAction.buildƒ(conf)
-        .then(askDevice)
-        .then(tasksHelper.execSequence(platformTasks[conf.platform]));
+    var tasks = platformTasks[conf.platform].map(require);
+    return buildAction.buildƒ(conf).then(askDevice)
+        .then(tasksHelper.execSequence(tasks));
 };
 
 var run = function (platform, config, localSettings, cleanResources, verbose) {
