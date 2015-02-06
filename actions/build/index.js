@@ -75,6 +75,7 @@ var tasks = {
             'android/release-properties'
         ],
         'pre-cordova-compile' : [
+            'android/bump_version_code',
             'android/app_label'
         ],
         'post-cordova-compile' : [
