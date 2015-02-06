@@ -3,7 +3,7 @@ var should = require('should'),
     fs = require('fs'),
     Q = require('q'),
     tmp = require('tmp'),
-    BuildCsproj = require('../../../lib/xml/wp8/csproj');
+    BuildCsproj = require('../../../lib/platforms/wp8/lib/xml/csproj');
 
 describe('[wp8] setting XapFilename tag in wp8/*.csproj', function() {
 

@@ -3,7 +3,7 @@ var should = require('should'),
     fs = require('fs'),
     Q = require('q'),
     tmp = require('tmp'),
-    BuildWMAppManifest = require('../../../lib/xml/wp8/WMAppManifest.xml');
+    BuildWMAppManifest = require('../../../lib/platforms/wp8/lib/xml/WMAppManifest.xml');
 
 describe('[wp8] read/write WMAppManifest.xml', function() {
 

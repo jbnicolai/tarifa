@@ -3,7 +3,7 @@ var should = require('should'),
     fs = require('fs'),
     Q = require('q'),
     tmp = require('tmp'),
-    stringXml = require('../../../lib/xml/android/string.xml');
+    stringXml = require('../../../lib/platforms/android/lib/xml/string.xml');
 
 describe('[android] setting app_name in android/res/values/strings.xml', function() {
     it('find app_name', function () {
