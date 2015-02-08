@@ -9,6 +9,7 @@ var Q = require('q'),
     tarifaFile = require('../../lib/tarifa-file'),
     prepareAction = require('../prepare'),
     platformsLib = require('../../lib/cordova/platforms'),
+    getPlatformVersion = require('../../lib/cordova/version').getPlatformVersion,
     argsHelper = require('../../lib/helper/args'),
     tasksHelper = require('../../lib/helper/tasks'),
     tasks = {};
@@ -71,7 +72,12 @@ var buildƒ = function (conf){
     if(conf.verbose) print.success('start to build the www project');
 
     process.chdir(pathHelper.root());
-    return prepareAction.prepareƒ(conf)
+    return getPlatformVersion(pathHelper.app())(conf.platform)
+        .then(function (platformInfo) {
+            conf.platformVersion = platformInfo.version;
+            return conf;
+        })
+        .then(prepareAction.prepareƒ)
         .then(conf.cleanResources ? runTasks('clean-resources'): Q.resolve)
         .then(runTasks('pre-cordova-prepare'))
         .then(prepare)
