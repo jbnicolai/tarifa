@@ -1,5 +1,7 @@
 {
   "name": "browser",
   "version": "3.6.0",
-  "description": "cordova browser"
+  "versions": [
+    "3.6.0"
+  ]
 }

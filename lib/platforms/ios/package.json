@@ -1,5 +1,7 @@
 {
   "name": "ios",
   "version": "3.7.0",
-  "description": "cordova ios"
+  "versions": [
+    "3.7.0"
+  ]
 }

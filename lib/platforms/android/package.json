@@ -1,5 +1,8 @@
 {
   "name": "android",
-  "version": "3.6.4",
-  "description": "cordova android"
+  "version": "3.7.1",
+  "versions": [
+    "3.6.4",
+    "3.7.1"
+  ]
 }
