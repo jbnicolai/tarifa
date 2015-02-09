@@ -52,9 +52,12 @@ function platform (action, type, verbose) {
     ];
 
     return Q.all(promises).spread(function (localSettings, available) {
-        if(!available) return Q.reject(format("Can't %s %s!, %s is not available on your host", action, type, type));
-        if(action === 'add') return add(type, verbose);
-        else return remove(type, verbose);
+        if(!available)
+            return Q.reject(format("Can't %s %s!, %s is not available on your host", action, type, type));
+        if(action === 'add')
+            return add(platformsLib.extendPlatform(type), verbose);
+        else
+            return remove(type, verbose);
     });
 }
 
