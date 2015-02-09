@@ -31,6 +31,7 @@ module.exports = function (options) {
         require('./actions/clean')(projectDefer, options);
         require('./actions/check')(projectDefer, options);
         require('./actions/platform')(projectDefer, options);
+        require('./actions/platform_version')(projectDefer, options);
 
         if(options.run) require('./actions/run')(projectDefer, options);
     });
