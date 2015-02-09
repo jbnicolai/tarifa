@@ -15,10 +15,11 @@ var Q = require('q'),
     copyDefaultSplash = require('../../lib/cordova/splashscreen').copyDefault;
 
 function addAssets(platform, verbose) {
-    var root = pathHelper.root();
-    return Q.all(createDefaultAssetsFolders(root, [platform], 'default'))
-        .then(function () { return copyDefaultIcons(root, [platform], verbose); })
-        .then(function () { return copyDefaultSplash(root, [platform], verbose); });
+    var root = pathHelper.root(),
+        type = platform.indexOf('@') > -1 ? platform.split('@')[0] : platform;
+    return Q.all(createDefaultAssetsFolders(root, [type], 'default'))
+        .then(function () { return copyDefaultIcons(root, [type], verbose); })
+        .then(function () { return copyDefaultSplash(root, [type], verbose); });
 }
 
 function rmAssets(platform, verbose) {
