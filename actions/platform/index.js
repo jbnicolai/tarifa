@@ -67,6 +67,14 @@ function list(verbose) {
     });
 }
 
+function info(verbose) {
+    print.outline('Supported cordova platforms:\n');
+    platformsLib.info().forEach(function (platform) {
+        print('  %s current version %s\n  supported versions: %s\n', platform.name, platform.version, platform.versions.join(', '));
+    });
+    return Q();
+}
+
 function action (argv) {
     var verbose = false,
         actions = ['add', 'remove'],
@@ -78,6 +86,9 @@ function action (argv) {
         }
         if(argv._[0] === 'list' && argsHelper.matchArgumentsCount(argv, [1])){
             return list(true);
+        }
+        if(argv._[0] === 'info' && argsHelper.matchArgumentsCount(argv, [1])){
+            return info(verbose);
         }
         if(actions.indexOf(argv._[0]) > -1
             && argsHelper.matchArgumentsCount(argv, [2])) {

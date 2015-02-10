@@ -10,6 +10,8 @@ Available commands:
         Remove the platform of type <platform>
     list
         List installed platforms
+    info
+        List supported cordova platforms
 
 Options:
 
