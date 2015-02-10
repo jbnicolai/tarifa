@@ -68,7 +68,7 @@ var action = function (argv) {
         if(argsHelper.matchOption(argv, 'V', 'verbose')) {
             verbose = true;
         }
-        return prepare(argv._[0], argv._[1], verbose);
+        return prepare(argv._[0], argv._[1] || 'default', verbose);
     }
     return fs.read(helpPath).then(print);
 };
