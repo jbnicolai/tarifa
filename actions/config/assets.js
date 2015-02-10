@@ -3,6 +3,7 @@ var Q = require('q'),
     mkdirp = require('mkdirp'),
     tarifaFile = require('../../lib/tarifa-file'),
     pathHelper = require('../../lib/helper/path'),
+    platformHelper = require('../../lib/helper/platform'),
     settings = require('../../lib/settings'),
     colorHelper = require('../../lib/helper/color'),
     generateIcons = require('../../lib/cordova/icon').generate,
@@ -16,8 +17,9 @@ function generate(color, config, f, verbose) {
     if(!colorHelper.validate(color)) return Q.reject('invalid color!');
 
     return tarifaFile.parse(root).then(function (localSettings) {
-        return Q.all(createFolders(root, localSettings.platforms, config)).then(function () {
-            return f(color, root, localSettings.platforms, config, verbose);
+        var platforms = localSettings.platforms.map(platformHelper.getName);
+        return Q.all(createFolders(root, platforms, config)).then(function () {
+            return f(color, root, platforms, config, verbose);
         });
     });
 }
@@ -27,8 +29,9 @@ function generateFromFile(file, config, f, verbose) {
     var root = pathHelper.root();
 
     return tarifaFile.parse(root).then(function (localSettings) {
-        return Q.all(createFolders(root, localSettings.platforms, config)).then(function () {
-            return f(file, root, localSettings.platforms, config, verbose);
+        var platforms = localSettings.platforms.map(platformHelper.getName);
+        return Q.all(createFolders(root, platforms, config)).then(function () {
+            return f(file, root, platforms, config, verbose);
         });
     });
 }

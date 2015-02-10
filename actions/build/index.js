@@ -5,6 +5,7 @@ var Q = require('q'),
     argsHelper = require('../../lib/helper/args'),
     print = require('../../lib/helper/print'),
     pathHelper = require('../../lib/helper/path'),
+    platformHelper = require('../../lib/helper/platform'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
     prepareAction = require('../prepare'),
@@ -121,7 +122,7 @@ var buildMultipleConfs = function(platform, configs, localSettings, keepFileChan
 
 var buildMultiplePlatforms = function (platforms, config, keepFileChanges, cleanResources, verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
-        platforms = platforms || localSettings.platforms;
+        platforms = platforms || localSettings.platforms.map(platformHelper.getName);
         return tarifaFile.checkPlatforms(platforms, localSettings).then(function () {
             return platforms.filter(platformsLib.isAvailableOnHostSync).reduce(function(promise, platform) {
                 return promise.then(function () {

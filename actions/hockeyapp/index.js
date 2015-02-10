@@ -5,6 +5,7 @@ var Q = require('q'),
     tarifaFile = require('../../lib/tarifa-file'),
     pathHelper = require('../../lib/helper/path'),
     argsHelper = require('../../lib/helper/args'),
+    platformHelper = require('../../lib/helper/platform'),
     platformsLib = require('../../lib/cordova/platforms'),
     print = require('../../lib/helper/print'),
     tasks = require('./tasks'),
@@ -19,7 +20,7 @@ function multiplePlatformsTask(task, platforms, config, argv, verbose) {
     return Q.all(conf).spread(function (localSettings, availablePlatforms) {
         platforms = intersection(
             availablePlatforms,
-            platforms || localSettings.platforms
+            platforms || localSettings.platforms.map(platformHelper.getName)
         );
         return platforms.reduce(function(promise, platform) {
             return promise.then(function () {

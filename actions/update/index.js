@@ -5,6 +5,7 @@ var Q = require('q'),
     chalk = require('chalk'),
     argsHelper = require('../../lib/helper/args'),
     pathHelper = require('../../lib/helper/path'),
+    platformHelper = require('../../lib/helper/platform'),
     tarifaFile = require('../../lib/tarifa-file'),
     cordovaVersion = require('../../lib/cordova/version'),
     cordovaPlatforms = require('../../lib/cordova/platforms'),
@@ -200,7 +201,7 @@ function update(verbose) {
                 versionObj: JSON.parse(fs.readFileSync(path.join(root, '.tarifa.json'), 'utf-8')),
                 platforms: intersection(settings.platforms.filter(function (p) {
                     return settings.os_platforms[p].indexOf(os.platform()) > -1;
-                }), localSettings.platforms),
+                }), localSettings.platforms.map(platformHelper.getName)),
                 pluginToUpdate: [],
                 platformsToUpdate : [],
                 verbose: verbose

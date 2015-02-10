@@ -6,6 +6,7 @@ var Q = require('q'),
     fs = require('q-io/fs'),
     intersection = require("interset/intersection"),
     argsHelper = require('../../lib/helper/args'),
+    platformHelper = require('../../lib/helper/platform'),
     print = require('../../lib/helper/print'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
@@ -51,7 +52,7 @@ var runMultipleConfs = function(platform, configs, localSettings, cleanResources
 
 var runMultiplePlatforms = function (platforms, config, cleanResources, verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
-        platforms = platforms || localSettings.platforms;
+        platforms = platforms || localSettings.platforms.map(platformHelper.getName);
         return tarifaFile.checkPlatforms(platforms, localSettings).then(function (availablePlatforms) {
             return intersection(platforms, availablePlatforms).reduce(function(promise, platform) {
                 return promise.then(function () {

@@ -9,6 +9,7 @@ var Q = require('q'),
     settings = require('../../lib/settings'),
     pathHelper = require('../../lib/helper/path'),
     print = require('../../lib/helper/print'),
+    platformHelper = require('../../lib/helper/platform'),
     platformsLib = require('../../lib/cordova/platforms'),
     copyDefaultIcons = require('../../lib/cordova/icon').copyDefault,
     createDefaultAssetsFolders = require('../../lib/cordova/assets').createFolders,
@@ -16,10 +17,10 @@ var Q = require('q'),
 
 function addAssets(platform, verbose) {
     var root = pathHelper.root(),
-        type = platform.indexOf('@') > -1 ? platform.split('@')[0] : platform;
-    return Q.all(createDefaultAssetsFolders(root, [type], 'default'))
-        .then(function () { return copyDefaultIcons(root, [type], verbose); })
-        .then(function () { return copyDefaultSplash(root, [type], verbose); });
+        platformName = platformHelper.getName(platform);
+    return Q.all(createDefaultAssetsFolders(root, [platformName], 'default'))
+        .then(function () { return copyDefaultIcons(root, [platformName], verbose); })
+        .then(function () { return copyDefaultSplash(root, [platformName], verbose); });
 }
 
 function rmAssets(platform, verbose) {
@@ -33,31 +34,31 @@ function rmAssets(platform, verbose) {
     return defer.promise;
 }
 
-function add(type, verbose) {
-    return tarifaFile.addPlatform(pathHelper.root(), type)
-        .then(function () { return platformsLib.add(pathHelper.root(), [type], verbose); })
-        .then(function () { return addAssets(type, verbose); });
+function add(platform, verbose) {
+    return tarifaFile.addPlatform(pathHelper.root(), platform)
+        .then(function () { return platformsLib.add(pathHelper.root(), [platform], verbose); })
+        .then(function () { return addAssets(platform, verbose); });
 }
 
-function remove(type, verbose) {
-    return tarifaFile.removePlatform(pathHelper.root(), type)
-        .then(function () { return platformsLib.remove(pathHelper.root(), [type], verbose); })
-        .then(function () { return rmAssets(type, verbose); });
+function remove(platform, verbose) {
+    return tarifaFile.removePlatform(pathHelper.root(), platform)
+        .then(function () { return platformsLib.remove(pathHelper.root(), [platform], verbose); })
+        .then(function () { return rmAssets(platform, verbose); });
 }
 
-function platform (action, type, verbose) {
+function platformAction (action, platform, verbose) {
     var promises = [
         tarifaFile.parse(pathHelper.root()),
-        platformsLib.isAvailableOnHost(type.indexOf('@') > -1 ? type.split('@')[0] : type)
+        platformsLib.isAvailableOnHost(platformHelper.getName(platform))
     ];
 
     return Q.all(promises).spread(function (localSettings, available) {
         if(!available)
-            return Q.reject(format("Can't %s %s!, %s is not available on your host", action, type, type));
+            return Q.reject(format("Can't %s %s!, %s is not available on your host", action, platform, platform));
         if(action === 'add')
-            return add(platformsLib.extendPlatform(type), verbose);
+            return add(platformsLib.extendPlatform(platform), verbose);
         else
-            return remove(type, verbose);
+            return remove(platform, verbose);
     });
 }
 
@@ -92,13 +93,13 @@ function action (argv) {
         }
         if(actions.indexOf(argv._[0]) > -1
             && argsHelper.matchArgumentsCount(argv, [2])) {
-            return platform(argv._[0], argv._[1], verbose);
+            return platformAction(argv._[0], argv._[1], verbose);
         }
     }
 
     return fs.read(helpPath).then(print);
 }
 
-action.platform = platform;
+action.platform = platformAction;
 action.list = list;
 module.exports = action;

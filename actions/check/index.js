@@ -7,6 +7,7 @@ var Q = require('q'),
     print = require('../../lib/helper/print'),
     pathHelper = require('../../lib/helper/path'),
     tasksHelper = require('../../lib/helper/tasks'),
+    platformHelper = require('../../lib/helper/platform'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
     builder = require('../../lib/builder'),
@@ -47,7 +48,7 @@ var check = function (verbose) {
                 settings: localSettings,
                 verbose: verbose
             },
-            intersection(platforms, localSettings.platforms),
+            intersection(platforms, localSettings.platforms.map(platformHelper.getName)),
             platformTasks,
             loadUserTasks(platforms, localSettings)
         );

@@ -6,6 +6,7 @@ var Q = require('q'),
     intersection = require('interset/intersection'),
     argsHelper = require('../../lib/helper/args'),
     pathHelper = require('../../lib/helper/path'),
+    platformHelper = require('../../lib/helper/platform'),
     tasksHelper = require('../../lib/helper/tasks'),
     print = require('../../lib/helper/print'),
     tarifaFile = require('../../lib/tarifa-file'),
@@ -48,14 +49,14 @@ var clean = function (platform, verbose) {
     return Q.all(conf).spread(function (localSettings, platforms) {
         var usablePlatforms = intersection(
             platforms,
-            platform ? [platform] : localSettings.platforms
+            platform ? [platform] : localSettings.platforms.map(platformHelper.getName)
         );
 
         process.chdir(pathHelper.root());
 
         if(platform && usablePlatforms.indexOf(platform) < 0)
             return Q.reject('platform not available on host!');
-        if(platform && localSettings.platforms.indexOf(platform) < 0)
+        if(platform && localSettings.platforms.map(platformHelper.getName).indexOf(platform) < 0)
             return Q.reject('platform not defined in project!');
 
         return tryRemoveWWW().then(function () {
