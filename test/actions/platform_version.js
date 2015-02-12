@@ -62,7 +62,7 @@ function testPlatformVersion(projectDefer) {
                     });
                 }
 
-                it(format('tarifa build %s dev', platform), function () {
+                it(format('tarifa build %s@%s dev', platform, version), function () {
                     this.timeout(0);
                     return projectDefer.promise.then(function () {
                         return buildAction.buildMultiplePlatforms([platform], ['dev'], false, false, true);
