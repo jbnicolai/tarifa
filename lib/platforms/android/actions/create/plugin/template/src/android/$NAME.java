@@ -7,12 +7,10 @@ import org.json.JSONException;
 
 public class $NAME extends CordovaPlugin {
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        switch (action) {
-            case "life":
-                callbackContext.success(life(args));
-                break;
-            default:
-                return false;
+        if (action.equals("life")) {
+            callbackContext.success(life(args));
+        } else {
+            return false;
         }
         return true;
     }
