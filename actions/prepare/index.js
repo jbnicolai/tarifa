@@ -2,14 +2,14 @@ var Q = require('q'),
     rimraf = require('rimraf'),
     os = require('os'),
     ncp = require('ncp').ncp,
+    path = require('path'),
+    fs = require('q-io/fs'),
     argsHelper = require('../../lib/helper/args'),
     print = require('../../lib/helper/print'),
     tarifaFile = require('../../lib/tarifa-file'),
     pathHelper = require('../../lib/helper/path'),
     settings = require('../../lib/settings'),
-    builder = require('../../lib/builder'),
-    path = require('path'),
-    fs = require('q-io/fs');
+    builder = require('../../lib/builder');
 
 var method = {
     copy: function (cordovaWWW, projectWWW) {
@@ -68,7 +68,7 @@ var action = function (argv) {
         if(argsHelper.matchOption(argv, 'V', 'verbose')) {
             verbose = true;
         }
-        return prepare(argv._[0], argv._[1], verbose);
+        return prepare(argv._[0], argv._[1] || 'default', verbose);
     }
     return fs.read(helpPath).then(print);
 };

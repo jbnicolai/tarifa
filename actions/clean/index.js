@@ -1,68 +1,68 @@
 var Q = require('q'),
     rimraf = require('rimraf'),
     spinner = require("char-spinner"),
+    path = require('path'),
+    fs = require('q-io/fs'),
+    intersection = require('interset/intersection'),
     argsHelper = require('../../lib/helper/args'),
     pathHelper = require('../../lib/helper/path'),
+    platformHelper = require('../../lib/helper/platform'),
+    tasksHelper = require('../../lib/helper/tasks'),
     print = require('../../lib/helper/print'),
     tarifaFile = require('../../lib/tarifa-file'),
-    isAvailableOnHostSync = require('../../lib/cordova/platforms').isAvailableOnHostSync,
+    listAvailableOnHost = require('../../lib/cordova/platforms').listAvailableOnHost,
     cordovaClean = require('../../lib/cordova/clean'),
     settings = require('../../lib/settings'),
-    path = require('path'),
-    fs = require('q-io/fs');
+    platformTasks = tasksHelper.load(settings.platforms, 'clean', 'tasks');
 
 var tryRemoveWWW = function (verbose) {
-    var defer = Q.defer();
-    var www = path.join(pathHelper.app(), "www");
+    var defer = Q.defer(),
+        www = path.join(pathHelper.app(), "www");
+
     rimraf(www, function (err) {
         if(err) {
             print.warning(err);
             print.warning("not able to remove www folder in cordova app!");
         }
-        fs.makeDirectory(www).then(function() {
-            defer.resolve();
-        });
+        fs.makeDirectory(www).then(function() { defer.resolve(); });
     });
     return defer.promise;
 };
 
-var tasks = {
-    android : [ './tasks/android/clean_gradle_build' ],
-    ios : [ ],
-    wp8 : [ ],
-    browser : [ ]
-};
-
 var runTasks = function (platforms, localSettings, verbose) {
     return function () {
-        return platforms.reduce(function (promise, platform) {
-            return promise.then(function (msg) {
-                return tasks[platform].reduce(function (p, task) {
-                    return p.then(require(task));
-                }, Q(msg));
-            });
-        }, Q({
+        return platforms.reduce(function (msg, platform) {
+            return Q.when(msg, tasksHelper.execSequence(platformTasks[platform].map(require)));
+        }, {
             settings: localSettings,
             verbose : verbose
-        }));
+        });
     };
 };
 
 var clean = function (platform, verbose) {
+    var cwd = process.cwd(),
+        conf = [tarifaFile.parse(pathHelper.root()), listAvailableOnHost()];
+
     spinner();
-    var cwd = process.cwd();
-    process.chdir(pathHelper.root());
-    return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
-        if(platform && !isAvailableOnHostSync(platform))
-            return Q.reject('platform not available in host!');
-        if(platform && localSettings.platforms.indexOf(platform) < 0)
-            return Q.reject('platform not available in project!');
-        var availablePlatforms = localSettings.platforms.filter(isAvailableOnHostSync),
-            platforms = platform ? [platform] : availablePlatforms;
+
+    return Q.all(conf).spread(function (localSettings, platforms) {
+        var usablePlatforms = intersection(
+            platforms,
+            platform ? [platform] : localSettings.platforms.map(platformHelper.getName)
+        );
+
+        process.chdir(pathHelper.root());
+
+        if(platform && usablePlatforms.indexOf(platform) < 0)
+            return Q.reject('platform not available on host!');
+        if(platform && localSettings.platforms.map(platformHelper.getName).indexOf(platform) < 0)
+            return Q.reject('platform not defined in project!');
+
         return tryRemoveWWW().then(function () {
-            return cordovaClean(pathHelper.root(), platforms, verbose)
-                .then(runTasks(platforms, localSettings, verbose));
-        });
+            return cordovaClean(pathHelper.root(), usablePlatforms, verbose);
+        }).then(runTasks(usablePlatforms, localSettings, verbose));
+
     }).then(function (msg) {
         process.chdir(cwd);
         return msg;

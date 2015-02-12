@@ -1,0 +1,9 @@
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="$NAME">
+                <param name="android-package" value="$ID.$NAME" />
+            </feature>
+        </config-file>
+
+        <source-file src="src/android/$NAME.java" target-dir="src/$TARGET_DIR" />
+    </platform>

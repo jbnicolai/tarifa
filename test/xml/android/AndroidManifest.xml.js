@@ -3,7 +3,7 @@ var should = require('should'),
     fs = require('fs'),
     Q = require('q'),
     tmp = require('tmp'),
-    AndroidManifestXml = require('../../../lib/xml/android/AndroidManifest.xml');
+    AndroidManifestXml = require('../../../lib/platforms/android/lib/xml/AndroidManifest.xml');
 
 describe('[android] replacing stuff in AndroidManifest.xml', function(){
 

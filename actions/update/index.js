@@ -5,6 +5,7 @@ var Q = require('q'),
     chalk = require('chalk'),
     argsHelper = require('../../lib/helper/args'),
     pathHelper = require('../../lib/helper/path'),
+    platformHelper = require('../../lib/helper/platform'),
     tarifaFile = require('../../lib/tarifa-file'),
     cordovaVersion = require('../../lib/cordova/version'),
     cordovaPlatforms = require('../../lib/cordova/platforms'),
@@ -23,7 +24,6 @@ function _addInstalledPlatforms(app, platforms, msg) {
         plts.forEach(function (p) {
             msg.installedPlatforms[p.name] = p.version;
         });
-        print.line();
         return msg;
     });
 }
@@ -54,15 +54,15 @@ function _addAvailablePlatforms(platforms) {
                 Object.keys(msg.installedPlatforms)
             );
 
-            print.line(chalk.underline('platforms to update'));
+            print(chalk.underline('platforms to update'));
             msg.platformsToUpdate = [];
-            inter.forEach(function (name) {
-                if(name === 'browser') {
-                    // !! do nothing currently no update script in cordova-browser
-                }
-                else if(versionGreater(availablePlatforms[name], msg.installedPlatforms[name])) {
+
+            inter.filter(function (p) {
+                return !require(path.resolve(__dirname, '../../lib/platforms', p, 'actions/update')).skip;
+            }).forEach(function (name) {
+                if(versionGreater(availablePlatforms[name], msg.installedPlatforms[name])) {
                     msg.platformsToUpdate.push(name);
-                    print.line(
+                    print(
                         '  %s: %s -> %s',
                         name,
                         msg.installedPlatforms[name],
@@ -71,9 +71,9 @@ function _addAvailablePlatforms(platforms) {
                 }
             });
 
-            if(!msg.platformsToUpdate.length) print.line('  none');
+            if(!msg.platformsToUpdate.length) print('  none');
 
-            print.line();
+            print();
             return msg;
         });
     };
@@ -104,21 +104,21 @@ function _addAvailablePlugins(root) {
             }),
             toUpdate = intersection(availablePlugins, msg.installedPlugins);
 
-        print.line(chalk.underline('default plugins to update'));
+        print(chalk.underline('default plugins to update'));
         msg.pluginToUpdate = [];
         return toUpdate.reduce(function (promise, p) {
             return promise.then(function () {
                 return  _pluginVersion(root, p).then(function (installedVersion) {
                     if(versionGreater(availablePluginsVersions[p], installedVersion)) {
                         msg.pluginToUpdate.push(p);
-                        print.line('  %s %s -> %s', p, installedVersion, availablePluginsVersions[p]);
+                        print('  %s %s -> %s', p, installedVersion, availablePluginsVersions[p]);
                     }
                     return Q.resolve();
                 });
             });
         }, Q.resolve()).then(function () {
-            if(!msg.pluginToUpdate.length) print.line('  none');
-            print.line();
+            if(!msg.pluginToUpdate.length) print('  none');
+            print();
             return msg;
         });
     };
@@ -128,10 +128,10 @@ function info(root) {
     return function (msg) {
         var appPath = path.join(root, settings.cordovaAppPath);
 
-        if(msg.verbose) print.line();
-        if(msg.verbose) print.line('tarifa version: %s', pkg.version);
-        if(msg.verbose) print.line('current project tarifa version: %s', msg.versionObj.current);
-        if(msg.verbose) print.line('project created with tarifa version: %s', msg.versionObj.created);
+        if(msg.verbose) print();
+        if(msg.verbose) print('tarifa version: %s', pkg.version);
+        if(msg.verbose) print('current project tarifa version: %s', msg.versionObj.current);
+        if(msg.verbose) print('project created with tarifa version: %s', msg.versionObj.created);
 
         return _addInstalledPlatforms(appPath, msg.platforms, msg)
             .then(_addAvailablePlatforms(msg.platforms))
@@ -161,6 +161,9 @@ function runUpdatePlatforms(root) {
             .then(function () {
                 if(msg.verbose) print.success('updated platforms');
                 return msg;
+            }, function (err) {
+                print.error('failed to update platforms');
+                throw err;
             });
     };
 }
@@ -197,7 +200,7 @@ function update(verbose) {
                 versionObj: JSON.parse(fs.readFileSync(path.join(root, '.tarifa.json'), 'utf-8')),
                 platforms: intersection(settings.platforms.filter(function (p) {
                     return settings.os_platforms[p].indexOf(os.platform()) > -1;
-                }), localSettings.platforms),
+                }), localSettings.platforms.map(platformHelper.getName)),
                 pluginToUpdate: [],
                 platformsToUpdate : [],
                 verbose: verbose

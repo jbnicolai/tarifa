@@ -35,8 +35,7 @@ function testPlugins(projectDefer, pluginDefer) {
         it('re tarifa plugin add ./fixtures/emptyplugin', function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
-                var p = path.join(__dirname, emptyPluginPath);
-                return pluginAction.plugin('add', p, false).should.be.rejected;
+                return pluginAction.plugin('add', emptyPluginPath, false).should.be.rejected;
             });
         });
 
@@ -114,7 +113,7 @@ function testPlugins(projectDefer, pluginDefer) {
                 it(format('tarifa build %s', p), function () {
                     this.timeout(0);
                     return projectDefer.promise.then(function (rslt) {
-                        return buildAction.build(p, 'default', false, false);
+                        return buildAction.buildMultiplePlatforms([p], ['default'], false, false);
                     });
                 });
             }

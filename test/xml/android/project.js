@@ -1,6 +1,6 @@
 var should = require('should'),
     path = require('path'),
-    projectXML = require('../../../lib/xml/android/project');
+    projectXML = require('../../../lib/platforms/android/lib/xml/project');
 
 describe('[android] get project name in app/platforms/android/.project', function() {
     it('get project name', function () {

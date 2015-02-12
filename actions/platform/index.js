@@ -1,24 +1,26 @@
 var Q = require('q'),
     rimraf = require('rimraf'),
     format = require('util').format,
-    argsHelper = require('../../lib/helper/args'),
-    tarifaFile = require('../../lib/tarifa-file'),
+    fs = require('q-io/fs');
     path = require('path'),
     chalk = require('chalk'),
+    argsHelper = require('../../lib/helper/args'),
+    tarifaFile = require('../../lib/tarifa-file'),
     settings = require('../../lib/settings'),
     pathHelper = require('../../lib/helper/path'),
     print = require('../../lib/helper/print'),
+    platformHelper = require('../../lib/helper/platform'),
     platformsLib = require('../../lib/cordova/platforms'),
     copyDefaultIcons = require('../../lib/cordova/icon').copyDefault,
     createDefaultAssetsFolders = require('../../lib/cordova/assets').createFolders,
-    copyDefaultSplash = require('../../lib/cordova/splashscreen').copyDefault,
-    fs = require('q-io/fs');
+    copyDefaultSplash = require('../../lib/cordova/splashscreen').copyDefault;
 
 function addAssets(platform, verbose) {
-    var root = pathHelper.root();
-    return Q.all(createDefaultAssetsFolders(root, [platform], 'default'))
-        .then(function () { return copyDefaultIcons(root, [platform], verbose); })
-        .then(function () { return copyDefaultSplash(root, [platform], verbose); });
+    var root = pathHelper.root(),
+        platformName = platformHelper.getName(platform);
+    return Q.all(createDefaultAssetsFolders(root, [platformName], 'default'))
+        .then(function () { return copyDefaultIcons(root, [platformName], verbose); })
+        .then(function () { return copyDefaultSplash(root, [platformName], verbose); });
 }
 
 function rmAssets(platform, verbose) {
@@ -32,28 +34,31 @@ function rmAssets(platform, verbose) {
     return defer.promise;
 }
 
-function add(type, verbose) {
-    return tarifaFile.addPlatform(pathHelper.root(), type)
-        .then(function () { return platformsLib.add(pathHelper.root(), [type], verbose); })
-        .then(function () { return addAssets(type, verbose); });
+function add(platform, verbose) {
+    return tarifaFile.addPlatform(pathHelper.root(), platform)
+        .then(function () { return platformsLib.add(pathHelper.root(), [platform], verbose); })
+        .then(function () { return addAssets(platform, verbose); });
 }
 
-function remove(type, verbose) {
-    return tarifaFile.removePlatform(pathHelper.root(), type)
-        .then(function () { return platformsLib.remove(pathHelper.root(), [type], verbose); })
-        .then(function () { return rmAssets(type, verbose); });
+function remove(platform, verbose) {
+    return tarifaFile.removePlatform(pathHelper.root(), platform)
+        .then(function () { return platformsLib.remove(pathHelper.root(), [platform], verbose); })
+        .then(function () { return rmAssets(platform, verbose); });
 }
 
-function platform (action, type, verbose) {
+function platformAction (action, platform, verbose) {
     var promises = [
         tarifaFile.parse(pathHelper.root()),
-        platformsLib.isAvailableOnHost(type.indexOf('@') > -1 ? type.split('@')[0] : type)
+        platformsLib.isAvailableOnHost(platformHelper.getName(platform))
     ];
 
     return Q.all(promises).spread(function (localSettings, available) {
-        if(!available) return Q.reject(format("Can't %s %s!, %s is not available on your host", action, type, type));
-        if(action === 'add') return add(type, verbose);
-        else return remove(type, verbose);
+        if(!available)
+            return Q.reject(format("Can't %s %s!, %s is not available on your host", action, platform, platform));
+        if(action === 'add')
+            return add(platformsLib.extendPlatform(platform), verbose);
+        else
+            return remove(platform, verbose);
     });
 }
 
@@ -61,6 +66,14 @@ function list(verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function () {
         return platformsLib.list(pathHelper.root(), verbose);
     });
+}
+
+function info(verbose) {
+    print.outline('Supported cordova platforms:\n');
+    platformsLib.info().forEach(function (platform) {
+        print('  %s current version %s\n  supported versions: %s\n', platform.name, platform.version, platform.versions.join(', '));
+    });
+    return Q();
 }
 
 function action (argv) {
@@ -75,15 +88,18 @@ function action (argv) {
         if(argv._[0] === 'list' && argsHelper.matchArgumentsCount(argv, [1])){
             return list(true);
         }
+        if(argv._[0] === 'info' && argsHelper.matchArgumentsCount(argv, [1])){
+            return info(verbose);
+        }
         if(actions.indexOf(argv._[0]) > -1
             && argsHelper.matchArgumentsCount(argv, [2])) {
-            return platform(argv._[0], argv._[1], verbose);
+            return platformAction(argv._[0], argv._[1], verbose);
         }
     }
 
     return fs.read(helpPath).then(print);
 }
 
-action.platform = platform;
+action.platform = platformAction;
 action.list = list;
 module.exports = action;

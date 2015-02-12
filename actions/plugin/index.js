@@ -16,15 +16,14 @@ function printPlugins(items) {
         return Q.resolve();
     }
 
-    return items.reduce(function (promise, p) {
-        return promise.then(function () {
+    return items.reduce(function (msg, p) {
+        return Q.when(msg, function () {
             var pluginPath = path.join(pathHelper.app(), 'plugins', p, 'plugin.xml');
-            return pluginXML.getVersion(pluginPath)
-                .then(function (v) {
-                    print('%s@%s', p, v);
-                });
+            return pluginXML.getVersion(pluginPath).then(function (v) {
+                print('%s@%s', p, v);
+            });
         });
-    }, Q.resolve());
+    }, {});
 }
 
 function log(action, verbose) {

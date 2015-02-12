@@ -10,6 +10,7 @@ var Q = require('q'),
     getCordovaPlatformsVersion = require('../../lib/cordova/version').getCordovaPlatformsVersion,
     argsHelper = require('../../lib/helper/args'),
     pathHelper = require('../../lib/helper/path'),
+    platformHelper = require('../../lib/helper/platform'),
     devices = require('../../lib/devices'),
     settings = require('../../lib/settings'),
     print = require('../../lib/helper/print'),
@@ -73,47 +74,6 @@ function check_tools(verbose) {
     };
 }
 
-function printiOSDevices (verbose) {
-    return function (devicesList) {
-        print(
-            devicesList.length ? "%s\n\t%s" : "%s %s",
-            chalk.green('connected iOS devices:'),
-            devicesList.length ? devicesList.join('\n\t') : 'none'
-        );
-    };
-}
-
-function printWPDevices (verbose) {
-    return function (devicesList) {
-        print(
-            devicesList.length ? "%s\n\t%s" : "%s %s",
-            chalk.green('available wp devices:'),
-            devicesList.length ? devicesList.join('\n\t') : 'none'
-        );
-    };
-}
-
-function printAndroidDevices (verbose) {
-    return function (devicesList) {
-        if(!devicesList.length) {
-            print("%s %s", chalk.green('connected Android devices:'), 'none');
-        }
-        else if(verbose) {
-            print(chalk.green('connected Android devices:'));
-            devicesList.forEach(function (dev) {
-                print('\t%s', dev.join(' '));
-            });
-        }
-        else {
-            print(
-                "%s\n\t%s",
-                chalk.green('connected Android devices:'),
-                devicesList.join('\n\t')
-            );
-        }
-    }
-}
-
 function listAvailablePlatforms() {
     var host = os.platform(), r = [];
     for(var p in settings.os_platforms) {
@@ -147,7 +107,7 @@ function check_cordova_platform_version(platforms, verbose) {
         return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
             return getCordovaPlatformsVersion(
                 path.join(pathHelper.root(), settings.cordovaAppPath),
-                localSettings.platforms.filter(platformsLib.isAvailableOnHostSync)
+                localSettings.platforms.map(platformHelper.getName).filter(platformsLib.isAvailableOnHostSync)
             ).then(function (versions) {
                 versions.forEach(function (v) {
                     print("%s %s", chalk.green(format("current project version %s:", v.name)), v.version);
@@ -162,17 +122,17 @@ function check_cordova_platform_version(platforms, verbose) {
 
 function check_requirements(verbose) {
     return function () {
-        return platformsLib.installedPlatforms(verbose).then(function (platforms) {
-            var installed = platforms.filter(function(platform) { return !platform.disabled; })
-                .map(function(platform) { return platform.name; });
-            if (installed.length)
-                print("%s %s", chalk.green("installed platforms on host:"), installed.join(', '));
-            var disabled = platforms.filter(function(platform) { return platform.disabled; })
-                .map(function(platform) { return platform.name; });
-            if (disabled.length)
-                print("%s %s", chalk.green("disabled platforms on host:"), disabled.join(', '));
+        return platformsLib.listAvailableOnHost(verbose).then(function (platforms) {
+            if (platforms.length)
+                print("%s %s", chalk.green("installed platforms on host:"), platforms.join(', '));
         });
     };
+}
+
+function printDevices(verbose) {
+    return Object.keys(devices).reduce(function (p, device) {
+        return p.then(function () { return devices[device].print(verbose); });
+    }, Q());
 }
 
 function info(verbose) {
@@ -186,15 +146,8 @@ function info(verbose) {
         .then(check_cordova_platform_version(platforms, verbose))
         .then(check_tools(verbose))
         .then(function (ok) {
-            if(!ok) return Q.reject("not all needed tools are available, first install them!");
-            return devices.ios().then(printiOSDevices(verbose))
-                .then(function () {
-                    if(verbose) return devices.androidVerbose();
-                    else return devices.android();
-                })
-                .then(printAndroidDevices(verbose))
-                .then(devices.wp8)
-                .then(printWPDevices(verbose));
+            if(!ok) print.warning("not all needed tools are available!");
+            return printDevices(verbose);
         });
 }
 
@@ -209,12 +162,11 @@ function dump_configuration() {
 
 module.exports = function (argv) {
     var verbose = false,
-        helpPath = path.join(__dirname, 'usage.txt');
+        helpPath = path.join(__dirname, 'usage.txt'),
+        hasNoArgs = argsHelper.matchArgumentsCount(argv, [0]),
+        hasValidDumpOpt = argsHelper.checkValidOptions(argv, ['V', 'verbose', 'dump-configuration']);
 
-    var validArguments = argsHelper.matchArgumentsCount(argv, [0]) &&
-                            argsHelper.checkValidOptions(argv, ['V', 'verbose', 'dump-configuration']);
-
-    if(validArguments) {
+    if(hasNoArgs && hasValidDumpOpt) {
         if(argsHelper.matchOption(argv, 'V', 'verbose')) {
             verbose = true;
         }

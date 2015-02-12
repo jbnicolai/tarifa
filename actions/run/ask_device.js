@@ -4,15 +4,10 @@ var Q = require('q'),
     ask = require('../../lib/questions/ask');
 
 module.exports = function (conf) {
+    if(!devices[conf.platform]) return conf;
 
-    if (conf.platform === 'browser')
-        return Q(conf);
-    if(!devices[conf.platform])
-        return Q.reject(format("Get devices for platform %s not implemented!", conf.platform));
-
-    return devices[conf.platform]().then(function (items) {
-        if (items.length === 0)
-            return Q.reject("No device available!");
+    return devices[conf.platform].info().then(function (items) {
+        if (items.length === 0) return Q.reject("No device available!");
 
         if (items.length === 1) {
             conf.device = { value: items[0], index : 0 };
@@ -24,8 +19,10 @@ module.exports = function (conf) {
             'list',
             ['all'].concat(items)
         ).then(function (resp) {
-            conf.device = (resp !== 'all')
-                ? { value: resp, index : items.indexOf(resp) }: items;
+            if(resp !== 'all')
+                conf.device = { value: resp, index : items.indexOf(resp) };
+            else
+                conf.device = items;
             return conf;
         });
     });
