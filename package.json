@@ -75,7 +75,7 @@
     "test-with-devices": "mocha test/with-devices"
   },
   "devDependencies": {
-    "mocha": "^1.21.4",
-    "should": "^4.0.4"
+    "mocha": "^2.1.0",
+    "should": "^5.0.0"
   }
 }
