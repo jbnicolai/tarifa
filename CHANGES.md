@@ -1,3 +1,20 @@
+## 0.6.0 (XX/XX/XXXX) not released
+
+### supported cordova platforms:
+
+- android: 3.6.4, 3.7.1
+- ios: 3.7.0
+- wp8: 3.7.0
+- browser: 3.6.0
+
+### changes
+
+- refactoring all specific platforms code in `lib/platforms/$platform`
+- adding version on defined platforms in `tarifa.json` like `android@3.7.1`
+- [android] re add versionCode overwritting if available in configuration in `pre-cordova-compile` tasks
+- adding `extend` keyword in configuration definition to extend configuration objects
+- updade default plugins to latest cordova plugins release: http://cordova.apache.org/news/2015/02/10/plugins-release.html
+
 ## 0.5.1 (01/21/2015)
 
 - fix `tarifa plugin add` when used with plugins having dependencies
