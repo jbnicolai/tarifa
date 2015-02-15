@@ -22,7 +22,7 @@ module.exports = function (conf) {
             if(resp !== 'all')
                 conf.device = { value: resp, index : items.indexOf(resp) };
             else
-                conf.device = items;
+                conf.devices = items;
             return conf;
         });
     });
