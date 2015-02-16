@@ -3,8 +3,7 @@ var should = require('should'),
     tmp = require('tmp'),
     setupHelper = require('../helper/setup'),
     buildAction = require('../../actions/build'),
-    tarifaFile = require('../../lib/tarifa-file'),
-    pathHelper = require('../../lib/helper/path');
+    tarifaFile = require('../../lib/tarifa-file');
 
 function testSign(projectDefer) {
 

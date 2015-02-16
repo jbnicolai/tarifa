@@ -35,18 +35,4 @@ module.exports = function (options) {
 
         if(options.run) require('./actions/run')(projectDefer, options);
     });
-
-    describe('testing tarifa android release build', function() {
-
-        var projectDefer = Q.defer();
-
-        before('create another project', setupHelper.createProject(tmp, projectDefer, 'create_project_response_android_sign.json'));
-
-        it('create project', function () {
-            this.timeout(0);
-            return projectDefer.promise;
-        });
-
-        require('./actions/sign_android')(projectDefer, options);
-    });
 };
