@@ -13,7 +13,8 @@
 - adding version on defined platforms in `tarifa.json` like `android@3.7.1`
 - [android] re add versionCode overwritting if available in configuration in `pre-cordova-compile` tasks
 - adding `extend` keyword in configuration definition to extend configuration objects
-- updade default plugins to latest cordova plugins release: http://cordova.apache.org/news/2015/02/10/plugins-release.html
+- upgade default plugins to latest cordova plugins release: http://cordova.apache.org/news/2015/02/10/plugins-release.html
+- upgrade cordova-lib to 4.2.0
 
 ## 0.5.1 (01/21/2015)
 
