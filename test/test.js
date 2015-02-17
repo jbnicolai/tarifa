@@ -32,6 +32,7 @@ module.exports = function (options) {
         require('./actions/check')(projectDefer, options);
         require('./actions/platform')(projectDefer, options);
         require('./actions/platform_version')(projectDefer, options);
+        require('./actions/update')(projectDefer, options);
 
         if(options.run) require('./actions/run')(projectDefer, options);
     });
