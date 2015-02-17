@@ -193,7 +193,7 @@ function getUsablePlatforms(localSettings) {
     }), localSettings.platforms.map(platformHelper.getName));
 }
 
-function update(verbose) {
+function update(verbose, force) {
     var root = pathHelper.root();
 
     return tarifaFile.parse(root)
@@ -208,7 +208,7 @@ function update(verbose) {
             };
         })
         .then(info(root))
-        .then(askUserForUpdate(root))
+        .then(force ? function(i) { return i; } : askUserForUpdate(root))
         .then(runUpdatePlatforms(root))
         .then(runUpdatePlugins(root))
         .then(function (msg) {
@@ -236,4 +236,5 @@ var action = function (argv) {
     return fs.read(helpPath).then(print);
 };
 
+action.update = update;
 module.exports = action;
