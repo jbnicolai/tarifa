@@ -18,9 +18,9 @@ var Q = require('q'),
     pluginAction = require('../plugin').plugin,
     ask = require('../../lib/questions/ask');
 
-function _addInstalledPlatforms(app, platforms, msg) {
-    return cordovaVersion.getCordovaPlatformsVersion(app,platforms).then(function (plts) {
-        msg.installedPlatforms = {};
+function _addInstalledPlatforms(app, msg) {
+    msg.installedPlatforms = {};
+    return cordovaVersion.getCordovaPlatformsVersion(app, msg.platforms).then(function (plts) {
         plts.forEach(function (p) {
             msg.installedPlatforms[p.name] = p.version;
         });
@@ -42,41 +42,39 @@ function versionGreater(version1, version2) {
     return false;
 }
 
-function _addAvailablePlatforms(platforms) {
-    return function (msg) {
-        return cordovaVersion.getAvailablePlatformsVersion(platforms).then(function (plts) {
-            var availablePlatforms = {};
-            plts.forEach(function (p) {
-                availablePlatforms[p.name] = p.version;
-            });
-            var inter = intersection(
-                Object.keys(availablePlatforms),
-                Object.keys(msg.installedPlatforms)
+function _addAvailablePlatforms(msg) {
+    var latestPlatforms = {},
+        platformsInfo = cordovaPlatforms.info();
+
+    platformsInfo.forEach(function (platformInfo) {
+        latestPlatforms[platformInfo.name] = platformInfo.version;
+    });
+    var inter = intersection(
+        Object.keys(latestPlatforms),
+        Object.keys(msg.installedPlatforms)
+    );
+
+    print(chalk.underline('platforms to update'));
+    msg.platformsToUpdate = [];
+
+    inter.filter(function (p) {
+        return !require(path.resolve(__dirname, '../../lib/platforms', p, 'actions/update')).skip;
+    }).forEach(function (name) {
+        if(versionGreater(latestPlatforms[name], msg.installedPlatforms[name])) {
+            msg.platformsToUpdate.push(name);
+            print(
+                '  %s: %s -> %s',
+                name,
+                msg.installedPlatforms[name],
+                latestPlatforms[name]
             );
+        }
+    });
 
-            print(chalk.underline('platforms to update'));
-            msg.platformsToUpdate = [];
+    if(!msg.platformsToUpdate.length) print('  none');
 
-            inter.filter(function (p) {
-                return !require(path.resolve(__dirname, '../../lib/platforms', p, 'actions/update')).skip;
-            }).forEach(function (name) {
-                if(versionGreater(availablePlatforms[name], msg.installedPlatforms[name])) {
-                    msg.platformsToUpdate.push(name);
-                    print(
-                        '  %s: %s -> %s',
-                        name,
-                        msg.installedPlatforms[name],
-                        availablePlatforms[name]
-                    );
-                }
-            });
-
-            if(!msg.platformsToUpdate.length) print('  none');
-
-            print();
-            return msg;
-        });
-    };
+    print();
+    return msg;
 }
 
 function _addInstalledPlugins(root) {
@@ -131,10 +129,10 @@ function info(root) {
         if(msg.verbose) print();
         if(msg.verbose) print('tarifa version: %s', pkg.version);
         if(msg.verbose) print('current project tarifa version: %s', msg.versionObj.current);
-        if(msg.verbose) print('project created with tarifa version: %s', msg.versionObj.created);
+        if(msg.verbose) print('project created with tarifa version: %s\n', msg.versionObj.created);
 
-        return _addInstalledPlatforms(appPath, msg.platforms, msg)
-            .then(_addAvailablePlatforms(msg.platforms))
+        return _addInstalledPlatforms(appPath, msg)
+            .then(_addAvailablePlatforms)
             .then(_addInstalledPlugins(root))
             .then(_addAvailablePlugins(root));
     };
@@ -157,14 +155,13 @@ function askUserForUpdate(root) {
 function runUpdatePlatforms(root) {
     return function (msg) {
         if(!msg.platformsToUpdate.length) return msg;
-        return cordovaPlatforms.update(root, msg.platformsToUpdate)
-            .then(function () {
-                if(msg.verbose) print.success('updated platforms');
+        var plts = msg.platformsToUpdate.map(cordovaPlatforms.extendPlatform),
+            verbose = msg.verbose;
+        return cordovaPlatforms.remove(root, plts, verbose).then(function () {
+            return cordovaPlatforms.add(root, plts, verbose).then(function () {
                 return msg;
-            }, function (err) {
-                print.error('failed to update platforms');
-                throw err;
             });
+        });
     };
 }
 
@@ -190,6 +187,12 @@ function runUpdatePlugins(root) {
     };
 }
 
+function getUsablePlatforms(localSettings) {
+    return intersection(settings.platforms.filter(function (p) {
+        return settings.os_platforms[p].indexOf(os.platform()) > -1;
+    }), localSettings.platforms.map(platformHelper.getName));
+}
+
 function update(verbose) {
     var root = pathHelper.root();
 
@@ -198,9 +201,7 @@ function update(verbose) {
             return {
                 localSettings: localSettings,
                 versionObj: JSON.parse(fs.readFileSync(path.join(root, '.tarifa.json'), 'utf-8')),
-                platforms: intersection(settings.platforms.filter(function (p) {
-                    return settings.os_platforms[p].indexOf(os.platform()) > -1;
-                }), localSettings.platforms.map(platformHelper.getName)),
+                platforms: getUsablePlatforms(localSettings),
                 pluginToUpdate: [],
                 platformsToUpdate : [],
                 verbose: verbose
