@@ -9,7 +9,7 @@ var Q = require('q'),
     hockeyapp = require('../../lib/hockeyapp/hockeyapp'),
     print = require('../../lib/helper/print');
 
-var mergeParams = function (localSettings, argv) {
+var mergeParams = function (localSettings, argv, verbose) {
     // check for hockeyapp options in conf
     var params = collsHelper.mapKeys(collsHelper.filterKeys(localSettings.hockeyapp, function (e) {
             return [
@@ -36,7 +36,7 @@ var mergeParams = function (localSettings, argv) {
         uploadParams: collsHelper.mergeObject(params, opts),
         verbose: verbose
     };
-}
+};
 
 var upload = function (msg) {
     var config = msg.config,
@@ -50,7 +50,7 @@ var upload = function (msg) {
         return Q.reject('No hockeyapp informations are available in the current tarifa.json file.');
 
     // check for hockeyapp options in conf
-    var conf = mergeParams(localSettings, msg.argv),
+    var conf = mergeParams(localSettings, msg.argv, verbose),
         productFileName = pathHelper.productFile(
             platform,
             envSettings.product_file_name,
