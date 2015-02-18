@@ -2,6 +2,7 @@ var Q = require('q'),
     os = require('os'),
     path = require('path'),
     fs = require('q-io/fs'),
+    rimraf = require('rimraf'),
     intersection = require('interset/intersection'),
     argsHelper = require('../../lib/helper/args'),
     print = require('../../lib/helper/print'),
@@ -11,6 +12,7 @@ var Q = require('q'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
     builder = require('../../lib/builder'),
+    createProject = require('../../lib/create'),
     listAvailableOnHost = require('../../lib/cordova/platforms').listAvailableOnHost,
     platformTasks = tasksHelper.load(settings.platforms, 'check', 'tasks');
 
@@ -38,17 +40,42 @@ function launchTasks(message, platforms, tasks, userTasks) {
     }, message);
 }
 
-var check = function (verbose) {
-    var cwd = process.cwd(),
-        conf = [tarifaFile.parse(pathHelper.root()), listAvailableOnHost()];
+function regenerate(verbose) {
+    var defer = Q.defer();
 
-    return Q.all(conf).spread(function (localSettings, platforms) {
-        process.chdir(pathHelper.root());
+    rimraf(pathHelper.app(), function (err) {
+        if(err) defer.reject(err);
+        else defer.resolve();
+    });
+
+    return defer.promise.then(function () {
+        return createProject.createFromTarifaJSONFile(pathHelper.root(), verbose);
+    }).then(function () {
+        if (verbose) print.success("regenerate app from tarifa.json");
+    });
+}
+
+function regenerateTask(force, verbose) {
+    return fs.exists(pathHelper.app()).then(function (exist) {
+        if(exist && !force) return Q();
+        return regenerate(verbose);
+    });
+}
+
+var check = function (force, verbose) {
+    var cwd = process.cwd(),
+        root = pathHelper.root();
+
+    return regenerateTask(force, verbose).then(function () {
+        return Q.all([tarifaFile.parse(root), listAvailableOnHost()]);
+    }).spread(function (localSettings, platforms) {
+        process.chdir(root);
+        var projectPlatforms = localSettings.platforms.map(platformHelper.getName);
         return launchTasks({
                 settings: localSettings,
                 verbose: verbose
             },
-            intersection(platforms, localSettings.platforms.map(platformHelper.getName)),
+            intersection(platforms, projectPlatforms),
             platformTasks,
             loadUserTasks(platforms, localSettings)
         );
@@ -65,14 +92,18 @@ var check = function (verbose) {
 
 var action = function (argv) {
     var verbose = false,
+        force = false,
         helpPath = path.join(__dirname, 'usage.txt');
 
     if(argsHelper.matchArgumentsCount(argv, [0])
-            && argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
+            && argsHelper.checkValidOptions(argv, ['V', 'verbose', 'force'])) {
         if(argsHelper.matchOption(argv, 'V', 'verbose')) {
             verbose = true;
         }
-        return check(verbose);
+        if(argsHelper.matchOption(argv, 'force')) {
+            force = true;
+        }
+        return check(force, verbose);
     }
 
     return fs.read(helpPath).then(print);

@@ -1,8 +1,10 @@
 Usage: tarifa check
 
-Check the current working project after cloning
+Check the current working project after cloning and regenerate the cordova
+app if not found.
 
 Options:
 
     --help, -h     Show this message
+    --force        Force cordova app regenerate
     --verbose, -V  Be more verbose on everything

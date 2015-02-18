@@ -1,6 +1,6 @@
 var path = require('path'),
     fs = require('fs'),
-    createProjectAction = require('../../actions/create/project'),
+    createProject = require('../../lib/create'),
     createPluginAction = require('../../actions/create/plugin');
 
 module.exports.createProject = function (tmp, projectDefer, responseMockPath) {
@@ -19,7 +19,7 @@ module.exports.createProject = function (tmp, projectDefer, responseMockPath) {
             response.www = path.resolve(__dirname, '..', '..', 'template', 'project');
 
             process.chdir(dirPath);
-            createProjectAction.launchTasks(response).then(function (rslt) {
+            createProject.createFromResponse(response).then(function (rslt) {
                 process.chdir(response.path);
                 projectDefer.resolve({ dirPath: dirPath, rslt: rslt, response:response });
             }, function (err) {
