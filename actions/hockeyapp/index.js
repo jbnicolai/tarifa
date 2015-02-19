@@ -41,8 +41,12 @@ function multiplePlatformsTask(task, platforms, config, argv, verbose) {
 }
 
 function runTask(task, platform, config, argv, verbose) {
-    platform = platform === 'all' ? null : (argsHelper.matchWildcard(platform) || [platform]);
-    return multiplePlatformsTask(task, platform, config, argv, verbose);
+    if (platform === 'all')
+        return multiplePlatformsTask(task, null, config, argv, verbose);
+    else if (argsHelper.matchWildcard(platform))
+        return multiplePlatformsTask(task, argsHelper.getFromWildcard(platform), config, argv, verbose);
+    else
+        return multiplePlatformsTask(task, [platform], config, argv, verbose);
 }
 
 function clean(nbToKeep, verbose) {
