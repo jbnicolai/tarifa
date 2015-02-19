@@ -7,14 +7,23 @@
 - wp8: 3.7.0
 - browser: 3.6.0
 
+### upgrade a project from 0.5.x to 0.6.0
+
+Run `tarifa update` to update platforms and default plugins.
+Extend each platforms defined in the `platforms` root attribute of `tarifa.json`
+with the according version for example `android` becomes `android@3.7.1`.
+
 ### changes
 
 - refactoring all specific platforms code in `lib/platforms/$platform`
 - adding version on defined platforms in `tarifa.json` like `android@3.7.1`
 - [android] re add versionCode overwritting if available in configuration in `pre-cordova-compile` tasks
 - adding `extend` keyword in configuration definition to extend configuration objects
+- add `--dump-configuration` option to `tarifa info` to dump configuration after parsing
 - upgade default plugins to latest cordova plugins release: http://cordova.apache.org/news/2015/02/10/plugins-release.html
 - upgrade cordova-lib to 4.2.0
+- regenerate cordova app with `tarifa check` if `app` folder is not found
+- change `tarifa update`: now if new platforms are available, tarifa removes them and re install new ones
 
 ## 0.5.1 (01/21/2015)
 
