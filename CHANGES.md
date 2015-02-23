@@ -1,4 +1,4 @@
-## 0.6.0 (XX/XX/XXXX) not released
+## 0.6.0 (02/23/2015)
 
 ### supported cordova platforms:
 
@@ -24,6 +24,7 @@ with the according version for example `android` becomes `android@3.7.1`.
 - upgrade cordova-lib to 4.2.0
 - regenerate cordova app with `tarifa check` if `app` folder is not found
 - change `tarifa update`: now if new platforms are available, tarifa removes them and re install new ones
+- no more `.gitignore` files while creating new project
 
 ## 0.5.1 (01/21/2015)
 
