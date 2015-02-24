@@ -35,7 +35,7 @@
   ],
   "homepage": "http://tarifa.tools",
   "dependencies": {
-    "chalk": "0.5.1",
+    "chalk": "1.0.0",
     "char-spinner": "1.0.1",
     "color": "0.7.1",
     "configstore": "0.3.1",
